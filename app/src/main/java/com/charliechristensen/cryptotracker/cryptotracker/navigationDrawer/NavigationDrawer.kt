@@ -71,8 +71,8 @@ class NavigationDrawer : BaseActivity(), NavigationView.OnNavigationItemSelected
         actionBarDrawerToggle.syncState()
     }
 
-    override fun getLayoutResource(): Int =
-        R.layout.activity_navigation_drawer
+    override val layoutResource: Int
+        get() = R.layout.activity_navigation_drawer
 
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {

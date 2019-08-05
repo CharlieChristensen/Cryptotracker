@@ -11,13 +11,9 @@ import org.json.JSONObject
 class WebSocketService(url: String) {
 
     private val webSocket: Socket = IO.socket(url)
-
     private val temporarySubscriptions: MutableSet<String> = mutableSetOf()
-
     private val portfolioSubscriptions: MutableSet<String> = mutableSetOf()
-
     private val priceUpdateReceivedRelay = PublishRelay.create<SymbolPricePair>()
-
     private val errorConnectingToSocketRelay = PublishRelay.create<Unit>()
 
     init {

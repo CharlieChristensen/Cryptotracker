@@ -29,7 +29,7 @@ buildscript {
             'rxbindings'      : '2.0.0',
             'rxrelay'         : '2.0.0',
             'socketio'        : '1.0.0',
-            'leakcanary'      : '1.6.3',
+            'leakcanary'      : '2.0-beta-2',
             'mpandroidchart'  : '3.0.3',
             'mockitoKotlin'   : '1.5.0',
             'junit'           : '4.12',

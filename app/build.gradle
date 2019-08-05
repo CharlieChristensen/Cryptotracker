@@ -72,7 +72,6 @@ dependencies {
     kapt "com.github.bumptech.glide:compiler:$versions.glide"
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakcanary"
 
     implementation "com.github.PhilJay:MPAndroidChart:v$versions.mpandroidchart"
 

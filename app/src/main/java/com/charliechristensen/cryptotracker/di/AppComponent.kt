@@ -11,9 +11,6 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
-/**
- * Created by Chuff on 12/21/17.
- */
 @Singleton
 @Component(modules = [(AppModule::class)])
 interface AppComponent {
@@ -27,6 +24,4 @@ interface AppComponent {
     val portfolioCoinListViewModel: PortfolioCoinListViewModel.ViewModel
     val searchCoinsViewModelFactory: SearchCoinsViewModel.ViewModel.Factory
     val settingsViewModel: SettingsViewModel.ViewModel
-
-    fun inject(application: MainApplication)
 }
