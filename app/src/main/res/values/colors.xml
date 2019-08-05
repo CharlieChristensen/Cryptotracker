@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="lightColorPrimary">#3f51b5</color>
+    <color name="lightColorPrimaryLight">#C5CAE9</color>
+    <color name="lightColorPrimaryDark">#303f9f</color>
+    <color name="lightColorAccent">#FF9800</color>
+    <color name="lightDividerColor">#BDBDBD</color>
+
+    <color name="colorPrimary">#474957</color>
+    <color name="colorPrimaryDark">#40414D</color>
+    <color name="colorAccent">#FF9800</color>
+    <color name="dividerColor">#474957</color>
+
+    <color name="tealColorPrimary">@color/teal_500</color>
+    <color name="tealColorPrimaryDark">@color/teal_700</color>
+    <color name="tealColorAccent">@color/lime_500</color>
+    <color name="tealDividerColor">@color/teal_500</color>
+
+    <!--Text-->
+    <color name="lightTextColorPrimary">#212121</color>
+    <color name="textColorPrimary">#F9F8F9</color>
+    <color name="tealTextColorPrimary">#F9F8F9</color>
+
+    <color name="lightTextColorSecondary">#757575</color>
+    <color name="textColorSecondary">#828390</color>
+    <color name="tealTextColorSecondary">#b2dfdb</color>
+
+    <color name="pastel_teal">#98CEC0</color>
+    <color name="pastel_red">#D08A81</color>
+
+</resources>

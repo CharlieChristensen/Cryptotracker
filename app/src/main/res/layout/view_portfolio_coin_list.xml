@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/titlePortfolioValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/portfolio"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/walletTotalValueTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="42sp"
+        app:layout_constraintStart_toStartOf="@+id/titlePortfolioValue"
+        app:layout_constraintTop_toBottomOf="@+id/titlePortfolioValue" />
+
+    <TextView
+        android:id="@+id/changeTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/_24h_change_percent"
+        android:textAlignment="center"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/title24HourHigh"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/title24HourHigh" />
+
+    <TextView
+        android:id="@+id/portfolio24HourChangeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:text=""
+        android:textColor="?attr/positivePriceGreen"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/changeTitle"
+        app:layout_constraintStart_toStartOf="@+id/changeTitle"
+        app:layout_constraintTop_toBottomOf="@+id/changeTitle" />
+
+    <View
+        android:id="@+id/leftSeparator"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/dividerColor"
+        app:layout_constraintBottom_toTopOf="@+id/include"
+        app:layout_constraintEnd_toStartOf="@+id/title24HourHigh"
+        app:layout_constraintStart_toEndOf="@+id/changeTitle"
+        app:layout_constraintTop_toBottomOf="@+id/walletTotalValueTextView" />
+
+    <TextView
+        android:id="@+id/title24HourHigh"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/_24h_change_currency"
+        android:textAlignment="center"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/changeTitle"
+        app:layout_constraintTop_toBottomOf="@+id/walletTotalValueTextView" />
+
+    <TextView
+        android:id="@+id/portfolio24HourValueChangeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="?attr/positivePriceGreen"
+        app:layout_constraintEnd_toEndOf="@+id/title24HourHigh"
+        app:layout_constraintStart_toStartOf="@+id/title24HourHigh"
+        app:layout_constraintTop_toBottomOf="@+id/title24HourHigh" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/view_portfolio_list_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/portfolio24HourValueChangeTextView" />
+
+    <!--<com.airbnb.epoxy.EpoxyRecyclerView-->
+        <!--android:id="@+id/epoxyRecyclerView"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/include"-->
+        <!--tools:listitem="@layout/cell_coin_portfolio">-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include"
+        tools:listitem="@layout/cell_coin_portfolio">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/current_price"
+            android:textColor="?android:textColorSecondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/currentPriceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="$14,500.87"
+            android:textSize="42sp"
+            app:layout_constraintStart_toStartOf="@+id/textView6"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+        <TextView
+            android:id="@+id/title24HourPercentChange"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/_24h_change"
+            android:textAlignment="center"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@+id/title24HourHigh"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/title24HourHigh" />
+
+        <TextView
+            android:id="@+id/percentChangeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="+14.50%"
+            android:textAlignment="center"
+            android:textColor="?attr/positivePriceGreen"
+            app:layout_constraintEnd_toEndOf="@+id/title24HourPercentChange"
+            app:layout_constraintStart_toStartOf="@+id/title24HourPercentChange"
+            app:layout_constraintTop_toBottomOf="@+id/title24HourPercentChange" />
+
+        <View
+            android:id="@+id/leftSeparator3"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/dividerColor"
+            app:layout_constraintBottom_toTopOf="@+id/chartCardView"
+            app:layout_constraintEnd_toStartOf="@+id/title24HourHigh"
+            app:layout_constraintStart_toEndOf="@+id/title24HourPercentChange"
+            app:layout_constraintTop_toBottomOf="@+id/currentPriceTextView" />
+
+        <TextView
+            android:id="@+id/title24HourHigh"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/_24h_high"
+            android:textAlignment="center"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@+id/titleLow24Hour"
+            app:layout_constraintStart_toEndOf="@+id/title24HourPercentChange"
+            app:layout_constraintTop_toBottomOf="@+id/currentPriceTextView" />
+
+        <TextView
+            android:id="@+id/high24HourTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="$14,500.87"
+            android:textAlignment="center"
+            android:textColor="?attr/positivePriceGreen"
+            app:layout_constraintEnd_toEndOf="@+id/title24HourHigh"
+            app:layout_constraintStart_toStartOf="@+id/title24HourHigh"
+            app:layout_constraintTop_toBottomOf="@+id/title24HourHigh" />
+
+        <View
+            android:id="@+id/rightSeparator"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/dividerColor"
+            app:layout_constraintBottom_toTopOf="@+id/chartCardView"
+            app:layout_constraintEnd_toStartOf="@+id/titleLow24Hour"
+            app:layout_constraintStart_toEndOf="@+id/title24HourHigh"
+            app:layout_constraintTop_toBottomOf="@+id/currentPriceTextView" />
+
+        <TextView
+            android:id="@+id/titleLow24Hour"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/_24h_low"
+            android:textAlignment="center"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/title24HourHigh"
+            app:layout_constraintTop_toTopOf="@+id/title24HourHigh" />
+
+        <TextView
+            android:id="@+id/low24HourTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="$13,678.78"
+            android:textAlignment="center"
+            android:textColor="?attr/negativePriceRed"
+            app:layout_constraintEnd_toEndOf="@+id/titleLow24Hour"
+            app:layout_constraintStart_toStartOf="@+id/titleLow24Hour"
+            app:layout_constraintTop_toBottomOf="@+id/titleLow24Hour" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/chartCardView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/high24HourTextView">
+
+            <include
+                android:id="@+id/lineGraphController"
+                layout="@layout/view_line_graph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/walletCardView"
+            style="?attr/cardStyle"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chartCardView">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/titleWalletTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/wallet_value"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toTopOf="@+id/walletTotalValueTextView"
+                    app:layout_constraintEnd_toStartOf="@+id/centerLine"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/walletTotalValueTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="16dp"
+                    app:autoSizeMaxTextSize="30sp"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
+                    android:maxLines="1"
+                    android:textSize="30sp"
+                    tools:text="$133,984.89"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/centerLine"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/titleWalletTextView" />
+
+                <View
+                    android:id="@+id/centerLine"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="32dp"
+                    android:background="?attr/dividerColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="?attr/dividerColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/centerLine"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/titleWalletPriceChange24Hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/_24h"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/centerLine"
+                    app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+                <TextView
+                    android:id="@+id/titleWalletAmountOwned"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/owned"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toTopOf="@+id/view2"
+                    app:layout_constraintStart_toEndOf="@+id/centerLine"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/walletAmountOwnedTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    tools:text="15.68"
+                    android:textColor="?attr/positivePriceGreen"
+                    app:layout_constraintBottom_toTopOf="@+id/view2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/walletPriceChange24Hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    tools:text="+$20,897.78"
+                    android:textColor="?attr/negativePriceRed"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/buttonConstraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/walletCardView">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/addToPortfolioButton"
+                style="?attr/cardStyle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:animateLayoutChanges="true"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/editQuantityButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/addCoinTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/add_to_portfolio"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/editQuantityButton"
+                style="?attr/cardStyle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/removeFromPortfolioButton"
+                app:layout_constraintStart_toEndOf="@+id/addToPortfolioButton"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0">
+
+                <TextView
+                    android:id="@+id/editPortfolioTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/edit_portfolio"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/removeFromPortfolioTextView"
+                    app:layout_constraintStart_toEndOf="@+id/addCoinTextView"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/removeFromPortfolioButton"
+                style="?attr/cardStyle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:cardBackgroundColor="?attr/negativePriceRed"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/editQuantityButton"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/removeFromPortfolioTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/remove"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/editPortfolioTextView"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

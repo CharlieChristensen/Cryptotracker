@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name = "cardStyle">
+        <attr name="cardStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name = "cardStyleSecondary">
+        <attr name="cardStyleSecondary" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name = "positivePriceGreen">
+        <attr name="positivePriceGreen" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name = "negativePriceRed">
+        <attr name="negativePriceRed" format="reference" />
+    </declare-styleable>
+
+
+    <declare-styleable name = "dividerColor">
+        <attr name="dividerColor" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name = "cardViewElevation">
+        <attr name="cardViewElevation" format="reference" />
+    </declare-styleable>
+
+</resources>

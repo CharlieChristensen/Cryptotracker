@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?attr/cardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="4dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/coin_logo"
+            app:layout_constraintEnd_toStartOf="@+id/walletValueTextView"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/coinSymbolTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            tools:text="BTC"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/logoImageView"
+            app:layout_constraintStart_toStartOf="@+id/logoImageView"
+            app:layout_constraintTop_toBottomOf="@+id/logoImageView" />
+
+        <TextView
+            android:id="@+id/currentPriceTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            tools:text="$15,645.34"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toTopOf="@+id/amountChangeTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/walletValueTextView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/amountChangeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="+$345.65"
+            android:textColor="?attr/positivePriceGreen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/currentPriceTextView"
+            app:layout_constraintStart_toStartOf="@+id/currentPriceTextView"
+            app:layout_constraintTop_toBottomOf="@+id/currentPriceTextView" />
+
+        <TextView
+            android:id="@+id/walletValueTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text="$26,875.76"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="@+id/currentPriceTextView"
+            app:layout_constraintEnd_toStartOf="@+id/currentPriceTextView"
+            app:layout_constraintStart_toEndOf="@+id/logoImageView"
+            app:layout_constraintTop_toTopOf="@+id/currentPriceTextView" />
+
+        <TextView
+            android:id="@+id/walletValueChangeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="+586.54"
+            android:textColor="?attr/positivePriceGreen"
+            app:layout_constraintEnd_toEndOf="@+id/walletValueTextView"
+            app:layout_constraintStart_toStartOf="@+id/walletValueTextView"
+            app:layout_constraintTop_toTopOf="@+id/amountChangeTextView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
