@@ -108,8 +108,8 @@ class Repository(
                 }
             }
 
-    fun coinListPaged(): DataSource.Factory<Int, DbCoin> =
-        coinDao.getAllCoinsPaged()
+    fun searchCoinsPaged(query: CharSequence): DataSource.Factory<Int, DbCoin> =
+        coinDao.searchCoinsPaged(query.toString())
 
     fun getPortfolioCoinSymbols(): Observable<List<String>> =
         portfolioCoinDao.getPortfolioCoinSymbols()

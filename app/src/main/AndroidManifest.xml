@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme"
         android:supportsRtl="true">
         <activity
-            android:name=".navigationDrawer.NavigationDrawer"
+            android:name=".navigationDrawer.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

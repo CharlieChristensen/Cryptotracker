@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.charliechristensen.cryptotracker.data.models.database.DbCoin
 import io.reactivex.Observable
-import io.reactivex.Single
 
 /**
  * Dao for DbCoin Data
@@ -25,10 +24,14 @@ interface CoinDao {
     fun getCoin(symbol: String): Observable<List<DbCoin>>
 
     @Query("SELECT * FROM coin")
-    fun getAllCoins(): Single<List<DbCoin>>
+    fun getAllCoins(): Observable<List<DbCoin>>
 
-    @Query("SELECT * FROM coin")
-    fun getAllCoinsPaged(): DataSource.Factory<Int, DbCoin>
+    @Query(
+        "SELECT * FROM coin " +
+                "WHERE coinName LIKE '%' || :query || '%' " +
+                "ORDER BY sortOrder"
+    )
+    fun searchCoinsPaged(query: String): DataSource.Factory<Int, DbCoin>
 
     @Query(
         "SELECT * FROM coin " +

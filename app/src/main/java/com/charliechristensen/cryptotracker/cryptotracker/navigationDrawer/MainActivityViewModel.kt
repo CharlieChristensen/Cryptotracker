@@ -12,7 +12,7 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-interface NavigationDrawerViewModel {
+interface MainActivityViewModel {
 
     interface Inputs {
         fun navigationItemSelected(itemId: Int)

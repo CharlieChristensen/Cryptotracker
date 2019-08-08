@@ -12,23 +12,22 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.savedstate.SavedStateRegistryOwner
 import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
+import com.charliechristensen.cryptotracker.di.DaggerAppComponent.factory
 
 inline fun <reified T : Fragment> fragment(block: Bundle.() -> Unit): T =
     T::class.java.newInstance().apply {
         arguments = Bundle().apply(block)
     }
-
-inline fun <reified T : AppCompatActivity> intent(
-    context: Context?,
-    block: Intent.() -> Unit
-): Intent =
-    Intent(context, T::class.java).apply(block)
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(
@@ -37,6 +36,16 @@ inline fun <reified T : ViewModel> FragmentActivity.viewModel(
     object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
             factory() as T
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T : ViewModel> Fragment.activityViewModel(
+    crossinline provider: () -> T
+) = activityViewModels<T> {
+    object : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+                factory() as T
     }
 }
 
@@ -50,15 +59,30 @@ inline fun <reified T : ViewModel> Fragment.viewModel(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T : ViewModel> Fragment.savedStateViewModel(
+    owner: SavedStateRegistryOwner,
+    defaultArgs: Bundle? = null,
+    crossinline factory: (SavedStateHandle) -> T
+) = viewModels<T> {
+    object : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+        override fun <T : ViewModel?> create(
+            key: String,
+            modelClass: Class<T>,
+            handle: SavedStateHandle
+        ): T = factory(handle) as T
+    }
+}
+
 fun Fragment.pushFragment(
     fragment: Fragment,
-    @IdRes containerViewId: Int = R.id.contentView,
+    @IdRes containerViewId: Int = R.id.fragmentContainer,
     addToBackStack: Boolean = true
 ): Int = requireActivity().pushFragment(fragment, containerViewId, addToBackStack)
 
 fun FragmentActivity.pushFragment(
     fragment: Fragment,
-    @IdRes containerViewId: Int = R.id.contentView,
+    @IdRes containerViewId: Int = R.id.fragmentContainer,
     addToBackStack: Boolean = true
 ): Int =
     supportFragmentManager.beginTransaction().apply {

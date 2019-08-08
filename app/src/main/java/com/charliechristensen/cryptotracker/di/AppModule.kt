@@ -27,9 +27,9 @@ import javax.inject.Singleton
 object AppModule {
 
     @Provides
-    @Singleton
     @JvmStatic
-    fun provideApplicationContext(application: Application): Context = application.applicationContext
+    fun provideApplicationContext(application: Application): Context =
+        application.applicationContext
 
     @Provides
     @JvmStatic
@@ -47,14 +47,13 @@ object AppModule {
     fun provideRepository(
         cryptoService: CryptoService,
         database: AppDatabase
-    ): Repository =
-        Repository(
-            cryptoService,
-            database.coinDao(),
-            database.coinPriceDao(),
-            database.portfolioCoinDao(),
-            database.combinedTableDao()
-        )
+    ): Repository = Repository(
+        cryptoService,
+        database.coinDao(),
+        database.coinPriceDao(),
+        database.portfolioCoinDao(),
+        database.combinedTableDao()
+    )
 
     @Provides
     @Singleton
@@ -65,7 +64,6 @@ object AppModule {
             .build()
 
     @Provides
-    @Singleton
     @JvmStatic
     fun provideApiService(@Named("BaseUrl") baseUrl: String): CryptoService =
         CryptoServiceFactory.makeCryptoService(baseUrl, BuildConfig.DEBUG)
@@ -80,7 +78,10 @@ object AppModule {
     @Singleton
     @JvmStatic
     fun provideSharedPreferences(applicationContext: Context): SharedPreferences =
-        applicationContext.getSharedPreferences("cryptotracker-shared-preferences", Context.MODE_PRIVATE)
+        applicationContext.getSharedPreferences(
+            "cryptotracker-shared-preferences",
+            Context.MODE_PRIVATE
+        )
 
     @Provides
     @Reusable

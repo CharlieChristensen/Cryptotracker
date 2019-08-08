@@ -40,30 +40,27 @@ interface PortfolioCoinListViewModel {
         private val formatterFactory: FormatterFactory
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val portfolioValueRelay: BehaviorRelay<Double> = BehaviorRelay.createDefault(0.0)
-        private val portfolioOpenRelay: BehaviorRelay<Double> = BehaviorRelay.createDefault(0.0)
-        private val portfolioValueChangeRelay: BehaviorRelay<Double> =
-            BehaviorRelay.createDefault(0.0)
-
-        private val coinListRelay: BehaviorRelay<List<PortfolioListItem>> = BehaviorRelay.create()
-
-        private val showCoinDetailControllerRelay: PublishRelay<String> = PublishRelay.create()
-        private val showAddCoinListControllerRelay: PublishRelay<Unit> = PublishRelay.create()
-        private val showNetworkErrorRelay: PublishRelay<Unit> = PublishRelay.create()
-
+        private val portfolioValueRelay = BehaviorRelay.createDefault(0.0)
+        private val portfolioOpenRelay = BehaviorRelay.createDefault(0.0)
+        private val portfolioValueChangeRelay = BehaviorRelay.createDefault(0.0)
+        private val coinListRelay = BehaviorRelay.create<List<PortfolioListItem>>()
+        private val showCoinDetailControllerRelay = PublishRelay.create<String>()
+        private val showAddCoinListControllerRelay = PublishRelay.create<Unit>()
+        private val showNetworkErrorRelay = PublishRelay.create<Unit>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
 
         init {
-            getPortfolioDataForSymbols(repository, formatterFactory)
+            repository.getPortfolioData()
+                .map { dbList -> mapPortfolioListData(dbList, formatterFactory) }
                 .subscribeOn(Schedulers.io())
                 .subscribeBy(
-                    onNext = {
-                        portfolioOpenRelay.accept(it.portfolioOpen)
-                        portfolioValueRelay.accept(it.portfolioValue)
-                        portfolioValueChangeRelay.accept(it.portfolioValueChange)
-                        coinListRelay.accept(it.coinList)
+                    onNext = { portfolioData ->
+                        portfolioOpenRelay.accept(portfolioData.portfolioOpen)
+                        portfolioValueRelay.accept(portfolioData.portfolioValue)
+                        portfolioValueChangeRelay.accept(portfolioData.portfolioValueChange)
+                        coinListRelay.accept(portfolioData.coinList)
                     },
                     onError = { showNetworkErrorRelay.accept(Unit) }
                 )
@@ -120,49 +117,41 @@ interface PortfolioCoinListViewModel {
 
         //endregion
 
-        //region Repository Calls
-
-        private fun getPortfolioDataForSymbols(
-            repository: Repository,
-            formatterFactory: FormatterFactory
-        ): Observable<PortfolioListData> = repository.getPortfolioData()
-            .map { dbList -> mapPortfolioListData(dbList, formatterFactory) }
-
-        //endregion
-
         private fun mapPortfolioListData(
             dbList: List<DbCoinWithPriceAndAmount>,
             formatterFactory: FormatterFactory
         ): PortfolioListData {
             var portfolioValueDouble = 0.0
             var portfolioOpenDouble = 0.0
-            val coinList = dbList.map { coin ->
-                val priceChangePerUnitDouble = coin.price - coin.open24Hour
-                val walletTotalValueDouble = coin.price * coin.amountOwned
-                val walletTotalValueOpenDouble = coin.open24Hour * coin.amountOwned
-                val walletTotalValueChangeDouble =
-                    walletTotalValueDouble - walletTotalValueOpenDouble
+            val coinList = dbList
+                .map { coin ->
+                    val priceChangePerUnitDouble = coin.price - coin.open24Hour
+                    val walletTotalValueDouble = coin.price * coin.amountOwned
+                    val walletTotalValueOpenDouble = coin.open24Hour * coin.amountOwned
+                    val walletTotalValueChangeDouble =
+                        walletTotalValueDouble - walletTotalValueOpenDouble
 
-                val dollarFormat = formatterFactory.currencyFormatter()
-                val walletTotalValueChange =
-                    ColorValueString.create(walletTotalValueChangeDouble, dollarFormat)
-                val priceChangePerUnit =
-                    ColorValueString.create(priceChangePerUnitDouble, dollarFormat)
-                val currentPrice = dollarFormat.format(coin.price)
-                val walletTotalValue = dollarFormat.format(walletTotalValueDouble)
+                    val dollarFormat = formatterFactory.currencyFormatter()
+                    val walletTotalValueChange =
+                        ColorValueString.create(walletTotalValueChangeDouble, dollarFormat)
+                    val priceChangePerUnit =
+                        ColorValueString.create(priceChangePerUnitDouble, dollarFormat)
+                    val currentPrice = dollarFormat.format(coin.price)
+                    val walletTotalValue = dollarFormat.format(walletTotalValueDouble)
 
-                portfolioValueDouble += walletTotalValueDouble
-                portfolioOpenDouble += walletTotalValueOpenDouble
+                    portfolioValueDouble += walletTotalValueDouble
+                    portfolioOpenDouble += walletTotalValueOpenDouble
 
-                PortfolioListItem.Coin(
-                    coin.symbol,
-                    coin.imageUrl,
-                    currentPrice,
-                    priceChangePerUnit,
-                    walletTotalValueChange,
-                    walletTotalValue
-                )
-            }.plus(PortfolioListItem.AddCoin)
+                    PortfolioListItem.Coin(
+                        coin.symbol,
+                        coin.imageUrl,
+                        currentPrice,
+                        priceChangePerUnit,
+                        walletTotalValueChange,
+                        walletTotalValue
+                    )
+                }
+                .plus(PortfolioListItem.AddCoin)
             val portfolioValueChange = portfolioValueDouble - portfolioOpenDouble
             return PortfolioListData(
                 coinList,

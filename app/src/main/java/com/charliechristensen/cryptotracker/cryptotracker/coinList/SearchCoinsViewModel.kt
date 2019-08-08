@@ -1,5 +1,6 @@
 package com.charliechristensen.cryptotracker.cryptotracker.coinList
 
+import androidx.lifecycle.SavedStateHandle
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.cryptotracker.coinList.list.SearchCoinsListItem
 import com.charliechristensen.cryptotracker.data.Repository
@@ -22,7 +23,6 @@ interface SearchCoinsViewModel {
 
     interface Inputs {
         fun onClickListItem(index: Int)
-        fun searchCoinsWithQuery(query: CharSequence): Observable<List<Coin>>
         fun setSearchQuery(query: CharSequence)
     }
 
@@ -34,31 +34,58 @@ interface SearchCoinsViewModel {
 
     class ViewModel @AssistedInject constructor(
         private val repository: Repository,
-        @Assisted private val filterOutOwnedCoins: Boolean
+        @Assisted private val filterOutOwnedCoins: Boolean,
+        @Assisted private val savedState: SavedStateHandle
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val showCoinDetailControllerRelay: PublishRelay<String> = PublishRelay.create()
-        private val searchQueryRelay: BehaviorRelay<CharSequence> = BehaviorRelay.createDefault("")
-        private val showNetworkErrorRelay: PublishRelay<Unit> = PublishRelay.create()
-        private val coinListRelay: BehaviorRelay<List<SearchCoinsListItem>> =
-            BehaviorRelay.createDefault(listOf(SearchCoinsListItem.Loading))
+        private val showCoinDetailControllerRelay = PublishRelay.create<String>()
+        private val showNetworkErrorRelay = PublishRelay.create<Unit>()
+        private val coinListRelay = BehaviorRelay.create<List<SearchCoinsListItem>>()
+        private val searchQueryRelay =
+            BehaviorRelay.createDefault<CharSequence>(savedState.get("searchQuery") ?: "")
 
         val inputs: Inputs = this
         val outputs: Outputs = this
 
         init {
-            searchQueryRelay
-                .debounce(400, TimeUnit.MILLISECONDS)
+            searchQueryRelay.debounce(400, TimeUnit.MILLISECONDS)
+                .mergeWith(searchQueryRelay.first("")) //Allows to emit saved state without waiting for debounce
+                .distinctUntilChanged()
+                .doOnNext { savedState.set("searchQuery", it) }
                 .switchMap { searchCoinsWithQuery(it) }
-                .subscribeOn(Schedulers.io())
                 .map { coinList ->
-                    coinList.map { coin ->
-                        SearchCoinsListItem.Coin(coin.coinName, coin.symbol, coin.imageUrl ?: "")
-                    }.plus(SearchCoinsListItem.RefreshFooter)
+                    coinList
+                        .map { coin ->
+                            SearchCoinsListItem.Coin(
+                                coin.coinName,
+                                coin.symbol,
+                                coin.imageUrl ?: ""
+                            )
+                        }
+                        .plus(SearchCoinsListItem.RefreshFooter)
                 }
+                .subscribeOn(Schedulers.io())
                 .subscribe(coinListRelay)
                 .addTo(disposables)
         }
+
+        private fun refreshCoins() {
+            repository.forceRefreshCoinListAndSaveToDb()
+                .doOnSubscribe { coinListRelay.accept(listOf(SearchCoinsListItem.Loading)) }
+                .doOnError { coinListRelay.accept(listOf()) }
+                .subscribeOn(Schedulers.io())
+                .subscribeBy(onError = { showNetworkErrorRelay.accept(Unit) })
+                .addTo(disposables)
+        }
+
+        private fun searchCoinsWithQuery(query: CharSequence): Observable<List<Coin>> =
+            if (filterOutOwnedCoins) {
+                repository.searchUnownedCoinWithQuery(query)
+            } else {
+                repository.searchCoinsWithQuery(query)
+            }.map { coins ->
+                coins.map { coin -> coin.toUi() }
+            }
 
         //region Inputs
 
@@ -68,15 +95,6 @@ interface SearchCoinsViewModel {
                 is SearchCoinsListItem.RefreshFooter -> refreshCoins()
             }
         }
-
-        override fun searchCoinsWithQuery(query: CharSequence): Observable<List<Coin>> =
-            if (filterOutOwnedCoins) {
-                repository.searchUnownedCoinWithQuery(query)
-            } else {
-                repository.searchCoinsWithQuery(query)
-            }.map { coins ->
-                coins.map { coin -> coin.toUi() }
-            }
 
         override fun setSearchQuery(query: CharSequence) {
             searchQueryRelay.accept(query)
@@ -97,17 +115,9 @@ interface SearchCoinsViewModel {
 
         //endregion
 
-        private fun refreshCoins() {
-            repository.forceRefreshCoinListAndSaveToDb()
-                .doOnSubscribe { coinListRelay.accept(listOf(SearchCoinsListItem.Loading)) }
-                .subscribeOn(Schedulers.io())
-                .subscribeBy(onError = { showNetworkErrorRelay.accept(Unit) })
-                .addTo(disposables)
-        }
-
         @AssistedInject.Factory
         interface Factory {
-            fun create(filterOutOwnedCoins: Boolean): ViewModel
+            fun create(filterOutOwnedCoins: Boolean, savedState: SavedStateHandle): ViewModel
         }
 
     }

@@ -7,7 +7,8 @@ import com.charliechristensen.cryptotracker.common.*
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.charliechristensen.cryptotracker.cryptotracker.coinDetail.CoinDetailFragment
-import com.charliechristensen.cryptotracker.cryptotracker.coinList.SearchCoinsListFragment
+import com.charliechristensen.cryptotracker.cryptotracker.coinList.SearchCoinsFragment
+import com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer.MainActivityViewModel
 import com.charliechristensen.cryptotracker.cryptotracker.portfolio.list.PortfolioAdapter
 import kotlinx.android.synthetic.main.view_portfolio_coin_list.*
 
@@ -15,6 +16,10 @@ class PortfolioFragment : BaseFragment<PortfolioCoinListViewModel.ViewModel>() {
 
     override val viewModel: PortfolioCoinListViewModel.ViewModel by viewModel {
         injector.portfolioCoinListViewModel
+    }
+
+    private val activityViewModel: MainActivityViewModel.ViewModel by activityViewModel {
+        injector.mainActivityViewModel
     }
 
     override val layoutResource: Int
@@ -68,7 +73,7 @@ class PortfolioFragment : BaseFragment<PortfolioCoinListViewModel.ViewModel>() {
     }
 
     private fun pushChooseCoinsListController() {
-        pushFragment(SearchCoinsListFragment.newInstance(true))
+        pushFragment(SearchCoinsFragment.newInstance(true))
     }
 
     companion object {
