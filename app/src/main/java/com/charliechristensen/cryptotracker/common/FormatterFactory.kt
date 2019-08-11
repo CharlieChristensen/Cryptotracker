@@ -1,13 +1,11 @@
 package com.charliechristensen.cryptotracker.common
 
+import dagger.Reusable
 import java.text.NumberFormat
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Created by Chuck on 1/16/2018.
- */
-@Singleton
+@Reusable
 class FormatterFactory @Inject constructor() {
 
     fun currencyFormatter(): NumberFormat =

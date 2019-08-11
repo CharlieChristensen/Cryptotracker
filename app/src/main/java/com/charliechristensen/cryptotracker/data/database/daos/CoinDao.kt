@@ -1,6 +1,5 @@
 package com.charliechristensen.cryptotracker.data.database.daos
 
-import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -25,13 +24,6 @@ interface CoinDao {
 
     @Query("SELECT * FROM coin")
     fun getAllCoins(): Observable<List<DbCoin>>
-
-    @Query(
-        "SELECT * FROM coin " +
-                "WHERE coinName LIKE '%' || :query || '%' " +
-                "ORDER BY sortOrder"
-    )
-    fun searchCoinsPaged(query: String): DataSource.Factory<Int, DbCoin>
 
     @Query(
         "SELECT * FROM coin " +

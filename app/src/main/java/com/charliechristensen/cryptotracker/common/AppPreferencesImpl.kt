@@ -6,13 +6,8 @@ import io.reactivex.Observable
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Saves preferences to SharedPreferences
- *
- * I feel that this is a better solution for simple data than Room.
- */
-@Singleton
-class AppPreferencesImpl @Inject constructor(private val sharedPreferences: SharedPreferences) : AppPreferences {
+class AppPreferencesImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
+    AppPreferences {
 
     private val themeRelay: BehaviorRelay<AppTheme> = BehaviorRelay.create()
     private val liveUpdatePricesRelay: BehaviorRelay<Boolean> = BehaviorRelay.create()
@@ -25,9 +20,9 @@ class AppPreferencesImpl @Inject constructor(private val sharedPreferences: Shar
     }
 
     override fun setLiveUpdatePrices(shouldUpdatePrices: Boolean) {
-        val editor = sharedPreferences.edit()
-        editor.putBoolean(KEY_LIVE_UPDATE_PRICES, shouldUpdatePrices)
-        editor.apply()
+        sharedPreferences.edit()
+            .putBoolean(KEY_LIVE_UPDATE_PRICES, shouldUpdatePrices)
+            .apply()
         liveUpdatePricesRelay.accept(shouldUpdatePrices)
     }
 
@@ -35,9 +30,9 @@ class AppPreferencesImpl @Inject constructor(private val sharedPreferences: Shar
         sharedPreferences.getBoolean(KEY_LIVE_UPDATE_PRICES, true)
 
     override fun setTheme(theme: AppTheme) {
-        val editor = sharedPreferences.edit()
-        editor.putInt(KEY_APP_THEME, theme.restoreId)
-        editor.apply()
+        sharedPreferences.edit()
+            .putInt(KEY_APP_THEME, theme.restoreId)
+            .apply()
         themeRelay.accept(theme)
     }
 

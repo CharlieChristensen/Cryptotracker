@@ -1,6 +1,5 @@
 package com.charliechristensen.cryptotracker.data
 
-import androidx.paging.DataSource
 import com.charliechristensen.cryptotracker.common.Constants
 import com.charliechristensen.cryptotracker.common.RxNetworkBoundResource
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits.*
@@ -15,8 +14,8 @@ import com.charliechristensen.cryptotracker.data.models.database.DbCoin
 import com.charliechristensen.cryptotracker.data.models.database.DbCoinPriceData
 import com.charliechristensen.cryptotracker.data.models.database.DbCoinWithPriceAndAmount
 import com.charliechristensen.cryptotracker.data.models.database.DbPortfolioCoin
-import com.charliechristensen.network.CryptoService
-import com.charliechristensen.network.models.ServerCoinPriceData
+import com.charliechristensen.cryptotracker.data.models.network.ServerCoinPriceData
+import com.charliechristensen.cryptotracker.data.webservice.CryptoService
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -107,9 +106,6 @@ class Repository(
                     Completable.complete()
                 }
             }
-
-    fun searchCoinsPaged(query: CharSequence): DataSource.Factory<Int, DbCoin> =
-        coinDao.searchCoinsPaged(query.toString())
 
     fun getPortfolioCoinSymbols(): Observable<List<String>> =
         portfolioCoinDao.getPortfolioCoinSymbols()

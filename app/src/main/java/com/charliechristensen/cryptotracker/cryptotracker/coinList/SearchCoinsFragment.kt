@@ -2,11 +2,14 @@ package com.charliechristensen.cryptotracker.cryptotracker.coinList
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.charliechristensen.cryptotracker.common.*
+import com.charliechristensen.cryptotracker.common.injector
+import com.charliechristensen.cryptotracker.common.savedStateViewModel
+import com.charliechristensen.cryptotracker.common.showToast
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
+import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
 import com.charliechristensen.cryptotracker.cryptotracker.R
-import com.charliechristensen.cryptotracker.cryptotracker.coinDetail.CoinDetailFragment
 import com.charliechristensen.cryptotracker.cryptotracker.coinList.list.SearchCoinsAdapter
 import com.jakewharton.rxbinding2.support.v7.widget.queryTextChanges
 import kotlinx.android.synthetic.main.view_search_coins.*
@@ -14,8 +17,9 @@ import kotlinx.android.synthetic.main.view_search_coins.*
 class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(),
     SearchCoinsAdapter.SearchCoinAdapterCallback {
 
-    override val viewModel: SearchCoinsViewModel.ViewModel by savedStateViewModel(this) { savedStateHandle ->
-        val filterOutOwnedCoins = arguments?.getBoolean(KEY_FILTER_OWNED_COINS, false) ?: false
+    override val viewModel: SearchCoinsViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
+        val filterOutOwnedCoins =
+            SearchCoinsFragmentArgs.fromBundle(requireArguments()).filterOwnedCoins
         injector.searchCoinsViewModelFactory.create(filterOutOwnedCoins, savedStateHandle)
     }
 
@@ -60,15 +64,8 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(),
     //endregion
 
     private fun pushCoinDetailController(symbol: String) {
-        pushFragment(CoinDetailFragment.newInstance(symbol))
-    }
-
-    companion object {
-        private const val KEY_FILTER_OWNED_COINS = "key_filter_owned_coins"
-
-        fun newInstance(filterOutOwnedCoins: Boolean): SearchCoinsFragment = fragment {
-            putBoolean(KEY_FILTER_OWNED_COINS, filterOutOwnedCoins)
-        }
+        val navDirections = NavigationGraphDirections.actionToCoinDetail(symbol)
+        findNavController().navigate(navDirections)
     }
 
 }

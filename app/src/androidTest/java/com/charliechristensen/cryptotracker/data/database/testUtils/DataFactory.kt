@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom
  */
 object DataFactory {
 
-    private val source = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    private const val source = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     fun randomSymbol(): String {
         return generateRandomStringOfLength(10)

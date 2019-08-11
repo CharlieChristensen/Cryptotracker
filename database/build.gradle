@@ -43,8 +43,6 @@ dependencies {
     implementation "androidx.room:room-rxjava2:$versions.room"
     androidTestImplementation "androidx.arch.core:core-testing:$versions.coreTesting"
     testImplementation "junit:junit:$versions.junit"
-    implementation "androidx.paging:paging-runtime-ktx:$versions.paging"
-    implementation "androidx.paging:paging-rxjava2-ktx:$versions.paging"
     androidTestImplementation "androidx.test:runner:$versions.testRunner"
     androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso"
 }

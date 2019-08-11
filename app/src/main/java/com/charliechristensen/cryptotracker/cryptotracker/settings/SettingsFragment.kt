@@ -32,7 +32,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>() {
             viewModel.inputs.themeButtonClicked()
         }
 
-        liveUpdatePricesSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        liveUpdatePricesSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.inputs.liveUpdatePricesToggled(isChecked)
         }
 

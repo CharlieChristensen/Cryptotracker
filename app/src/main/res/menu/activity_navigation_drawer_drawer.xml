@@ -5,15 +5,15 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_my_portfolio"
+            android:id="@+id/portfolioRoot"
             android:icon="@drawable/ic_chart_24dp"
             android:title="@string/my_portfolio" />
         <item
-            android:id="@+id/nav_coin_prices"
+            android:id="@+id/coinsRoot"
             android:icon="@drawable/ic_menu_coin"
             android:title="@string/all_coins" />
         <item
-            android:id="@+id/nav_settings"
+            android:id="@+id/settingsRoot"
             android:icon="@drawable/ic_menu_settings"
             android:title="@string/action_settings" />
     </group>

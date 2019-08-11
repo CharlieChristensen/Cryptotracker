@@ -10,7 +10,7 @@ import com.charliechristensen.cryptotracker.data.models.ui.ImageAndNamePair
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
 import com.charliechristensen.cryptotracker.data.models.graph.CoinHistoryElement
 import com.charliechristensen.cryptotracker.data.models.graph.CoinHistoryGraphEntry
-import com.charliechristensen.network.socketio.WebSocketService
+import com.charliechristensen.cryptotracker.data.websocket.WebSocketService
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
 import com.squareup.inject.assisted.Assisted

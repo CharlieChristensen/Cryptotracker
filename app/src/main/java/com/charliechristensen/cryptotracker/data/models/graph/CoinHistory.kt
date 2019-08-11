@@ -1,6 +1,6 @@
 package com.charliechristensen.cryptotracker.data.models.graph
 
-import com.charliechristensen.network.models.ServerHistoryResponse
+import com.charliechristensen.cryptotracker.data.models.network.ServerHistoryResponse
 
 /**
  * Created by Chuck on 12/31/2017.

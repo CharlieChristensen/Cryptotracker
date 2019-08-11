@@ -1,6 +1,6 @@
 package com.charliechristensen.cryptotracker.data.models.graph
 
-import com.charliechristensen.network.models.ServerHistoryElement
+import com.charliechristensen.cryptotracker.data.models.network.ServerHistoryElement
 
 @Suppress("unused")
 /**

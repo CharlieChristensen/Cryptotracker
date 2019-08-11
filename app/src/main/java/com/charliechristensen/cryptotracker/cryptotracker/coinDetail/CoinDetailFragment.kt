@@ -25,8 +25,7 @@ import kotlinx.android.synthetic.main.view_line_graph.*
 class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>() {
 
     override val viewModel: CoinDetailViewModel.ViewModel by viewModel {
-        val coinSymbol = arguments?.getString(KEY_COIN_SYMBOL)
-            ?: throw IllegalStateException("Must pass symbol into CoinDetailFragment")
+        val coinSymbol = CoinDetailFragmentArgs.fromBundle(requireArguments()).coinSymbol
         injector.coinDetailViewModelFactory.create(coinSymbol)
     }
 
@@ -262,11 +261,6 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>() {
     //endregion
 
     companion object {
-        private const val KEY_COIN_SYMBOL = "detail_coin_symbol"
         private const val KEY_TOGGLE_GROUP_SELECTED = "toggle_group_selected"
-
-        fun newInstance(coinSymbol: String): CoinDetailFragment = fragment {
-            putString(KEY_COIN_SYMBOL, coinSymbol)
-        }
     }
 }

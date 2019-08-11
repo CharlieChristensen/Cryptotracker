@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/portfolioRoot">
+
+    <fragment
+        android:id="@+id/portfolioRoot"
+        android:name="com.charliechristensen.cryptotracker.cryptotracker.portfolio.PortfolioFragment"
+        android:label="PortfolioFragment"
+        tools:layout="@layout/view_portfolio_coin_list">
+        <action
+            android:id="@+id/action_portfolio_to_coins"
+            app:destination="@id/coins"
+            app:enterAnim="@anim/slide_enter_from_right"
+            app:exitAnim="@anim/slide_exit_to_left"
+            app:popEnterAnim="@anim/slide_enter_from_left"
+            app:popExitAnim="@anim/slide_exit_to_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/coinDetail"
+        android:name="com.charliechristensen.cryptotracker.cryptotracker.coinDetail.CoinDetailFragment"
+        android:label="CoinDetailFragment"
+        tools:layout="@layout/view_coin_detail">
+        <argument
+            android:name="coinSymbol"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/coinsRoot"
+        android:name="com.charliechristensen.cryptotracker.cryptotracker.coinList.SearchCoinsFragment"
+        android:label="SearchCoinsFragment"
+        tools:layout="@layout/view_search_coins">
+        <argument
+            android:name="filterOwnedCoins"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/coins"
+        android:name="com.charliechristensen.cryptotracker.cryptotracker.coinList.SearchCoinsFragment"
+        android:label="SearchCoinsFragment"
+        tools:layout="@layout/view_search_coins">
+        <argument
+            android:name="filterOwnedCoins"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsRoot"
+        android:name="com.charliechristensen.cryptotracker.cryptotracker.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/view_settings"/>
+
+    <action
+        android:id="@+id/action_to_coinDetail"
+        app:destination="@id/coinDetail"
+        app:enterAnim="@anim/slide_enter_from_right"
+        app:exitAnim="@anim/slide_exit_to_left"
+        app:popEnterAnim="@anim/slide_enter_from_left"
+        app:popExitAnim="@anim/slide_exit_to_right" />
+
+</navigation>
