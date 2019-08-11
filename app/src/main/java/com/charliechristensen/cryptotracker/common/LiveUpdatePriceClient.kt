@@ -47,7 +47,7 @@ class LiveUpdatePriceClient @Inject constructor(
 
         webSocketService.priceUpdateReceived()
             .observeOn(Schedulers.io())
-            .subscribeBy { repository.updatePriceForCoin(it.symbol, it.price) }
+            .subscribe { repository.updatePriceForCoin(it.symbol, it.price) }
             .addTo(disposables)
     }
 

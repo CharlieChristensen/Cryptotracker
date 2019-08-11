@@ -3,7 +3,6 @@ package com.charliechristensen.cryptotracker.common
 import io.reactivex.Observable
 import io.reactivex.Single
 
-
 /**
  * Exposes observable while deciding when to call network and cache
  */
@@ -16,9 +15,10 @@ abstract class RxNetworkBoundResource<DbType, RemoteType> {
             .switchMap {
                 if (isFirstElement && shouldFetch(it)) {
                     isFirstElement = false
-                    return@switchMap Observable.concat(Observable.just(it), loadFromNetworkAndMap())
+                    Observable.concat(Observable.just(it), loadFromNetworkAndMap())
+                }else {
+                    Observable.just(it)
                 }
-                return@switchMap Observable.just(it)
             }
             .distinctUntilChanged()
     }
@@ -31,14 +31,11 @@ abstract class RxNetworkBoundResource<DbType, RemoteType> {
 
     protected abstract fun loadFromNetwork(): Single<RemoteType>
 
-    private fun loadFromNetworkAndMap(): Observable<List<DbType>> {
-        return loadFromNetwork()
-            .map {
-                mapToDbType(it)
-            }
+    private fun loadFromNetworkAndMap(): Observable<List<DbType>> =
+        loadFromNetwork()
+            .map { mapToDbType(it) }
             .doOnSuccess { saveToDb(it) }
             .toObservable()
-    }
 
     protected abstract fun mapToDbType(value: RemoteType): List<DbType>
 

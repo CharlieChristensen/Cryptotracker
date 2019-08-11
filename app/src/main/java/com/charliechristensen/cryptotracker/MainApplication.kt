@@ -1,6 +1,7 @@
 package com.charliechristensen.cryptotracker
 
 import android.app.Application
+import com.charliechristensen.cryptotracker.common.RxGlobalErrorHandler
 import com.charliechristensen.cryptotracker.di.AppComponent
 import com.charliechristensen.cryptotracker.di.DaggerAppComponent
 import io.reactivex.plugins.RxJavaPlugins
@@ -15,9 +16,7 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        RxJavaPlugins.setErrorHandler {
-            //TODO
-        }
+        RxJavaPlugins.setErrorHandler(RxGlobalErrorHandler())
     }
 
 }
