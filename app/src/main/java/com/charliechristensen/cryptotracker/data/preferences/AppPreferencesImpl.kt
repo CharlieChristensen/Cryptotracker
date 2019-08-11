@@ -1,11 +1,13 @@
-package com.charliechristensen.cryptotracker.common
+package com.charliechristensen.cryptotracker.data.preferences
 
 import android.content.SharedPreferences
+import com.charliechristensen.cryptotracker.common.AppTheme
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Singleton
 class AppPreferencesImpl @Inject constructor(private val sharedPreferences: SharedPreferences) :
     AppPreferences {
 
@@ -38,7 +40,9 @@ class AppPreferencesImpl @Inject constructor(private val sharedPreferences: Shar
 
     override fun getTheme(): AppTheme {
         val restoreId = sharedPreferences.getInt(KEY_APP_THEME, 0)
-        return AppTheme.themeFromRestoreId(restoreId)
+        return AppTheme.themeFromRestoreId(
+            restoreId
+        )
     }
 
     override fun theme(): Observable<AppTheme> =

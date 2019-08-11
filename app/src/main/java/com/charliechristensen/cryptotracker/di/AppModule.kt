@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
-import com.charliechristensen.cryptotracker.common.AppPreferences
-import com.charliechristensen.cryptotracker.common.AppPreferencesImpl
+import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
+import com.charliechristensen.cryptotracker.data.preferences.AppPreferencesImpl
 import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.charliechristensen.cryptotracker.data.Repository

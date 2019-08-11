@@ -2,6 +2,7 @@ package com.charliechristensen.cryptotracker.common
 
 import android.util.Log
 import com.charliechristensen.cryptotracker.data.Repository
+import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.cryptotracker.data.websocket.WebSocketService
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable

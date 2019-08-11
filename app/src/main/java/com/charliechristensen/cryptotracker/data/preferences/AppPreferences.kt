@@ -1,5 +1,6 @@
-package com.charliechristensen.cryptotracker.common
+package com.charliechristensen.cryptotracker.data.preferences
 
+import com.charliechristensen.cryptotracker.common.AppTheme
 import io.reactivex.Observable
 
 /**

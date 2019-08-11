@@ -4,10 +4,10 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import com.charliechristensen.cryptotracker.common.fragment
-import com.charliechristensen.cryptotracker.common.injector
+import com.charliechristensen.cryptotracker.common.extensions.fragment
+import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
-import com.charliechristensen.cryptotracker.common.viewModel
+import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import kotlinx.android.synthetic.main.dialog_choose_theme.view.*
 import kotlinx.android.synthetic.main.view_settings.*
@@ -67,7 +67,8 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>() {
     }
 
     companion object {
-        fun newInstance(): SettingsFragment = fragment {}
+        fun newInstance(): SettingsFragment =
+            fragment {}
     }
 
 }

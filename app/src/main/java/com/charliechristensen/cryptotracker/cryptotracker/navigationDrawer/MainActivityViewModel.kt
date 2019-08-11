@@ -1,6 +1,6 @@
 package com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer
 
-import com.charliechristensen.cryptotracker.common.AppPreferences
+import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.LiveUpdatePriceClient

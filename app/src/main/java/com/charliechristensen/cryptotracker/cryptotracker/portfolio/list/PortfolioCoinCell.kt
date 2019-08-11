@@ -3,7 +3,7 @@ package com.charliechristensen.cryptotracker.cryptotracker.portfolio.list
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.charliechristensen.cryptotracker.common.GlideApp
-import com.charliechristensen.cryptotracker.common.getColorAttribute
+import com.charliechristensen.cryptotracker.common.extensions.getColorAttribute
 import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import kotlinx.android.synthetic.main.cell_coin_portfolio.*

@@ -34,6 +34,9 @@ class Repository(
     fun searchCoinsWithQuery(query: CharSequence): Observable<List<DbCoin>> =
         coinDao.searchCoinsByName(query.toString())
 
+    fun searchCoinsWithQuery(query: CharSequence, limit: Int, offset: Int): Observable<List<DbCoin>> =
+        coinDao.searchCoinsByName(query.toString(), limit, offset)
+
     fun searchUnownedCoinWithQuery(query: CharSequence): Observable<List<DbCoin>> =
         combinedTableDao.searchUnownedCoinsByName(query.toString())
 

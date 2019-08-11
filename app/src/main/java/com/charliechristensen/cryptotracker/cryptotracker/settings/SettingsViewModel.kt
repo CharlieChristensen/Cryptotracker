@@ -1,6 +1,6 @@
 package com.charliechristensen.cryptotracker.cryptotracker.settings
 
-import com.charliechristensen.cryptotracker.common.AppPreferencesImpl
+import com.charliechristensen.cryptotracker.data.preferences.AppPreferencesImpl
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.jakewharton.rxrelay2.BehaviorRelay

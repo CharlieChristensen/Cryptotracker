@@ -15,6 +15,10 @@ import androidx.transition.TransitionManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.charliechristensen.cryptotracker.common.*
+import com.charliechristensen.cryptotracker.common.extensions.getColorFromResource
+import com.charliechristensen.cryptotracker.common.extensions.injector
+import com.charliechristensen.cryptotracker.common.extensions.showToast
+import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.jakewharton.rxbinding2.support.design.widget.selections

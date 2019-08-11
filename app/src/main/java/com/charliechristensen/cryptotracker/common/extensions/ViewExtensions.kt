@@ -1,4 +1,4 @@
-package com.charliechristensen.cryptotracker.common
+package com.charliechristensen.cryptotracker.common.extensions
 
 import android.app.Activity
 import android.content.Context
@@ -15,6 +15,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.charliechristensen.cryptotracker.MainApplication
+import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
 
 inline fun <reified T : Fragment> fragment(block: Bundle.() -> Unit): T =
@@ -56,6 +57,13 @@ inline fun <reified T : ViewModel> Fragment.savedStateViewModel(
     }
 }
 
+fun Activity.getColorFromResource(colorAttribute: Int): Int{
+    val typedValue = TypedValue()
+    val theme = theme
+    theme.resolveAttribute(colorAttribute, typedValue, true)
+    return typedValue.data
+}
+
 val Activity.injector
     get() = (application as MainApplication).appComponent
 
@@ -70,7 +78,10 @@ fun Fragment.showToast(message: String) =
 
 fun Context.getColorAttribute(color: ValueChangeColor, success: (Int) -> Unit) {
     val typedValue = TypedValue()
-    if (theme.resolveAttribute(ColorUtils.getColorInt(color), typedValue, true)) {
+    if (theme.resolveAttribute(
+            ColorUtils.getColorInt(
+                color
+            ), typedValue, true)) {
         success(typedValue.data)
     }
 }

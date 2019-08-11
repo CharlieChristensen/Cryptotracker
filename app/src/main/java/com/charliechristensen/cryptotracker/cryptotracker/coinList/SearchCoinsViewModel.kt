@@ -41,8 +41,7 @@ interface SearchCoinsViewModel {
         private val showCoinDetailControllerRelay = PublishRelay.create<String>()
         private val showNetworkErrorRelay = PublishRelay.create<Unit>()
         private val coinListRelay = BehaviorRelay.create<List<SearchCoinsListItem>>()
-        private val searchQueryRelay =
-            BehaviorRelay.createDefault<CharSequence>(savedState.get("searchQuery") ?: "")
+        private val searchQueryRelay = BehaviorRelay.createDefault<CharSequence>(savedState.get(KEY_SEARCH_QUERY_SAVED_STATE) ?: "")
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -51,7 +50,7 @@ interface SearchCoinsViewModel {
             searchQueryRelay.debounce(400, TimeUnit.MILLISECONDS)
                 .mergeWith(searchQueryRelay.first("")) //Allows to emit saved state without waiting for debounce
                 .distinctUntilChanged()
-                .doOnNext { savedState.set("searchQuery", it) }
+                .doOnNext { savedState.set(KEY_SEARCH_QUERY_SAVED_STATE, it) }
                 .switchMap { searchCoinsWithQuery(it) }
                 .map { coinList ->
                     coinList
@@ -72,7 +71,7 @@ interface SearchCoinsViewModel {
         private fun refreshCoins() {
             repository.forceRefreshCoinListAndSaveToDb()
                 .doOnSubscribe { coinListRelay.accept(listOf(SearchCoinsListItem.Loading)) }
-                .doOnError { coinListRelay.accept(listOf()) }
+                .doOnError { coinListRelay.accept(listOf(SearchCoinsListItem.RefreshFooter)) }
                 .subscribeOn(Schedulers.io())
                 .subscribeBy(onError = { showNetworkErrorRelay.accept(Unit) })
                 .addTo(disposables)
@@ -118,6 +117,10 @@ interface SearchCoinsViewModel {
         @AssistedInject.Factory
         interface Factory {
             fun create(filterOutOwnedCoins: Boolean, savedState: SavedStateHandle): ViewModel
+        }
+
+        companion object {
+            const val KEY_SEARCH_QUERY_SAVED_STATE = "KeySearchQuerySavedState"
         }
 
     }
