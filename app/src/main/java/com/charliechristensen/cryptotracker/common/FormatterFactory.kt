@@ -3,7 +3,6 @@ package com.charliechristensen.cryptotracker.common
 import dagger.Reusable
 import java.text.NumberFormat
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @Reusable
 class FormatterFactory @Inject constructor() {

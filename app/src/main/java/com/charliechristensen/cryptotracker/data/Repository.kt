@@ -34,9 +34,6 @@ class Repository(
     fun searchCoinsWithQuery(query: CharSequence): Observable<List<DbCoin>> =
         coinDao.searchCoinsByName(query.toString())
 
-    fun searchCoinsWithQuery(query: CharSequence, limit: Int, offset: Int): Observable<List<DbCoin>> =
-        coinDao.searchCoinsByName(query.toString(), limit, offset)
-
     fun searchUnownedCoinWithQuery(query: CharSequence): Observable<List<DbCoin>> =
         combinedTableDao.searchUnownedCoinsByName(query.toString())
 
@@ -61,7 +58,7 @@ class Repository(
                         DbCoinPriceData(
                             symbol
                         )
-                    ) //Coin data does not exist
+                    )
                 }
             }
 
@@ -70,7 +67,7 @@ class Repository(
 
             override fun mapToDbType(value: ServerCoinPriceData): List<DbCoinPriceData> {
                 if (value.rawData?.containsKey(symbol) == true) {
-                    val rawData = value.rawData?.get(symbol) ?: return emptyList()
+                    val rawData = value.rawData[symbol] ?: return emptyList()
                     if (rawData.containsKey(Constants.MyCurrency)) {
                         val coinPriceRawData = rawData[Constants.MyCurrency] ?: return emptyList()
                         val coinPriceData = NetworkToDbMapper.mapCoinPriceData(coinPriceRawData)
@@ -97,7 +94,7 @@ class Repository(
                     .toList()
             }
             .doOnSuccess { coinDao.insertCoins(it) }
-            .toCompletable()
+            .ignoreElement()
 
     fun refreshCoinListIfNeeded(): Completable =
         coinDao.getAllCoins()
@@ -141,23 +138,3 @@ class Repository(
         coinPriceDao.updatePrice(coinSymbol, price)
     }
 }
-
-//    fun getAllCoins(forceRefresh: Boolean = false): Observable<List<DbCoin>> =
-//        object : RxNetworkBoundResource<DbCoin, ServerCoinList>() {
-//            override fun saveToDb(data: List<DbCoin>) {
-//                coinDao.insertCoins(data)
-//            }
-//
-//            override fun shouldFetch(data: List<DbCoin>): Boolean =
-//                data.isEmpty() || forceRefresh
-//
-//            override fun mapToDbType(value: ServerCoinList): List<DbCoin> =
-//                value.data.asSequence().map { DbCoin(it.value, value.baseImageUrl) }.toList()
-//
-//            override fun loadFromDb(): Observable<List<DbCoin>> =
-//                coinDao.getAllCoins()
-//
-//            override fun loadFromNetwork(): Single<ServerCoinList> =
-//                service.getCoinList()
-//
-//        }.observable

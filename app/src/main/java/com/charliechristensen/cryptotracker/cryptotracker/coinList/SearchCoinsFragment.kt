@@ -3,6 +3,7 @@ package com.charliechristensen.cryptotracker.cryptotracker.coinList
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.savedStateViewModel
@@ -17,10 +18,10 @@ import kotlinx.android.synthetic.main.view_search_coins.*
 class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(),
     SearchCoinsAdapter.SearchCoinAdapterCallback {
 
+    private val fragmentArgs: SearchCoinsFragmentArgs by navArgs()
+
     override val viewModel: SearchCoinsViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
-        val filterOutOwnedCoins =
-            SearchCoinsFragmentArgs.fromBundle(requireArguments()).filterOwnedCoins
-        injector.searchCoinsViewModelFactory.create(filterOutOwnedCoins, savedStateHandle)
+        injector.searchCoinsViewModelFactory.create(fragmentArgs.filterOwnedCoins, savedStateHandle)
     }
 
     override val layoutResource: Int

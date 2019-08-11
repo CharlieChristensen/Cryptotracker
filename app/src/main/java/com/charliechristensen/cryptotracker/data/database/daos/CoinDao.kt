@@ -32,11 +32,4 @@ interface CoinDao {
     )
     fun searchCoinsByName(query: String): Observable<List<DbCoin>>
 
-    @Query(
-        "SELECT * FROM coin " +
-                "WHERE coinName LIKE '%' || :query || '%' " +
-                "ORDER BY sortOrder LIMIT :limit OFFSET :offset"
-    )
-    fun searchCoinsByName(query: String, limit: Int, offset: Int): Observable<List<DbCoin>>
-
 }

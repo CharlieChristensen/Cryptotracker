@@ -73,9 +73,6 @@ val Fragment.injector
 fun Fragment.showToast(@StringRes resId: Int) =
     Toast.makeText(requireContext(), resId, Toast.LENGTH_SHORT).show()
 
-fun Fragment.showToast(message: String) =
-    Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
-
 fun Context.getColorAttribute(color: ValueChangeColor, success: (Int) -> Unit) {
     val typedValue = TypedValue()
     if (theme.resolveAttribute(

@@ -10,6 +10,7 @@ import android.view.animation.AnticipateOvershootInterpolator
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.navigation.fragment.navArgs
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import com.bumptech.glide.request.target.CustomTarget
@@ -28,9 +29,10 @@ import kotlinx.android.synthetic.main.view_line_graph.*
 
 class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>() {
 
+    private val fragmentArgs: CoinDetailFragmentArgs by navArgs()
+
     override val viewModel: CoinDetailViewModel.ViewModel by viewModel {
-        val coinSymbol = CoinDetailFragmentArgs.fromBundle(requireArguments()).coinSymbol
-        injector.coinDetailViewModelFactory.create(coinSymbol)
+        injector.coinDetailViewModelFactory.create(fragmentArgs.coinSymbol)
     }
 
     override val layoutResource: Int
