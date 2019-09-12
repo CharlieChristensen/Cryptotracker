@@ -27,16 +27,13 @@ import kotlinx.android.synthetic.main.dialog_text_input_layout.view.*
 import kotlinx.android.synthetic.main.view_coin_detail.*
 import kotlinx.android.synthetic.main.view_line_graph.*
 
-class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>() {
+class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.view_coin_detail) {
 
     private val fragmentArgs: CoinDetailFragmentArgs by navArgs()
 
     override val viewModel: CoinDetailViewModel.ViewModel by viewModel {
         injector.coinDetailViewModelFactory.create(fragmentArgs.coinSymbol)
     }
-
-    override val layoutResource: Int
-        get() = R.layout.view_coin_detail
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(KEY_TOGGLE_GROUP_SELECTED, dateTabLayout.selectedTabPosition)

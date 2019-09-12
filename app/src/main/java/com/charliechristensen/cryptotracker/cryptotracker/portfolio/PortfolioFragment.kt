@@ -15,14 +15,11 @@ import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.charliechristensen.cryptotracker.cryptotracker.portfolio.list.PortfolioAdapter
 import kotlinx.android.synthetic.main.view_portfolio_coin_list.*
 
-class PortfolioFragment : BaseFragment<PortfolioCoinListViewModel.ViewModel>() {
+class PortfolioFragment : BaseFragment<PortfolioCoinListViewModel.ViewModel>(R.layout.view_portfolio_coin_list) {
 
     override val viewModel: PortfolioCoinListViewModel.ViewModel by viewModel {
         injector.portfolioCoinListViewModel
     }
-
-    override val layoutResource: Int
-        get() = R.layout.view_portfolio_coin_list
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

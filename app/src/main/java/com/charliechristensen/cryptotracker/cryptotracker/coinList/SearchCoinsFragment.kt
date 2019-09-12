@@ -15,7 +15,7 @@ import com.charliechristensen.cryptotracker.cryptotracker.coinList.list.SearchCo
 import com.jakewharton.rxbinding2.support.v7.widget.queryTextChanges
 import kotlinx.android.synthetic.main.view_search_coins.*
 
-class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(),
+class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layout.view_search_coins),
     SearchCoinsAdapter.SearchCoinAdapterCallback {
 
     private val fragmentArgs: SearchCoinsFragmentArgs by navArgs()
@@ -23,9 +23,6 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(),
     override val viewModel: SearchCoinsViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
         injector.searchCoinsViewModelFactory.create(fragmentArgs.filterOwnedCoins, savedStateHandle)
     }
-
-    override val layoutResource: Int
-        get() = R.layout.view_search_coins
 
     //region Lifecycle
 

@@ -53,5 +53,6 @@
     <string name="_24h">24h</string>
     <string name="teal">Teal</string>
     <string name="search">Search</string>
+    <string name="title_coindetail">Coin Detail</string>
 
 </resources>

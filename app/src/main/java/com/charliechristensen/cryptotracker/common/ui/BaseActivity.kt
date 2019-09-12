@@ -1,6 +1,6 @@
 package com.charliechristensen.cryptotracker.common.ui
 
-import android.os.Bundle
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -9,16 +9,9 @@ import io.reactivex.exceptions.OnErrorNotImplementedException
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.rxkotlin.addTo
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity(contentLayoutId) {
 
-    protected val disposables = CompositeDisposable()
-
-    protected abstract val layoutResource: Int
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(layoutResource)
-    }
+    private val disposables = CompositeDisposable()
 
     override fun onDestroy() {
         disposables.clear()

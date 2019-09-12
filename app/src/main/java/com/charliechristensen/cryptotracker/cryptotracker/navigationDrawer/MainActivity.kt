@@ -15,14 +15,11 @@ import com.charliechristensen.cryptotracker.cryptotracker.R
 import kotlinx.android.synthetic.main.activity_navigation_drawer.*
 import kotlinx.android.synthetic.main.app_bar_navigation_drawer.*
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(R.layout.activity_navigation_drawer) {
 
     private val viewModel: MainActivityViewModel.ViewModel by viewModel {
         injector.mainActivityViewModel
     }
-
-    override val layoutResource: Int
-        get() = R.layout.activity_navigation_drawer
 
     private val navController: NavController
         get() = findNavController(R.id.navigationHost)

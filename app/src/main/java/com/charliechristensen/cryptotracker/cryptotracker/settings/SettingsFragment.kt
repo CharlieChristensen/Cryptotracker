@@ -12,14 +12,11 @@ import com.charliechristensen.cryptotracker.cryptotracker.R
 import kotlinx.android.synthetic.main.dialog_choose_theme.view.*
 import kotlinx.android.synthetic.main.view_settings.*
 
-class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>() {
+class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view_settings) {
 
     override val viewModel: SettingsViewModel.ViewModel by viewModel {
         injector.settingsViewModel
     }
-
-    override val layoutResource: Int
-        get() = R.layout.view_settings
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -1,9 +1,6 @@
 package com.charliechristensen.cryptotracker.common.ui
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -15,19 +12,11 @@ import io.reactivex.exceptions.OnErrorNotImplementedException
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.rxkotlin.addTo
 
-abstract class BaseFragment<VM : BaseViewModel>: Fragment() {
+abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int): Fragment(contentLayoutId) {
 
-    protected val disposables = CompositeDisposable()
+    private val disposables = CompositeDisposable()
 
     protected abstract val viewModel: VM
-
-    protected abstract val layoutResource: Int
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = inflater.inflate(layoutResource, container, false)
 
     override fun onDestroyView() {
         super.onDestroyView()
