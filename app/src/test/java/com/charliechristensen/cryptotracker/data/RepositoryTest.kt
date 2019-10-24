@@ -8,12 +8,14 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.Observable
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Test
 
 /**
  * Created by Chuck on 1/17/2018.
  */
+@ExperimentalCoroutinesApi
 class RepositoryTest {
 
     private lateinit var repository: Repository

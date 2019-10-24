@@ -14,8 +14,9 @@ import com.charliechristensen.cryptotracker.data.models.database.DbPortfolioCoin
  * Application Database
  */
 @Database(
-    entities = [(DbCoin::class), (DbCoinPriceData::class), (DbPortfolioCoin::class)],
-    version = 26
+        entities = [(DbCoin::class), (DbCoinPriceData::class), (DbPortfolioCoin::class)],
+        version = 26,
+        exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun coinDao(): CoinDao

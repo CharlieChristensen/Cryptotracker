@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.charliechristensen.cryptotracker.data.models.database.DbPortfolioCoin
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Dao for DbPortfolioCoin Data
@@ -14,18 +14,24 @@ import io.reactivex.Observable
 interface PortfolioCoinDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addCoinToPortfolio(myCoin: DbPortfolioCoin)
+    suspend fun addCoinToPortfolio(myCoin: DbPortfolioCoin)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addCoinToPortfolios(myCoin: DbPortfolioCoin)
 
     @Query("SELECT * FROM portfolio_coin WHERE symbol = :symbol")
-    fun getCoinFromPortfolio(symbol: String): Observable<List<DbPortfolioCoin>>
+    fun getCoinFromPortfolio(symbol: String): Flow<List<DbPortfolioCoin>>
 
     @Query("DELETE FROM portfolio_coin WHERE symbol = :symbol")
-    fun removeCoinFromPortfolio(symbol: String)
+    suspend fun removeCoinFromPortfolio(symbol: String)
+
+    @Query("DELETE FROM portfolio_coin WHERE symbol = :symbol")
+    suspend fun removeCoinFromPortfolios(symbol: String)
 
     @Query("SELECT symbol FROM portfolio_coin")
-    fun getPortfolioCoinSymbols(): Observable<List<String>>
+    fun getPortfolioCoinSymbols(): Flow<List<String>>
 
     @Query("SELECT amountOwned FROM portfolio_coin WHERE symbol = :symbol")
-    fun getUnitsOwnedForSymbol(symbol: String): Observable<List<Double>>
+    fun getUnitsOwnedForSymbol(symbol: String): Flow<List<Double>>
 
 }

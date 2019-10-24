@@ -1,22 +1,19 @@
 package com.charliechristensen.cryptotracker
 
-import android.app.Application
-import com.charliechristensen.cryptotracker.common.RxGlobalErrorHandler
 import com.charliechristensen.cryptotracker.di.AppComponent
 import com.charliechristensen.cryptotracker.di.DaggerAppComponent
-import io.reactivex.plugins.RxJavaPlugins
+import com.google.android.play.core.splitcompat.SplitCompatApplication
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
-class MainApplication : Application() {
+@ExperimentalCoroutinesApi
+@FlowPreview
+class MainApplication : SplitCompatApplication() {
 
     val appComponent: AppComponent by lazy {
         DaggerAppComponent
             .factory()
             .create(this)
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        RxJavaPlugins.setErrorHandler(RxGlobalErrorHandler())
     }
 
 }

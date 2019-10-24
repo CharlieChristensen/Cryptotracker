@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.charliechristensen.cryptotracker.data.models.database.DbCoinPriceData
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Dao for coin_price_data table
@@ -14,12 +14,12 @@ import io.reactivex.Observable
 interface CoinPriceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun setPrice(priceObject: DbCoinPriceData)
+    suspend fun setPrice(priceObject: DbCoinPriceData)
 
     @Query("SELECT * FROM coin_price_data WHERE symbol = :coinSymbol")
-    fun getPrice(coinSymbol: String): Observable<List<DbCoinPriceData>>
+    fun getPrice(coinSymbol: String): Flow<List<DbCoinPriceData>>
 
     @Query("UPDATE coin_price_data SET price = :price WHERE symbol = :coinSymbol")
-    fun updatePrice(coinSymbol: String, price: Double)
+    suspend fun updatePrice(coinSymbol: String, price: Double)
 
 }

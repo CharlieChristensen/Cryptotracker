@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import com.charliechristensen.cryptotracker.common.navigation.NavGraphHolder
+import com.charliechristensen.cryptotracker.common.navigation.NavGraphHolderImpl
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferencesImpl
 import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
@@ -17,14 +19,17 @@ import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 @Suppress("unused")
 @AssistedModule
 @Module(includes = [AssistedInject_AppModule::class])
@@ -100,7 +105,6 @@ object AppModule {
     ): Retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(okHttpClient)
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
 
@@ -129,5 +133,11 @@ object AppModule {
     @JvmStatic
     fun provideAppPreferences(appPreferencesImpl: AppPreferencesImpl): AppPreferences =
         appPreferencesImpl
+
+    @Provides
+    @Singleton
+    @JvmStatic
+    fun provideNavGraphHolder(navGraphHolder: NavGraphHolderImpl): NavGraphHolder =
+        navGraphHolder
 
 }

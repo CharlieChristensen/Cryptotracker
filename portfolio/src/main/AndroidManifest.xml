@@ -1,0 +1,24 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.charliechristensen.portfolio">
+
+    <dist:module
+        dist:instant="false"
+        dist:title="@string/title_portfolio">
+        <dist:delivery>
+            <dist:install-time />
+        </dist:delivery>
+        <dist:fusing dist:include="true" />
+    </dist:module>
+
+    <application tools:ignore="GoogleAppIndexingWarning">
+        <provider
+            android:name=".contentprovider.PortfolioContentProvider"
+            android:authorities="com.charliechristensen.cryptotracker.portfolio"
+            android:exported="false"
+            android:initOrder="100" />
+    </application>
+
+</manifest>
+

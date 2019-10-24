@@ -4,24 +4,20 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.charliechristensen.cryptotracker.common.BaseViewModel
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.exceptions.OnErrorNotImplementedException
-import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.rxkotlin.addTo
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
-abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int): Fragment(contentLayoutId) {
-
-    private val disposables = CompositeDisposable()
+@ExperimentalCoroutinesApi
+abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int) :
+    Fragment(contentLayoutId) {
 
     protected abstract val viewModel: VM
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        disposables.clear()
-    }
 
     protected fun setActionBarTitle(@StringRes resId: Int) {
         if (activity is AppCompatActivity) {
@@ -31,23 +27,12 @@ abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int)
         }
     }
 
-    private val onNextStub: (Any) -> Unit = {}
-    private val onCompleteStub: () -> Unit = {}
-    private val onErrorStub: (Throwable) -> Unit = {
-        RxJavaPlugins.onError(
-            OnErrorNotImplementedException(it)
-        )
+    fun <T> LiveData<T>.bind(observer: (T) -> Unit) {
+        this.observe(this@BaseFragment, Observer { observer(it) })
     }
 
-    fun <T : Any> Observable<T>.bind(
-        onError: (Throwable) -> Unit = onErrorStub,
-        onComplete: () -> Unit = onCompleteStub,
-        onNext: (T) -> Unit = onNextStub
-    ) {
-        this.observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onNext, onError, onComplete)
-            .addTo(disposables)
-    }
-
+    inline fun <T> Flow<T>.bind(crossinline action: suspend (value: T) -> Unit) =
+        this.onEach { action(it) }
+            .launchIn(lifecycleScope)
 
 }

@@ -1,27 +1,32 @@
 package com.charliechristensen.cryptotracker.data.websocket
 
 import com.charliechristensen.cryptotracker.data.models.network.SymbolPricePair
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
 import io.socket.client.IO
 import io.socket.client.Socket
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import org.json.JSONArray
 import org.json.JSONObject
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class WebSocketService(url: String) {
 
     private val webSocket: Socket = IO.socket(url)
     private val temporarySubscriptions: MutableSet<String> = mutableSetOf()
     private val portfolioSubscriptions: MutableSet<String> = mutableSetOf()
-    private val priceUpdateReceivedRelay = PublishRelay.create<SymbolPricePair>()
-    private val errorConnectingToSocketRelay = PublishRelay.create<Unit>()
+    private val priceUpdateReceivedChannel = BroadcastChannel<SymbolPricePair>(1)
+    private val errorConnectingToSocketChannel = BroadcastChannel<Unit>(1)
 
     init {
         webSocket.on("m"){
             val socketResponse = SocketResponseMapper.mapResponse(it) ?: return@on
             if (socketResponse.subscriptionId == 5) {
                 if (socketResponse.priceDirection == 1 || socketResponse.priceDirection == 2) {
-                    priceUpdateReceivedRelay.accept(
+                    priceUpdateReceivedChannel.offer(
                         SymbolPricePair(
                             socketResponse.fromCurrency,
                             socketResponse.price
@@ -39,7 +44,7 @@ class WebSocketService(url: String) {
                 onConnection.invoke(this)
             }
             webSocket.on(Socket.EVENT_ERROR) {
-                errorConnectingToSocketRelay.accept(Unit)
+                errorConnectingToSocketChannel.offer(Unit)
             }
         }else{
             onConnection.invoke(this)
@@ -52,8 +57,8 @@ class WebSocketService(url: String) {
         webSocket.disconnect()
     }
 
-    fun priceUpdateReceived() : Observable<SymbolPricePair> =
-        priceUpdateReceivedRelay
+    fun priceUpdateRecieveds(): Flow<SymbolPricePair> =
+        priceUpdateReceivedChannel.asFlow()
 
     fun setPortfolioSubscriptions(symbols: Collection<String>, currency: String){
         val symbolsToUnsubscribe = portfolioSubscriptions.minus(symbols).minus(temporarySubscriptions)

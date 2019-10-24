@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coin_detail_navigation_graph"
+    app:startDestination="@id/coinDetailFragment"
+    tools:ignore="UnusedNavigation">
+
+    <fragment
+        android:id="@+id/coinDetailFragment"
+        android:name="com.charliechristensen.coindetail.CoinDetailFragment"
+        android:label="CoinDetailFragment" >
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="cryptotracker://coin/{coin_symbol}" />
+        <argument
+            android:name="coin_symbol"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

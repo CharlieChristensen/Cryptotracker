@@ -1,0 +1,24 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.charliechristensen.coinlist">
+
+    <dist:module
+        dist:instant="false"
+        dist:title="@string/title_coinlist">
+        <dist:delivery>
+            <dist:install-time />
+        </dist:delivery>
+        <dist:fusing dist:include="true" />
+    </dist:module>
+
+    <application tools:ignore="GoogleAppIndexingWarning">
+        <provider
+            android:name=".contentprovider.CoinListContentProvider"
+            android:authorities="com.charliechristensen.cryptotracker.coinlist"
+            android:exported="false"
+            android:initOrder="100" />
+    </application>
+
+</manifest>
+

@@ -54,5 +54,8 @@
     <string name="teal">Teal</string>
     <string name="search">Search</string>
     <string name="title_coindetail">Coin Detail</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_coinlist">Coin List</string>
+    <string name="title_portfolio">Portfolio</string>
 
 </resources>

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.charliechristensen.cryptotracker.cryptotracker">
+
+    <dist:module dist:instant="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -10,17 +14,18 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:supportsRtl="true">
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
             android:name=".navigationDrawer.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

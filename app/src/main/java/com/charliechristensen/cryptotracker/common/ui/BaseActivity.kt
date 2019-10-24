@@ -2,38 +2,17 @@ package com.charliechristensen.cryptotracker.common.ui
 
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.exceptions.OnErrorNotImplementedException
-import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.rxkotlin.addTo
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
+@ExperimentalCoroutinesApi
 abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity(contentLayoutId) {
 
-    private val disposables = CompositeDisposable()
-
-    override fun onDestroy() {
-        disposables.clear()
-        super.onDestroy()
-    }
-
-    private val onNextStub: (Any) -> Unit = {}
-    private val onCompleteStub: () -> Unit = {}
-    private val onErrorStub: (Throwable) -> Unit = {
-        RxJavaPlugins.onError(
-            OnErrorNotImplementedException(it)
-        )
-    }
-
-    fun <T : Any> Observable<T>.bind(
-        onError: (Throwable) -> Unit = onErrorStub,
-        onComplete: () -> Unit = onCompleteStub,
-        onNext: (T) -> Unit = onNextStub
-    ) {
-        this.observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onNext, onError, onComplete)
-            .addTo(disposables)
-    }
+    inline fun <T> Flow<T>.bind(crossinline action: suspend (value: T) -> Unit) =
+        this.onEach { action(it) }
+            .launchIn(lifecycleScope)
 
 }

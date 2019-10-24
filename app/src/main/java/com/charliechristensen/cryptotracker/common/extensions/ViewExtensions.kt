@@ -17,6 +17,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
 inline fun <reified T : Fragment> fragment(block: Bundle.() -> Unit): T =
     T::class.java.newInstance().apply {
@@ -64,9 +66,13 @@ fun Activity.getColorFromResource(colorAttribute: Int): Int{
     return typedValue.data
 }
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 val Activity.injector
     get() = (application as MainApplication).appComponent
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 val Fragment.injector
     get() = (requireActivity().application as MainApplication).appComponent
 

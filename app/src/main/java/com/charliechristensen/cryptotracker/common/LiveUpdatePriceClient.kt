@@ -4,14 +4,13 @@ import android.util.Log
 import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.cryptotracker.data.websocket.WebSocketService
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 @Singleton
 class LiveUpdatePriceClient @Inject constructor(
     private val appPreferences: AppPreferences,
@@ -19,40 +18,36 @@ class LiveUpdatePriceClient @Inject constructor(
     private val webSocketService: WebSocketService
 ) {
 
-    private val disposables = CompositeDisposable()
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
     fun start() {
+
         appPreferences.liveUpdatePrices()
-            .switchMap {
-                if (it) {
+            .flatMapLatest { isSet ->
+                if (isSet) {
                     repository.getPortfolioCoinSymbols()
                 } else {
-                    webSocketService.disconnect()
-                    Observable.empty<List<String>>()
+                    flow {
+                        webSocketService.disconnect()
+                    }
                 }
             }
-            .doFinally { webSocketService.disconnect() }
-            .subscribeOn(Schedulers.io())
-            .subscribeBy(
-                onNext = { symbolsList ->
-                    webSocketService.connect { socket ->
-                        socket.setPortfolioSubscriptions(symbolsList, Constants.MyCurrency)
-                    }
-                },
-                onError = {
-                    Log.d("SOCKET IO ERROR", it.localizedMessage)
+            .onEach { symbolsList ->
+                webSocketService.connect { socket ->
+                    socket.setPortfolioSubscriptions(symbolsList, Constants.MyCurrency)
                 }
-            )
-            .addTo(disposables)
+            }
+            .onCompletion { webSocketService.disconnect() }
+            .catch { Log.d("SOCKET IO ERROR", it.localizedMessage) }
+            .launchIn(scope)
 
-        webSocketService.priceUpdateReceived()
-            .observeOn(Schedulers.io())
-            .subscribe { repository.updatePriceForCoin(it.symbol, it.price) }
-            .addTo(disposables)
+        webSocketService.priceUpdateRecieveds()
+            .onEach { repository.updatePriceForCoin(it.symbol, it.price) }
+            .launchIn(scope)
     }
 
     fun stop() {
-        disposables.clear()
+        scope.coroutineContext.cancelChildren()
     }
 
 }

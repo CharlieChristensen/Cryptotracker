@@ -3,7 +3,6 @@ package com.charliechristensen.cryptotracker.data.webservice
 import com.charliechristensen.cryptotracker.data.models.network.ServerCoinList
 import com.charliechristensen.cryptotracker.data.models.network.ServerCoinPriceData
 import com.charliechristensen.cryptotracker.data.models.network.ServerHistoryResponse
-import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -13,31 +12,39 @@ import retrofit2.http.Query
 interface CryptoService {
 
     @GET("/data/all/coinlist")
-    fun getCoinList() : Single<ServerCoinList>
+    suspend fun getCoinList(): ServerCoinList
 
     @GET("/data/pricemultifull")
-    fun getFullCoinPrice(@Query("fsyms") fromSymbols: String,
-                         @Query("tsyms") toSymbols: String): Single<ServerCoinPriceData>
+    suspend fun getFullCoinPrice(
+        @Query("fsyms") fromSymbols: String,
+        @Query("tsyms") toSymbols: String
+    ): ServerCoinPriceData
 
     @GET("/data/histominute")
-    fun getHistoricalDataByMinute(@Query("fsym") fromSymbol: String,
-                                  @Query("tsym") toSymbols: String,
-                                  @Query("limit") limit: Int = 1440,
-                                  @Query("aggregate") aggregate: Int = 1,
-                                  @Query("e") exchange: String = "CCCAGG") : Single<ServerHistoryResponse>
+    suspend fun getHistoricalDataByMinute(
+        @Query("fsym") fromSymbol: String,
+        @Query("tsym") toSymbols: String,
+        @Query("limit") limit: Int = 1440,
+        @Query("aggregate") aggregate: Int = 1,
+        @Query("e") exchange: String = "CCCAGG"
+    ): ServerHistoryResponse
 
     @GET("/data/histohour")
-    fun getHistoricalDataByHour(@Query("fsym") fromSymbol: String,
-                                @Query("tsym") toSymbols: String,
-                                @Query("limit") limit: Int = 168,
-                                @Query("aggregate") aggregate: Int = 1,
-                                @Query("e") exchange: String = "CCCAGG") : Single<ServerHistoryResponse>
+    suspend fun getHistoricalDataByHour(
+        @Query("fsym") fromSymbol: String,
+        @Query("tsym") toSymbols: String,
+        @Query("limit") limit: Int = 168,
+        @Query("aggregate") aggregate: Int = 1,
+        @Query("e") exchange: String = "CCCAGG"
+    ): ServerHistoryResponse
 
     @GET("/data/histoday")
-    fun getHistoricalDataByDay(@Query("fsym") fromSymbol: String,
-                               @Query("tsym") toSymbols: String,
-                               @Query("limit") limit: Int = 30,
-                               @Query("aggregate") aggregate: Int = 1,
-                               @Query("e") exchange: String = "CCCAGG") : Single<ServerHistoryResponse>
+    suspend fun getHistoricalDataByDay(
+        @Query("fsym") fromSymbol: String,
+        @Query("tsym") toSymbols: String,
+        @Query("limit") limit: Int = 30,
+        @Query("aggregate") aggregate: Int = 1,
+        @Query("e") exchange: String = "CCCAGG"
+    ): ServerHistoryResponse
 
 }
