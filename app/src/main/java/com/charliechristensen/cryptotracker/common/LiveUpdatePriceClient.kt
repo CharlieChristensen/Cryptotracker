@@ -41,7 +41,7 @@ class LiveUpdatePriceClient @Inject constructor(
             .catch { Log.d("SOCKET IO ERROR", it.localizedMessage) }
             .launchIn(scope)
 
-        webSocketService.priceUpdateRecieveds()
+        webSocketService.priceUpdateReceived()
             .onEach { repository.updatePriceForCoin(it.symbol, it.price) }
             .launchIn(scope)
     }

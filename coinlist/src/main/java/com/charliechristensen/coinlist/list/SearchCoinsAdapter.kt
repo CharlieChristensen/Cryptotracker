@@ -9,7 +9,8 @@ import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
 class SearchCoinsAdapter(private val callback: SearchCoinAdapterCallback) : BaseListAdapter<SearchCoinsListItem>() {
 
     interface SearchCoinAdapterCallback {
-        fun onClickListItem(index: Int)
+        fun onClickCoin(symbol: String)
+        fun onClickRefresh()
     }
 
     override fun onCreateViewHolder(

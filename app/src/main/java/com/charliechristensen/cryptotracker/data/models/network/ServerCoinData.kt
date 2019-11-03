@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-class ServerCoinData(
+data class ServerCoinData(
     @Json(name = "Id") val id: Int,
     @Json(name = "Url") val url: String,
     @Json(name = "ImageUrl") val imageUrl: String?,

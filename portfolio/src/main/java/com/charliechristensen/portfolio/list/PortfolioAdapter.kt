@@ -6,7 +6,7 @@ import com.charliechristensen.cryptotracker.common.lists.BaseListAdapter
 import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
 import com.charliechristensen.portfolio.R
 
-class PortfolioAdapter(private val onClickItemCallback: (Int) -> Unit): BaseListAdapter<PortfolioListItem>() {
+class PortfolioAdapter(private val onClickItemCallback: (PortfolioListItem) -> Unit): BaseListAdapter<PortfolioListItem>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

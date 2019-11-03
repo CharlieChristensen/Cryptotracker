@@ -39,13 +39,13 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view
             viewModel.inputs.liveUpdatePricesToggled(isChecked)
         }
 
-        viewModel.outputs.showChooseThemeDialog()
+        viewModel.outputs.showChooseThemeDialog
             .bind { showSelectThemeDialog(activity, it) }
 
-        viewModel.outputs.liveUpdatePrices()
+        viewModel.outputs.liveUpdatePrices
             .bind { liveUpdatePricesSwitch.isChecked = it }
 
-        viewModel.outputs.themeDisplay()
+        viewModel.outputs.themeDisplay
             .bind { themeNameTextView.setText(it) }
 
     }

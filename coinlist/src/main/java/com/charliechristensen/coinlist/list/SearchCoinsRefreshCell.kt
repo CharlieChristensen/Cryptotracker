@@ -13,6 +13,6 @@ class SearchCoinsRefreshCell(
     inflater.inflate(R.layout.cell_coin_list_footer, parent, false)
 ) {
     init {
-        itemView.setOnClickListener { callback.onClickListItem(adapterPosition) }
+        itemView.setOnClickListener { callback.onClickRefresh() }
     }
 }

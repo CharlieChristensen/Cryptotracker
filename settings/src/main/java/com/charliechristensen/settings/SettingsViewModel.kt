@@ -1,16 +1,16 @@
 package com.charliechristensen.settings
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.AppTheme.*
 import com.charliechristensen.cryptotracker.common.BaseViewModel
+import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -26,9 +26,9 @@ interface SettingsViewModel {
     }
 
     interface Outputs {
-        fun themeDisplay(): Flow<Int>
-        fun liveUpdatePrices(): Flow<Boolean>
-        fun showChooseThemeDialog(): Flow<Int>
+        val themeDisplay: LiveData<Int>
+        val liveUpdatePrices: LiveData<Boolean>
+        val showChooseThemeDialog: LiveData<Int>
     }
 
     @FlowPreview
@@ -36,8 +36,7 @@ interface SettingsViewModel {
     class ViewModel @Inject constructor(private val appPreferences: AppPreferences) :
         BaseViewModel(), Inputs, Outputs {
 
-        private val liveUpdatePriceChannel = ConflatedBroadcastChannel(appPreferences.getLiveUpdatePrices())
-        private val showChooseThemeChannel = BroadcastChannel<AppTheme>(1)
+        private val showChooseThemeChannel = SingleLiveEvent<AppTheme>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -45,7 +44,7 @@ interface SettingsViewModel {
         //region Inputs
 
         override fun themeButtonClicked() {
-            showChooseThemeChannel.offer(appPreferences.getTheme())
+            showChooseThemeChannel.value = appPreferences.getTheme()
         }
 
         override fun liveUpdatePricesToggled(isChecked: Boolean) {
@@ -61,17 +60,15 @@ interface SettingsViewModel {
 
         //region Outputs
 
-        override fun themeDisplay(): Flow<Int> =
-            appPreferences.theme()
-                .map { it.displayId }
+        override val themeDisplay: LiveData<Int> = appPreferences.theme()
+            .map { it.displayId }
+            .asLiveData()
 
-        override fun liveUpdatePrices(): Flow<Boolean> =
-            liveUpdatePriceChannel.asFlow()
-                .distinctUntilChanged()
+        override val liveUpdatePrices: LiveData<Boolean> =
+            MutableLiveData(appPreferences.getLiveUpdatePrices())
 
-        override fun showChooseThemeDialog(): Flow<Int> =
-            showChooseThemeChannel.asFlow()
-                .map { buttonIdFromTheme(it) }
+        override val showChooseThemeDialog: LiveData<Int> =
+            showChooseThemeChannel.map { buttonIdFromTheme(it) }
 
         //endregion
 

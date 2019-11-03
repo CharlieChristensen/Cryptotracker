@@ -85,10 +85,10 @@ class Repository(
                 return emptyList()
             }
 
-            override fun loadFromDbs(): Flow<List<DbCoinPriceData>> =
+            override fun loadFromDb(): Flow<List<DbCoinPriceData>> =
                 coinPriceDao.getPrice(symbol)
 
-            override suspend fun loadFromNetworks(): ServerCoinPriceData =
+            override suspend fun loadFromNetwork(): ServerCoinPriceData =
                 service.getFullCoinPrice(symbol, Constants.MyCurrency)
 
         }.flow

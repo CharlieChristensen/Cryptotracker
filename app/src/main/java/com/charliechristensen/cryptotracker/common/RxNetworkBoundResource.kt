@@ -14,27 +14,14 @@ abstract class RxNetworkBoundResource<DbType, RemoteType> {
 
     private var isFirstElement: Boolean = true
 
-//    val observable: Observable<List<DbType>> by lazy {
-//        loadFromDb()
-//            .switchMap {
-//                if (isFirstElement && shouldFetch(it)) {
-//                    isFirstElement = false
-//                    Observable.concat(Observable.just(it), loadFromNetworkAndMap())
-//                } else {
-//                    Observable.just(it)
-//                }
-//            }
-//            .distinctUntilChanged()
-//    }
-
     val flow : Flow<List<DbType>> by lazy {
-        loadFromDbs()
+        loadFromDb()
             .flatMapLatest { dbList ->
                 if (isFirstElement && shouldFetch(dbList)) {
                     isFirstElement = false
                     flow {
                         emit(dbList)
-                        emit(loadFromNetworkAndMaps())
+                        emit(loadFromNetworkAndMap())
                     }
                 } else {
                     flowOf(dbList)
@@ -46,22 +33,12 @@ abstract class RxNetworkBoundResource<DbType, RemoteType> {
 
     protected abstract fun shouldFetch(data: List<DbType>): Boolean
 
-//    protected abstract fun loadFromDb(): Observable<List<DbType>>
+    protected abstract fun loadFromDb(): Flow<List<DbType>>
 
-//    protected abstract fun loadFromNetwork(): Single<RemoteType>
+    protected abstract suspend fun loadFromNetwork(): RemoteType
 
-    protected abstract fun loadFromDbs(): Flow<List<DbType>>
-
-    protected abstract suspend fun loadFromNetworks(): RemoteType
-
-//    private fun loadFromNetworkAndMap(): Observable<List<DbType>> =
-//        loadFromNetwork()
-//            .map { mapToDbType(it) }
-//            .doOnSuccess { saveToDb(it) }
-//            .toObservable()
-
-    private suspend fun loadFromNetworkAndMaps(): List<DbType> {
-        val networkResponse = loadFromNetworks()
+    private suspend fun loadFromNetworkAndMap(): List<DbType> {
+        val networkResponse = loadFromNetwork()
         val mappedResponse = mapToDbType(networkResponse)
         saveToDb(mappedResponse)
         return mappedResponse

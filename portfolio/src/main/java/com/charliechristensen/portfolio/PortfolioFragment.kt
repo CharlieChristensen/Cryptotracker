@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.view_portfolio_coin_list.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
+
 @FlowPreview
 @ExperimentalCoroutinesApi
 class PortfolioFragment :
@@ -34,43 +35,50 @@ class PortfolioFragment :
 
         setActionBarTitle(com.charliechristensen.cryptotracker.cryptotracker.R.string.portfolio)
 
-        val adapter = PortfolioAdapter { index ->
-            viewModel.inputs.onClickItem(index)
-        }
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        viewModel.outputs.portfolioState
+            .bind { renderViewState(it) }
 
-        viewModel.outputs.getPortfolioValue()
-            .bind { walletTotalValueTextView.text = it }
-
-        viewModel.outputs.getPortfolioValueChange()
-            .bind {
-                portfolio24HourValueChangeTextView.text = it.value
-                activity?.getColorFromResource(ColorUtils.getColorInt(it.color))?.let { colorInt ->
-                    portfolio24HourValueChangeTextView.setTextColor(colorInt)
-                }
-            }
-
-        viewModel.outputs.getPortfolioPercentChange24Hour()
-            .bind {
-                portfolio24HourChangeTextView.text = it.value
-                activity?.getColorFromResource(ColorUtils.getColorInt(it.color))?.let { colorInt ->
-                    portfolio24HourChangeTextView.setTextColor(colorInt)
-                }
-            }
-
-        viewModel.outputs.coinList()
-            .bind { adapter.submitList(it) }
-
-        viewModel.outputs.showNetworkError()
+        viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
 
-        viewModel.outputs.showCoinDetailController()
+        viewModel.outputs.showCoinDetailController
             .bind { pushCoinDetailController(it) }
 
-        viewModel.outputs.showChooseCoinsListController()
+        viewModel.outputs.showChooseCoinsListController
             .bind { pushChooseCoinsListController() }
+
     }
+
+    private fun renderViewState(portfolioState: PortfolioListData) {
+
+        getAdapter().submitList(portfolioState.coinList)
+
+        walletTotalValueTextView.text = portfolioState.formattedValue
+
+        val valueChange = portfolioState.portfolioValueChange
+        portfolio24HourValueChangeTextView.text = valueChange.value
+        activity?.getColorFromResource(ColorUtils.getColorInt(valueChange.color))
+            ?.let { colorInt ->
+                portfolio24HourValueChangeTextView.setTextColor(colorInt)
+            }
+
+        val percentChanged = portfolioState.percentChange24Hour
+        portfolio24HourChangeTextView.text = percentChanged.value
+        activity?.getColorFromResource(ColorUtils.getColorInt(percentChanged.color))
+            ?.let { colorInt ->
+                portfolio24HourChangeTextView.setTextColor(colorInt)
+            }
+
+    }
+
+    private fun getAdapter(): PortfolioAdapter =
+        recyclerView.adapter as? PortfolioAdapter?
+            ?: (PortfolioAdapter { item ->
+                viewModel.inputs.onClickItem(item)
+            }.apply {
+                recyclerView.adapter = this
+                recyclerView.layoutManager = LinearLayoutManager(context)
+            })
 
     private fun pushCoinDetailController(symbol: String) {
         findNavController().navigate(NavigationHelper.coinDetailUri(symbol))

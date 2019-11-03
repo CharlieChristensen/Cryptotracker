@@ -1,16 +1,13 @@
 package com.charliechristensen.coinlist
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.charliechristensen.coinlist.list.SearchCoinsListItem
 import com.charliechristensen.cryptotracker.common.BaseViewModel
-import com.charliechristensen.cryptotracker.data.Repository
-import com.charliechristensen.cryptotracker.data.mappers.toUi
-import com.charliechristensen.cryptotracker.data.models.ui.Coin
+import com.charliechristensen.cryptotracker.common.SingleLiveEvent
+import com.charliechristensen.cryptotracker.common.call
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 
@@ -20,55 +17,35 @@ import kotlinx.coroutines.flow.*
 interface SearchCoinsViewModel {
 
     interface Inputs {
-        fun onClickListItem(index: Int)
         fun setSearchQuery(query: CharSequence)
+        fun onClickCoin(symbol: String)
+        fun onClickRefresh()
     }
 
     interface Outputs {
-        fun coinList(): Flow<List<SearchCoinsListItem>>
-        fun showCoinDetailController(): Flow<String>
-        fun showNetworkError(): Flow<Unit>
+        val coinList: LiveData<List<SearchCoinsListItem>>
+        val showCoinDetailController: LiveData<String>
+        val showNetworkError: LiveData<Unit>
     }
 
     @FlowPreview
     @ExperimentalCoroutinesApi
     class ViewModel @AssistedInject constructor(
-        private val repository: Repository,
+        private val interactor: SearchCoinsInteractor,
         @Assisted private val filterOutOwnedCoins: Boolean,
         @Assisted private val savedState: SavedStateHandle
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val showCoinDetailControllerChannel = BroadcastChannel<String>(1)
-        private val showNetworkErrorChannel = BroadcastChannel<Unit>(1)
-        private val coinListChannel = ConflatedBroadcastChannel<List<SearchCoinsListItem>>()
-        private val searchQueryChannel = ConflatedBroadcastChannel<CharSequence>(savedState.get(
-            KEY_SEARCH_QUERY_SAVED_STATE
-        ) ?: "")
+        private val showCoinDetailControllerChannel = SingleLiveEvent<String>()
+        private val showNetworkErrorChannel = SingleLiveEvent<Unit>()
+        private val searchQueryChannel = ConflatedBroadcastChannel<CharSequence>(
+            savedState.get(
+                KEY_SEARCH_QUERY_SAVED_STATE
+            ) ?: ""
+        )
 
         val inputs: Inputs = this
         val outputs: Outputs = this
-
-        init {
-            searchQueryChannel.asFlow()
-                .debounce(400)
-                .distinctUntilChanged()
-                .onEach { savedState.set(KEY_SEARCH_QUERY_SAVED_STATE, it) }
-                .flatMapLatest { searchCoinsWithQuery(it) }
-                .map { coinList ->
-                    coinList
-                        .map { coin ->
-                            SearchCoinsListItem.Coin(
-                                coin.coinName,
-                                coin.symbol,
-                                coin.imageUrl ?: ""
-                            )
-                        }
-                        .plus(SearchCoinsListItem.RefreshFooter)
-                }
-                .onEach(coinListChannel::send)
-                .flowOn(Dispatchers.IO)
-                .launchIn(viewModelScope)
-        }
 
         private fun refreshCoins() {
             viewModelScope.launch { forceRefreshCoinList() }
@@ -76,29 +53,20 @@ interface SearchCoinsViewModel {
 
         private suspend fun forceRefreshCoinList() = withContext(Dispatchers.IO) {
             try {
-                repository.forceRefreshCoinListAndSaveToDb()
-            } catch(exception: Exception) {
-                coinListChannel.send(listOf(SearchCoinsListItem.RefreshFooter))
-                showNetworkErrorChannel.send(Unit)
+                interactor.forceRefreshCoinListAndSaveToDb()
+            } catch (exception: Exception) {
+                withContext(Dispatchers.Main) { showNetworkErrorChannel.call() }
             }
         }
 
-        private fun searchCoinsWithQuery(query: CharSequence): Flow<List<Coin>> =
-            if (filterOutOwnedCoins) {
-                repository.searchUnownedCoinWithQuery(query)
-            } else {
-                repository.searchCoinsWithQuery(query)
-            }.map { coins ->
-                coins.map { coin -> coin.toUi() }
-            }
-
         //region Inputs
 
-        override fun onClickListItem(index: Int) {
-            when (val coin = coinListChannel.valueOrNull?.getOrNull(index)) {
-                is SearchCoinsListItem.Coin -> showCoinDetailControllerChannel.offer(coin.symbol)
-                is SearchCoinsListItem.RefreshFooter -> refreshCoins()
-            }
+        override fun onClickCoin(symbol: String) {
+            showCoinDetailControllerChannel.value = symbol
+        }
+
+        override fun onClickRefresh() {
+            refreshCoins()
         }
 
         override fun setSearchQuery(query: CharSequence) {
@@ -109,15 +77,19 @@ interface SearchCoinsViewModel {
 
         //region Outputs
 
-        override fun coinList(): Flow<List<SearchCoinsListItem>> =
-            coinListChannel.asFlow()
+        override val coinList: LiveData<List<SearchCoinsListItem>> =
+            searchQueryChannel.asFlow()
+                .debounce(400)
                 .distinctUntilChanged()
+                .onEach { savedState.set(KEY_SEARCH_QUERY_SAVED_STATE, it) }
+                .flatMapLatest { interactor.searchCoinsWithQuery(it, filterOutOwnedCoins) }
+                .catch { emit(listOf(SearchCoinsListItem.RefreshFooter)) }
+                .flowOn(Dispatchers.IO)
+                .asLiveData()
 
-        override fun showCoinDetailController(): Flow<String> =
-            showCoinDetailControllerChannel.asFlow()
+        override val showCoinDetailController: LiveData<String> = showCoinDetailControllerChannel
 
-        override fun showNetworkError(): Flow<Unit> =
-            showNetworkErrorChannel.asFlow()
+        override val showNetworkError: LiveData<Unit> = showNetworkErrorChannel
 
         //endregion
 

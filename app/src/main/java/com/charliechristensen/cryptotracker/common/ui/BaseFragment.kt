@@ -7,11 +7,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import com.charliechristensen.cryptotracker.common.BaseViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 @ExperimentalCoroutinesApi
 abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int) :
@@ -27,12 +26,22 @@ abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int)
         }
     }
 
-    fun <T> LiveData<T>.bind(observer: (T) -> Unit) {
+    inline fun <T> LiveData<T>.bind(crossinline observer: (T) -> Unit) {
         this.observe(this@BaseFragment, Observer { observer(it) })
     }
 
-    inline fun <T> Flow<T>.bind(crossinline action: suspend (value: T) -> Unit) =
-        this.onEach { action(it) }
-            .launchIn(lifecycleScope)
+    protected inline fun <T> Flow<T>.bind(crossinline action: suspend (value: T) -> Unit): Job {
+        return lifecycleScope.launchWhenStarted {
+            this@bind
+                .flowOn(Dispatchers.Main.immediate)
+                .collect { action(it) }
+        }
+    }
+
+    protected fun <T> Flow<T>.launch(): Job = lifecycleScope.launch {
+        whenStarted {
+            collect() // tail-call
+        }
+    }
 
 }

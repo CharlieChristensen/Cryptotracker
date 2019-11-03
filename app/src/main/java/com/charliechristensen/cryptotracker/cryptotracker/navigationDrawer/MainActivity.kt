@@ -57,7 +57,7 @@ class MainActivity : BaseActivity(R.layout.activity_navigation_drawer) {
                 .build()
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        viewModel.outputs.theme()
+        viewModel.outputs.theme
             .bind { changeTheme(it, true) }
     }
 

@@ -44,7 +44,7 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
         searchView.queryTextChanges()
             .bind { viewModel.inputs.setSearchQuery(it) }
 
-        viewModel.outputs.coinList()
+        viewModel.outputs.coinList
             .bind {
                 adapter.submitList(it)
                 if (coinsRecyclerView.adapter == null) { //Attaching the adapter here allows automatic state restore to work properly with async data
@@ -52,10 +52,10 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
                 }
             }
 
-        viewModel.outputs.showCoinDetailController()
+        viewModel.outputs.showCoinDetailController
             .bind { pushCoinDetailController(it) }
 
-        viewModel.outputs.showNetworkError()
+        viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
     }
 
@@ -63,9 +63,14 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
 
     //region SearchCoinsAdapterCallback
 
-    override fun onClickListItem(index: Int) {
-        viewModel.inputs.onClickListItem(index)
+    override fun onClickCoin(symbol: String) {
+        viewModel.inputs.onClickCoin(symbol)
     }
+
+    override fun onClickRefresh() {
+        viewModel.inputs.onClickRefresh()
+    }
+
     //endregion
 
     private fun pushCoinDetailController(symbol: String) {

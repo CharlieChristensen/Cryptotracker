@@ -1,5 +1,7 @@
 package com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.BaseViewModel
@@ -9,8 +11,7 @@ import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ interface MainActivityViewModel {
     }
 
     interface Outputs {
-        fun theme(): Flow<AppTheme>
+        val theme: LiveData<AppTheme>
         fun getAppThemeSync(): AppTheme
     }
 
@@ -32,21 +33,13 @@ interface MainActivityViewModel {
         repository: Repository
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val themeChannel = BroadcastChannel<AppTheme>(1)
-
         val inputs: Inputs = this
         val outputs: Outputs = this
 
         init {
-            appPreferences.theme()
-                .onEach(themeChannel::send)
-                .flowOn(Dispatchers.IO)
-                .launchIn(viewModelScope)
-
             viewModelScope.launch(Dispatchers.IO) {
                 repository.refreshCoinListIfNeeded()
             }
-
             liveUpdatePriceClient.start()
         }
 
@@ -61,9 +54,12 @@ interface MainActivityViewModel {
 
         //region Outputs
 
-        override fun getAppThemeSync() = appPreferences.getTheme()
+        override fun getAppThemeSync(): AppTheme =
+            appPreferences.getTheme()
 
-        override fun theme(): Flow<AppTheme> = themeChannel.asFlow()
+        override val theme: LiveData<AppTheme> = appPreferences.theme()
+            .drop(1)
+            .asLiveData()
 
         //endregion
 

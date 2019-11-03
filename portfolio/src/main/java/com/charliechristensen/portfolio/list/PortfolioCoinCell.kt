@@ -11,16 +11,16 @@ import kotlinx.android.synthetic.main.cell_coin_portfolio.*
 class PortfolioCoinCell(
     inflater: LayoutInflater,
     parent: ViewGroup,
-    onClickItemCallback: (Int) -> Unit
+    private val onClickItemCallback: (PortfolioListItem) -> Unit
 ) : BaseViewHolder<PortfolioListItem>(
     inflater.inflate(R.layout.cell_coin_portfolio, parent, false)
 ) {
 
-    init {
-        itemView.setOnClickListener {
-            onClickItemCallback(adapterPosition)
-        }
-    }
+//    init {
+//        itemView.setOnClickListener {
+//            onClickItemCallback(adapterPosition)
+//        }
+//    }
 
     override fun bind(listItem: PortfolioListItem) {
         if (listItem is PortfolioListItem.Coin) {
@@ -40,6 +40,10 @@ class PortfolioCoinCell(
             walletValueChangeTextView.text = walletPriceChange.value
             context.getColorAttribute(walletPriceChange.color) { color ->
                 walletValueChangeTextView.setTextColor(color)
+            }
+
+            itemView.setOnClickListener {
+                onClickItemCallback(listItem)
             }
 
             GlideApp.with(logoImageView)

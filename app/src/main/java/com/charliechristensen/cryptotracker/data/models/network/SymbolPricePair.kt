@@ -1,7 +1,7 @@
 package com.charliechristensen.cryptotracker.data.models.network
 
 
-class SymbolPricePair(
+data class SymbolPricePair(
     val symbol: String,
     val price: Double
 )

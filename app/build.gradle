@@ -57,6 +57,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$versions.saved_state"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
     implementation "androidx.activity:activity-ktx:$versions.activity"
     implementation "androidx.fragment:fragment-ktx:$versions.fragment"
     implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigation"
@@ -67,6 +68,8 @@ dependencies {
     androidTestImplementation "androidx.arch.core:core-testing:$versions.coreTesting"
     implementation "com.google.android.play:core:$versions.play_core"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+    implementation "com.github.akarnokd:kotlin-flow-extensions:$versions.flow_extensions"
     implementation "ru.ldralighieri.corbind:corbind:$versions.corbind"
 
     implementation "com.google.dagger:dagger:$versions.dagger"

@@ -10,6 +10,7 @@ import android.view.animation.AnticipateOvershootInterpolator
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
@@ -195,21 +196,11 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
     }
 
     private fun setButtonLayout(inPortfolio: Boolean) {
-        val currentButtonConstraintSet = ConstraintSet()
-        currentButtonConstraintSet.clone(buttonConstraintLayout)
-        val newButtonConstraintSet = ConstraintSet()
-        if (inPortfolio) {
-            newButtonConstraintSet.clone(
-                activity,
-                R.layout.view_coin_detail_button_layout_portfolio
-            )
+        if(inPortfolio){
+            constraintLayout.transitionToState(R.id.editCoin)
         } else {
-            newButtonConstraintSet.clone(activity, R.layout.view_coin_detail_button_layout_add)
+            constraintLayout.transitionToState(R.id.addCoin)
         }
-        val transition = ChangeBounds()
-        transition.interpolator = AnticipateOvershootInterpolator()
-        newButtonConstraintSet.applyTo(buttonConstraintLayout)
-        TransitionManager.beginDelayedTransition(constraintLayout, transition)
     }
 
     //endregion

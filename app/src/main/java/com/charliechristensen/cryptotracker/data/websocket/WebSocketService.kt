@@ -57,7 +57,7 @@ class WebSocketService(url: String) {
         webSocket.disconnect()
     }
 
-    fun priceUpdateRecieveds(): Flow<SymbolPricePair> =
+    fun priceUpdateReceived(): Flow<SymbolPricePair> =
         priceUpdateReceivedChannel.asFlow()
 
     fun setPortfolioSubscriptions(symbols: Collection<String>, currency: String){

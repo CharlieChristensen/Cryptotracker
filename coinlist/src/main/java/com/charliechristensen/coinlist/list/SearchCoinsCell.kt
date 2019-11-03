@@ -11,21 +11,16 @@ import kotlinx.android.synthetic.main.cell_coin_list.*
 class SearchCoinsCell(
     inflater: LayoutInflater,
     parent: ViewGroup,
-    callback: SearchCoinsAdapter.SearchCoinAdapterCallback
+    private val callback: SearchCoinsAdapter.SearchCoinAdapterCallback
 ) : BaseViewHolder<SearchCoinsListItem>(
     inflater.inflate(R.layout.cell_coin_list, parent, false)
 ) {
 
-    init {
-        itemView.setOnClickListener {
-            callback.onClickListItem(adapterPosition)
-        }
-    }
-
     override fun bind(listItem: SearchCoinsListItem) {
-        if(listItem is SearchCoinsListItem.Coin){
+        if (listItem is SearchCoinsListItem.Coin) {
             coinNameTextView.text = listItem.name
             coinSymbolTextView.text = listItem.symbol
+            itemView.setOnClickListener { callback.onClickCoin(listItem.symbol) }
             GlideApp.with(logoImageView)
                 .load(listItem.imageUri)
                 .apply(RequestOptions.circleCropTransform())

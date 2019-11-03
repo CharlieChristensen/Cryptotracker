@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @Suppress("unused")
 @JsonClass(generateAdapter = true)
-class ServerCoinList(
+data class ServerCoinList(
     @Json(name = "Response") val response: String,
     @Json(name = "Message") val message: String,
     @Json(name = "BaseImageUrl") val baseImageUrl: String,
