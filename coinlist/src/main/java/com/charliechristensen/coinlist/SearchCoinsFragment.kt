@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.charliechristensen.coinlist.di.DaggerCoinListComponent
 import com.charliechristensen.coinlist.list.SearchCoinsAdapter
 import com.charliechristensen.cryptotracker.common.extensions.injector
+import com.charliechristensen.cryptotracker.common.extensions.navigateRight
 import com.charliechristensen.cryptotracker.common.extensions.savedStateViewModel
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.navigation.NavigationHelper
@@ -74,7 +75,7 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
     //endregion
 
     private fun pushCoinDetailController(symbol: String) {
-        findNavController().navigate(NavigationHelper.coinDetailUri(symbol))
+        findNavController().navigateRight(NavigationHelper.coinDetailUri(symbol))
     }
 
 }
