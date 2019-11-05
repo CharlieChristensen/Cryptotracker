@@ -1,9 +1,9 @@
 package com.charliechristensen.cryptotracker.data
 
-import com.charliechristensen.cryptotracker.data.models.database.DbCoin
-import com.charliechristensen.cryptotracker.data.models.database.DbCoinPriceData
-import com.charliechristensen.cryptotracker.data.models.database.DbCoinWithPriceAndAmount
-import com.charliechristensen.cryptotracker.data.models.database.DbPortfolioCoin
+import com.charliechristensen.database.models.DbCoin
+import com.charliechristensen.database.models.DbCoinPriceData
+import com.charliechristensen.database.models.DbCoinWithPriceAndAmount
+import com.charliechristensen.database.models.DbPortfolioCoin
 
 /**
  * Creates models for testing

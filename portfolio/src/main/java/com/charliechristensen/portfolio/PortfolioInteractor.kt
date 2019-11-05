@@ -2,7 +2,7 @@ package com.charliechristensen.portfolio
 
 import com.charliechristensen.cryptotracker.common.FormatterFactory
 import com.charliechristensen.cryptotracker.data.Repository
-import com.charliechristensen.cryptotracker.data.models.database.DbCoinWithPriceAndAmount
+import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.portfolio.list.PortfolioListItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,7 +21,7 @@ class PortfolioInteractor @Inject constructor(
             .map { dbList -> mapPortfolioListData(dbList, formatterFactory) }
 
     private fun mapPortfolioListData(
-        dbList: List<DbCoinWithPriceAndAmount>,
+        dbList: List<CoinWithPriceAndAmount>,
         formatterFactory: FormatterFactory
     ): PortfolioListData {
         var portfolioValueDouble = 0.0

@@ -1,9 +1,7 @@
 package com.charliechristensen.coinlist
 
 import com.charliechristensen.coinlist.list.SearchCoinsListItem
-import com.charliechristensen.cryptotracker.common.extensions.mapItems
 import com.charliechristensen.cryptotracker.data.Repository
-import com.charliechristensen.cryptotracker.data.mappers.toUi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,19 +20,17 @@ class SearchCoinsInteractor @Inject constructor(
             repository.searchUnownedCoinWithQuery(query)
         } else {
             repository.searchCoinsWithQuery(query)
+        }.map { coinList ->
+            coinList
+                .map { coin ->
+                    SearchCoinsListItem.Coin(
+                        coin.coinName,
+                        coin.symbol,
+                        coin.imageUrl ?: ""
+                    )
+                }
+                .plus(SearchCoinsListItem.RefreshFooter)
         }
-            .mapItems { coin -> coin.toUi() }
-            .map { coinList ->
-                coinList
-                    .map { coin ->
-                        SearchCoinsListItem.Coin(
-                            coin.coinName,
-                            coin.symbol,
-                            coin.imageUrl ?: ""
-                        )
-                    }
-                    .plus(SearchCoinsListItem.RefreshFooter)
-            }
 
     suspend fun forceRefreshCoinListAndSaveToDb() {
         repository.forceRefreshCoinListAndSaveToDb()

@@ -3,7 +3,6 @@ package com.charliechristensen.cryptotracker.common
 import android.util.Log
 import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
-import com.charliechristensen.cryptotracker.data.websocket.WebSocketService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -14,8 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class LiveUpdatePriceClient @Inject constructor(
     private val appPreferences: AppPreferences,
-    private val repository: Repository,
-    private val webSocketService: WebSocketService
+    private val repository: Repository
 ) {
 
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
@@ -28,22 +26,21 @@ class LiveUpdatePriceClient @Inject constructor(
                     repository.getPortfolioCoinSymbols()
                 } else {
                     flow {
-                        webSocketService.disconnect()
+                        repository.disconnectFromLivePrices()
                     }
                 }
             }
             .onEach { symbolsList ->
-                webSocketService.connect { socket ->
-                    socket.setPortfolioSubscriptions(symbolsList, Constants.MyCurrency)
-                }
+                repository.connectToLivePrices(symbolsList, Constants.MyCurrency)
             }
-            .onCompletion { webSocketService.disconnect() }
-            .catch { Log.d("SOCKET IO ERROR", it.localizedMessage) }
+            .onCompletion { repository.disconnectFromLivePrices() }
+            .catch { Log.d("SOCKET IO ERROR", it.localizedMessage ?: "UNKNOWN ERROR") }
             .launchIn(scope)
 
-        webSocketService.priceUpdateReceived()
+        repository.priceUpdateReceived()
             .onEach { repository.updatePriceForCoin(it.symbol, it.price) }
             .launchIn(scope)
+
     }
 
     fun stop() {

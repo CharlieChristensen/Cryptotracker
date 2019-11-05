@@ -2,10 +2,8 @@ package com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuInflater
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.navigateUp
@@ -13,9 +11,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.extensions.injector
-import com.charliechristensen.cryptotracker.common.ui.BaseActivity
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.navigation.NavigationHelper
+import com.charliechristensen.cryptotracker.common.ui.BaseActivity
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import kotlinx.android.synthetic.main.activity_navigation_drawer.*
 import kotlinx.android.synthetic.main.app_bar_navigation_drawer.*

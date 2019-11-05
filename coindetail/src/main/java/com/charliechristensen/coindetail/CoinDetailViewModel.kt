@@ -10,7 +10,6 @@ import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.cryptotracker.data.models.ui.ImageAndNamePair
-import com.charliechristensen.cryptotracker.data.websocket.WebSocketService
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -59,7 +58,6 @@ interface CoinDetailViewModel {
     @FlowPreview
     @ExperimentalCoroutinesApi
     class ViewModel @AssistedInject constructor(
-        private val webSocket: WebSocketService,
         private val formatterFactory: FormatterFactory,
         private val interactor: CoinDetailInteractor,
         @Assisted private val coinSymbol: String
@@ -119,12 +117,12 @@ interface CoinDetailViewModel {
                 .catch { graphStateChannel.send(CoinDetailGraphState.Error) }
                 .launchIn(viewModelScope)
 
-            webSocket.addTemporarySubscription(coinSymbol, Constants.MyCurrency)
+            interactor.addTemporarySubscription(coinSymbol, Constants.MyCurrency)
         }
 
         override fun onCleared() {
             super.onCleared()
-            webSocket.clearTemporarySubscriptions(Constants.MyCurrency)
+            interactor.clearTemporarySubscriptions(Constants.MyCurrency)
         }
 
         //region Inputs

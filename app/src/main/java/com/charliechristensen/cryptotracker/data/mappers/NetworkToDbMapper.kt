@@ -1,9 +1,9 @@
 package com.charliechristensen.cryptotracker.data.mappers
 
-import com.charliechristensen.cryptotracker.data.models.database.DbCoin
-import com.charliechristensen.cryptotracker.data.models.database.DbCoinPriceData
-import com.charliechristensen.cryptotracker.data.models.network.ServerCoinData
-import com.charliechristensen.cryptotracker.data.models.network.ServerCoinPriceRawData
+import com.charliechristensen.database.models.DbCoin
+import com.charliechristensen.database.models.DbCoinPriceData
+import com.charliechristensen.remote.models.ServerCoinData
+import com.charliechristensen.remote.models.ServerCoinPriceRawData
 
 /**
  * Created by Chuck on 1/20/2018.

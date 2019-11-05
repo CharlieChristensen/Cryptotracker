@@ -13,7 +13,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         debug {
@@ -37,7 +36,6 @@ android {
 
     dynamicFeatures = [":coindetail", ":settings", ":coinlist", ":portfolio"]
 
-
 }
 
 androidExtensions {
@@ -46,6 +44,8 @@ androidExtensions {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':remote')
+    implementation project(':database')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "androidx.core:core-ktx:$versions.androidx_core"
     implementation "androidx.appcompat:appcompat:$versions.appCompat"
@@ -62,10 +62,6 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:$versions.fragment"
     implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$versions.navigation"
-    implementation "androidx.room:room-runtime:$versions.room"
-    implementation "androidx.room:room-ktx:$versions.room"
-    kapt "androidx.room:room-compiler:$versions.room"
-    androidTestImplementation "androidx.arch.core:core-testing:$versions.coreTesting"
     implementation "com.google.android.play:core:$versions.play_core"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
@@ -77,24 +73,15 @@ dependencies {
     kapt "com.squareup.inject:assisted-inject-processor-dagger2:$versions.assistedInject"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
 
-    implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
-    implementation "com.squareup.retrofit2:converter-moshi:$versions.retrofit"
-    implementation "com.squareup.moshi:moshi:$versions.moshi"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
-    implementation "com.squareup.okhttp3:okhttp:$versions.okhttp"
-    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
-    implementation "io.socket:socket.io-client:$versions.socketio"
-
     implementation "com.github.bumptech.glide:glide:$versions.glide"
     kapt "com.github.bumptech.glide:compiler:$versions.glide"
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary"
 
-    implementation "com.github.PhilJay:MPAndroidChart:v$versions.mpandroidchart"
-
     testImplementation "junit:junit:$versions.junit"
     testImplementation "com.nhaarman:mockito-kotlin:$versions.mockitoKotlin"
 
+    androidTestImplementation "androidx.arch.core:core-testing:$versions.coreTesting"
     androidTestImplementation "androidx.test:runner:$versions.testRunner"
     androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso"
 }
