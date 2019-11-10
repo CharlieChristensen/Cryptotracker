@@ -9,10 +9,13 @@ import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.cryptotracker.data.models.ui.ImageAndNamePair
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @FlowPreview
@@ -57,12 +60,12 @@ class CoinDetailInteractor @Inject constructor(
                 walletPriceChange24Hour = walletPriceChange24Hour,
                 toolbarImageData = imageNamePair
             )
-        }
+        }.flowOn(Dispatchers.IO)
 
     suspend fun getCoinGraphData(
         coinSymbol: String,
         timePeriod: CoinHistoryTimePeriod
-    ): CoinDetailGraphState {
+    ): CoinDetailGraphState = withContext(Dispatchers.IO) {
         val coinHistory = repository.getHistoricalDataForCoin(coinSymbol, timePeriod)
         var color = ValueChangeColor.GREEN
         var validStartPrice = false
@@ -84,7 +87,7 @@ class CoinDetailInteractor @Inject constructor(
                 closingPrice.toFloat()
             )
         }
-        return if (list.isEmpty()) {
+        return@withContext if (list.isEmpty()) {
             CoinDetailGraphState.NoData
         } else {
             CoinDetailGraphState.Success(list, color, startPrice)

@@ -3,11 +3,11 @@ package com.charliechristensen.settings
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.charliechristensen.settings.di.DaggerSettingsComponent
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_choose_theme.view.*
 import kotlinx.android.synthetic.main.view_settings.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,7 +59,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view
             activity.layoutInflater.inflate(R.layout.dialog_choose_theme, null)
         val radioGroup = radioGroupView.radioGroup
         radioGroup.check(selectedRadioButtonId)
-        AlertDialog.Builder(activity)
+        MaterialAlertDialogBuilder(activity)
             .setTitle("Choose Theme")
             .setView(radioGroupView)
             .setPositiveButton("OK") { _, _ ->

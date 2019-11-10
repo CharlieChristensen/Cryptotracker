@@ -11,10 +11,7 @@ data class CoinDetailData(
     val pricePerUnit24HourLow: Double = 0.0,
     val pricePerUnit24HourHigh: Double = 0.0,
     val walletTotalValue: Double = 0.0,
-    val walletPriceChange24Hour: ColorValueString = ColorValueString(
-        "",
-        ValueChangeColor.RED
-    ),
+    val walletPriceChange24Hour: ColorValueString = ColorValueString("", ValueChangeColor.RED),
     val toolbarImageData: ImageAndNamePair = ImageAndNamePair()
 )
 

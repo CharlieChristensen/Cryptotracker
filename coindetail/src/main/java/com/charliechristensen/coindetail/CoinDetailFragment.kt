@@ -6,14 +6,8 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
 import android.view.View
-import android.view.animation.AnticipateOvershootInterpolator
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import androidx.transition.ChangeBounds
-import androidx.transition.TransitionManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.charliechristensen.coindetail.data.CoinDetailGraphState
@@ -25,6 +19,7 @@ import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_text_input_layout.view.*
 import kotlinx.android.synthetic.main.view_coin_detail.*
 import kotlinx.android.synthetic.main.view_line_graph.*
@@ -63,28 +58,28 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
 
         restoreViewState(savedInstanceState)
 
-        viewModel.outputs.isCoinInPortfolio()
+        viewModel.outputs.isCoinInPortfolio
             .bind { setButtonLayout(it) }
 
-        viewModel.outputs.toolbarImageData()
+        viewModel.outputs.toolbarImageData
             .bind { setToolbarImage(it.coinName, it.imageUrl) }
 
-        viewModel.outputs.currentCoinPrice()
+        viewModel.outputs.currentCoinPrice
             .bind { currentPriceTextView.text = it }
 
-        viewModel.outputs.low24Hour()
+        viewModel.outputs.low24Hour
             .bind { low24HourTextView.text = it }
 
-        viewModel.outputs.high24Hour()
+        viewModel.outputs.high24Hour
             .bind { high24HourTextView.text = it }
 
-        viewModel.outputs.walletUnitsOwned()
+        viewModel.outputs.walletUnitsOwned
             .bind { walletAmountOwnedTextView.text = it }
 
-        viewModel.outputs.walletTotalValue()
+        viewModel.outputs.walletTotalValue
             .bind { walletTotalValueTextView.text = it }
 
-        viewModel.outputs.walletPriceChange24Hour()
+        viewModel.outputs.walletPriceChange24Hour
             .bind {
                 walletPriceChange24Hour.text = it.value
                 activity?.getColorFromResource(ColorUtils.getColorInt(it.color))?.let { color ->
@@ -92,7 +87,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
                 }
             }
 
-        viewModel.outputs.valueChange24Hour()
+        viewModel.outputs.valueChange24Hour
             .bind {
                 percentChangeTextView.text = it.value
                 activity?.getColorFromResource(ColorUtils.getColorInt(it.color))?.let { colorInt ->
@@ -100,22 +95,22 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
                 }
             }
 
-        viewModel.outputs.percentChangeTimePeriod()
+        viewModel.outputs.percentChangeTimePeriod
             .bind { title24HourPercentChange.setText(it) }
 
-        viewModel.outputs.graphState()
+        viewModel.outputs.graphState
             .bind { setGraphState(it) }
 
-        viewModel.outputs.showAddCoinDialog()
+        viewModel.outputs.showAddCoinDialog
             .bind { showAddCoinDialog(activity, it) }
 
-        viewModel.outputs.showEditCoinAmountDialog()
+        viewModel.outputs.showEditCoinAmountDialog
             .bind { showEditCoinAmountDialog(activity, it) }
 
-        viewModel.outputs.showConfirmRemoveDialog()
+        viewModel.outputs.showConfirmRemoveDialog
             .bind { showConfirmRemoveDialog(activity, it) }
 
-        viewModel.outputs.showNetworkError()
+        viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
 
         dateTabLayout.selections()
@@ -215,7 +210,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         val editTextView = activity.layoutInflater.inflate(R.layout.dialog_text_input_layout, null)
         val textInputLayout = editTextView.textInputLayout
         textInputLayout.hint = "Coin Amount"
-        AlertDialog.Builder(activity)
+        MaterialAlertDialogBuilder(activity)
             .setTitle(coinSymbol)
             .setMessage("How many coins do you own? (optional)")
             .setView(editTextView)
@@ -236,7 +231,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         val editTextView = activity.layoutInflater.inflate(R.layout.dialog_text_input_layout, null)
         val textInputLayout = editTextView.textInputLayout
         textInputLayout.hint = "Coin Amount"
-        AlertDialog.Builder(activity)
+        MaterialAlertDialogBuilder(activity)
             .setTitle("Edit Amount")
             .setMessage("Set total amount of $coinSymbol owned")
             .setView(editTextView)
@@ -254,7 +249,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         coinSymbol: String
     ) {
         if (activity == null) return
-        AlertDialog.Builder(activity)
+        MaterialAlertDialogBuilder(activity)
             .setTitle("Remove")
             .setMessage("Are you sure you want to remove $coinSymbol from your portfolio?")
             .setPositiveButton("DELETE") { _, _ ->

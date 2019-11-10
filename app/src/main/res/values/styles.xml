@@ -1,78 +1,39 @@
 <resources>
 
-    <!-- Light application theme. -->
-    <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!--Theme Colors-->
-        <item name="colorPrimary">@color/lightColorPrimary</item>
-        <item name="colorPrimaryDark">@color/lightColorPrimaryDark</item>
-        <item name="colorAccent">@color/lightColorAccent</item>
+        <item name="colorPrimary">?themeColorPrimary</item>
+        <item name="colorPrimaryDark">?themeColorPrimaryDark</item>
+        <item name="colorAccent">?themeColorAccent</item>
         <!--Dialog background-->
-        <item name="colorBackgroundFloating">@color/lightColorPrimaryDark</item>
-        <item name="backgroundTint">@color/lightColorPrimaryDark</item>
-        <!--Card View-->
-        <item name="cardStyle">@style/CardViewPrimary.Light</item>
-        <item name="cardStyleSecondary">@style/CardViewSecondary.Light</item>
+        <item name="colorBackgroundFloating">?themeColorPrimaryDark</item>
+        <!--        <item name="backgroundTint">?themeColorPrimaryDark</item>-->
         <!--Menu Item Background-->
-        <item name="android:itemBackground">@color/lightColorPrimaryDark</item>
+        <item name="android:itemBackground">?themeColorPrimaryDark</item>
         <!--Text Colors-->
-        <item name="android:textColor">@color/lightTextColorPrimary</item>
-        <item name="android:textColorSecondary">@color/lightTextColorSecondary</item>
+        <item name="android:textColor">?themeTextColor</item>
+        <item name="android:textColorSecondary">?themeTextColorSecondary</item>
         <!--Font-->
-        <item name="android:textViewStyle">@style/TextViewStyle</item>
-        <!--Default Background-->
-        <item name="android:windowBackground">@color/white</item>
-        <!--Custom Attributes-->
-        <item name="positivePriceGreen">@color/green_600</item>
-        <item name="negativePriceRed">@color/pastel_red</item>
-        <item name="dividerColor">@color/lightDividerColor</item>
-    </style>
+        <item name="fontFamily">@font/open_sans</item>
+        <item name="android:fontFamily">@font/open_sans</item>
 
-    <!-- Teal application theme. -->
-    <style name="AppTheme.Teal" parent="Theme.AppCompat.Light.NoActionBar">
-        <!--Theme Colors-->
-        <item name="colorPrimary">@color/tealColorPrimary</item>
-        <item name="colorPrimaryDark">@color/tealColorPrimaryDark</item>
-        <item name="colorAccent">@color/tealColorAccent</item>
-        <!--Dialog background-->
-        <item name="colorBackgroundFloating">@color/tealColorPrimaryDark</item>
-        <item name="backgroundTint">@color/tealColorPrimaryDark</item>
-        <!--Card View-->
-        <item name="cardStyle">@style/CardViewPrimary.Teal</item>
-        <item name="cardStyleSecondary">@style/CardViewSecondary.Teal</item>
-        <!--Menu Item Background-->
-        <item name="android:itemBackground">@color/tealColorPrimaryDark</item>
-        <!--Text Colors-->
-        <item name="android:textColor">@color/tealTextColorPrimary</item>
-        <item name="android:textColorSecondary">@color/tealTextColorSecondary</item>
-        <!--Font-->
-        <item name="android:textViewStyle">@style/TextViewStyle</item>
-        <!--Default Background-->
-        <item name="android:windowBackground">@drawable/background_teal_theme</item>
-        <!--Custom Attributes-->
-        <item name="positivePriceGreen">@color/pastel_teal</item>
-        <item name="negativePriceRed">@color/pastel_red</item>
-        <item name="dividerColor">@color/tealDividerColor</item>
+        <!--        <item name="colorSurface">?themeTextColorSecondary</item>-->
+        <!--        <item name="colorOnSurface">?themeTextColor</item>-->
+        <item name="appBarLayoutStyle">
+            @style/Widget.MaterialComponents.AppBarLayout.PrimarySurface
+        </item>
+        <item name="materialCardViewStyle">@style/CardViewPrimary</item>
+        <item name="android:statusBarColor">?themeColorPrimaryDark</item>
     </style>
 
     <!-- Dark application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme.Dark">
         <!--Theme Colors-->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <!--Dialog background-->
-        <item name="colorBackgroundFloating">@color/colorPrimaryDark</item>
-        <item name="backgroundTint">@color/colorPrimaryDark</item>
-        <!--Card View-->
-        <item name="cardStyle">@style/CardViewPrimary</item>
-        <item name="cardStyleSecondary">@style/CardViewSecondary</item>
-        <!--Menu Item Background-->
-        <item name="android:itemBackground">@color/colorPrimaryDark</item>
-        <!--Text Colors-->
-        <item name="android:textColor">@color/textColorPrimary</item>
-        <item name="android:textColorSecondary">@color/textColorSecondary</item>
-        <!--Font-->
-        <item name="android:textViewStyle">@style/TextViewStyle</item>
+        <item name="themeColorPrimary">@color/colorPrimary</item>
+        <item name="themeColorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="themeColorAccent">@color/colorAccent</item>
+        <item name="themeTextColor">@color/textColorPrimary</item>
+        <item name="themeTextColorSecondary">@color/textColorSecondary</item>
         <!--Default Background-->
         <item name="android:windowBackground">@drawable/background_dark_theme</item>
         <!--Custom Attributes-->
@@ -81,13 +42,136 @@
         <item name="dividerColor">@color/dividerColor</item>
     </style>
 
-    <!--Font-->
+    <!-- Teal application theme. -->
+    <style name="AppTheme.Teal">
+        <!--Theme Colors-->
+        <item name="themeColorPrimary">@color/tealColorPrimary</item>
+        <item name="themeColorPrimaryDark">@color/tealColorPrimaryDark</item>
+        <item name="themeColorAccent">@color/tealColorAccent</item>
+        <item name="themeTextColor">@color/tealTextColorPrimary</item>
+        <item name="themeTextColorSecondary">@color/tealTextColorSecondary</item>
+        <!--Default Background-->
+        <item name="android:windowBackground">@drawable/background_teal_theme</item>
+        <!--Custom Attributes-->
+        <item name="positivePriceGreen">@color/pastel_teal</item>
+        <item name="negativePriceRed">@color/pastel_red</item>
+        <item name="dividerColor">@color/tealDividerColor</item>
+    </style>
 
-    <style name="TextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">@font/open_sans</item>
+    <style name="CardViewPrimary" parent="CardView.Dark">
+        <item name="cardBackgroundColor">?themeColorPrimaryDark</item>
+        <item name="cardElevation">0dp</item>
+        <item name="enforceMaterialTheme">true</item>
+        <item name="android:stateListAnimator">@animator/card_button_animator</item>
+    </style>
+
+    <style name="AppTabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabTextColor">?themeTextColorSecondary</item>
+        <item name="tabSelectedTextColor">?themeTextColor</item>
+        <item name="tabIndicatorColor">?themeColorAccent</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
 </resources>
+
+<!--<style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">-->
+<!--&lt;!&ndash;Theme Colors&ndash;&gt;-->
+<!--<item name="colorPrimary">?themeColorPrimary</item>-->
+<!--<item name="colorPrimaryDark">?themeColorPrimaryDark</item>-->
+<!--<item name="colorAccent">?themeColorAccent</item>-->
+<!--&lt;!&ndash;Dialog background&ndash;&gt;-->
+<!--<item name="colorBackgroundFloating">?themeColorPrimaryDark</item>-->
+<!--&lt;!&ndash;        <item name="backgroundTint">?themeColorPrimaryDark</item>&ndash;&gt;-->
+<!--&lt;!&ndash;Menu Item Background&ndash;&gt;-->
+<!--<item name="android:itemBackground">?themeColorPrimaryDark</item>-->
+<!--&lt;!&ndash;Text Colors&ndash;&gt;-->
+<!--<item name="android:textColor">?themeTextColor</item>-->
+<!--<item name="android:textColorSecondary">?themeTextColorSecondary</item>-->
+<!--&lt;!&ndash;Font&ndash;&gt;-->
+<!--<item name="fontFamily">@font/open_sans</item>-->
+<!--<item name="android:fontFamily">@font/open_sans</item>-->
+
+<!--&lt;!&ndash;        <item name="colorSurface">?themeTextColorSecondary</item>&ndash;&gt;-->
+<!--&lt;!&ndash;        <item name="colorOnSurface">?themeTextColor</item>&ndash;&gt;-->
+<!--<item name="appBarLayoutStyle">@style/Widget.MaterialComponents.AppBarLayout.PrimarySurface</item>-->
+<!--<item name="materialCardViewStyle">@style/CardViewPrimary</item>-->
+<!--<item name="android:statusBarColor">?themeColorPrimaryDark</item>-->
+<!--</style>-->
+
+<!--    &lt;!&ndash; Dark application theme. &ndash;&gt;-->
+<!--<style name="AppTheme.Dark">-->
+<!--&lt;!&ndash;Theme Colors&ndash;&gt;-->
+<!--<item name="themeColorPrimary">@color/colorPrimary</item>-->
+<!--<item name="themeColorPrimaryDark">@color/colorPrimaryDark</item>-->
+<!--<item name="themeColorAccent">@color/colorAccent</item>-->
+<!--<item name="themeTextColor">@color/textColorPrimary</item>-->
+<!--<item name="themeTextColorSecondary">@color/textColorSecondary</item>-->
+<!--&lt;!&ndash;Default Background&ndash;&gt;-->
+<!--<item name="android:windowBackground">@drawable/background_dark_theme</item>-->
+<!--&lt;!&ndash;Custom Attributes&ndash;&gt;-->
+<!--<item name="positivePriceGreen">@color/pastel_teal</item>-->
+<!--<item name="negativePriceRed">@color/pastel_red</item>-->
+<!--<item name="dividerColor">@color/dividerColor</item>-->
+<!--</style>-->
+
+<!--    &lt;!&ndash; Teal application theme. &ndash;&gt;-->
+<!--<style name="AppTheme.Teal">-->
+<!--&lt;!&ndash;Theme Colors&ndash;&gt;-->
+<!--<item name="themeColorPrimary">@color/tealColorPrimary</item>-->
+<!--<item name="themeColorPrimaryDark">@color/tealColorPrimaryDark</item>-->
+<!--<item name="themeColorAccent">@color/tealColorAccent</item>-->
+<!--<item name="themeTextColor">@color/tealTextColorPrimary</item>-->
+<!--<item name="themeTextColorSecondary">@color/tealTextColorSecondary</item>-->
+<!--&lt;!&ndash;Default Background&ndash;&gt;-->
+<!--<item name="android:windowBackground">@drawable/background_teal_theme</item>-->
+<!--&lt;!&ndash;Custom Attributes&ndash;&gt;-->
+<!--<item name="positivePriceGreen">@color/pastel_teal</item>-->
+<!--<item name="negativePriceRed">@color/pastel_red</item>-->
+<!--<item name="dividerColor">@color/tealDividerColor</item>-->
+<!--</style>-->
+
+<!--<style name="CardViewPrimary" parent="CardView.Dark">-->
+<!--<item name="cardBackgroundColor">?themeColorPrimaryDark</item>-->
+<!--<item name="cardElevation">0dp</item>-->
+<!--<item name="enforceMaterialTheme">true</item>-->
+<!--<item name="android:stateListAnimator">@animator/card_button_animator</item>-->
+<!--</style>-->
+
+<!--<style name="AppTabLayout" parent="Widget.MaterialComponents.TabLayout">-->
+<!--<item name="tabTextColor">?themeTextColorSecondary</item>-->
+<!--<item name="tabSelectedTextColor">?themeTextColor</item>-->
+<!--<item name="tabIndicatorColor">?themeColorAccent</item>-->
+<!--<item name="android:background">@android:color/transparent</item>-->
+<!--</style>-->
+
+    <!--    &lt;!&ndash; Light application theme. &ndash;&gt;-->
+    <!--    <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">-->
+    <!--        &lt;!&ndash;Theme Colors&ndash;&gt;-->
+    <!--        <item name="colorPrimary">@color/lightColorPrimary</item>-->
+    <!--        <item name="colorPrimaryDark">@color/lightColorPrimaryDark</item>-->
+    <!--        <item name="colorAccent">@color/lightColorAccent</item>-->
+    <!--        &lt;!&ndash;Dialog background&ndash;&gt;-->
+    <!--        <item name="colorBackgroundFloating">@color/lightColorPrimaryDark</item>-->
+    <!--        <item name="backgroundTint">@color/lightColorPrimaryDark</item>-->
+    <!--        &lt;!&ndash;Card View&ndash;&gt;-->
+    <!--        <item name="cardStyle">@style/CardViewPrimary.Light</item>-->
+    <!--        <item name="cardStyleSecondary">@style/CardViewSecondary.Light</item>-->
+    <!--        &lt;!&ndash;Menu Item Background&ndash;&gt;-->
+    <!--        <item name="android:itemBackground">@color/lightColorPrimaryDark</item>-->
+    <!--        &lt;!&ndash;Text Colors&ndash;&gt;-->
+    <!--        <item name="android:textColor">@color/lightTextColorPrimary</item>-->
+    <!--        <item name="android:textColorSecondary">@color/lightTextColorSecondary</item>-->
+    <!--        &lt;!&ndash;Font&ndash;&gt;-->
+    <!--        <item name="fontFamily">@font/open_sans</item>-->
+    <!--        <item name="android:fontFamily">@font/open_sans</item>-->
+    <!--        &lt;!&ndash;Default Background&ndash;&gt;-->
+    <!--        <item name="android:windowBackground">@color/white</item>-->
+    <!--        &lt;!&ndash;Custom Attributes&ndash;&gt;-->
+    <!--        <item name="positivePriceGreen">@color/green_600</item>-->
+    <!--        <item name="negativePriceRed">@color/pastel_red</item>-->
+    <!--        <item name="dividerColor">@color/lightDividerColor</item>-->
+    <!--    </style>-->
+
 
     <!--Dialog-->
     <!--<style name="Dialog.Dark" parent="Theme.AppCompat.Dialog.Alert">-->
@@ -101,3 +185,4 @@
     <!--<style name="AppTheme.PopupOverlay.Dark" parent="Widget.AppCompat.Light.PopupMenu" />-->
     <!--<style name="AppTheme.PopupTextAppearance" parent="@android:style/TextAppearance.Widget.IconMenu.Item"/>-->
     <!--<style name="AppTheme.PopupTextAppearance.Dark" parent="@android:style/TextAppearance.Widget.IconMenu.Item"/>-->
+

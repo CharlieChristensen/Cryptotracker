@@ -31,45 +31,39 @@ import kotlinx.coroutines.flow.map
 @ExperimentalCoroutinesApi
 internal class RepositoryImpl constructor(
     private val service: CryptoService,
-    private val databaseApi: DatabaseApi,
+    private val database: DatabaseApi,
     private val webSocket: WebSocketService
 ) : Repository {
 
     override fun searchCoinsWithQuery(query: CharSequence): Flow<List<Coin>> =
-        databaseApi.searchCoinsByName(query.toString())
+        database.searchCoinsByName(query.toString())
             .mapItems { coin -> coin.toUi() }
 
     override fun searchUnownedCoinWithQuery(query: CharSequence): Flow<List<Coin>> =
-        databaseApi.searchUnownedCoinsByName(query.toString())
+        database.searchUnownedCoinsByName(query.toString())
             .mapItems { coin -> coin.toUi() }
 
     override fun getCoinDetails(symbol: String): Flow<List<Coin>> =
-        databaseApi.getCoin(symbol)
-            .map { dbCoinList ->
-                dbCoinList.map { coin -> coin.toUi() }
-            }
+        database.getCoin(symbol)
+            .mapItems { coin -> coin.toUi() }
 
     override fun getUnitsOwnedForSymbol(symbol: String): Flow<List<Double>> =
-        databaseApi.getUnitsOwnedForSymbol(symbol)
+        database.getUnitsOwnedForSymbol(symbol)
 
     override fun getPortfolioData(): Flow<List<CoinWithPriceAndAmount>> =
-        databaseApi.getPortfolioData()
+        database.getPortfolioData()
             .mapItems { it.toUi() }
 
     override fun getCoinPriceData(
         symbol: String,
         forceRefresh: Boolean
     ): Flow<List<CoinPriceData>> =
-        object : RxNetworkBoundResource<DbCoinPriceData, ServerCoinPriceData>() {
+        object : RxNetworkBoundResource<DbCoinPriceData, ServerCoinPriceData, CoinPriceData>() {
             override suspend fun saveToDb(data: List<DbCoinPriceData>) {
                 if (data.isNotEmpty()) {
-                    databaseApi.setPrice(data[0])
+                    database.setPrice(data[0])
                 } else {
-                    databaseApi.setPrice(
-                        DbCoinPriceData(
-                            symbol
-                        )
-                    )
+                    database.setPrice(DbCoinPriceData(symbol))
                 }
             }
 
@@ -89,29 +83,31 @@ internal class RepositoryImpl constructor(
             }
 
             override fun loadFromDb(): Flow<List<DbCoinPriceData>> =
-                databaseApi.getPrice(symbol)
+                database.getPrice(symbol)
 
             override suspend fun loadFromNetwork(): ServerCoinPriceData =
                 service.getFullCoinPrice(symbol, Constants.MyCurrency)
 
-        }.flow.mapItems { it.toUi() }
+            override fun mapToUiType(value: DbCoinPriceData): CoinPriceData = value.toUi()
+
+        }.flow
 
     override suspend fun forceRefreshCoinListAndSaveToDb() {
         val serverCoinList = service.getCoinList()
         val coinList = serverCoinList.data
             .map { NetworkToDbMapper.mapCoin(it.value, serverCoinList.baseImageUrl) }
-        databaseApi.insertCoins(coinList)
+        database.insertCoins(coinList)
     }
 
     override suspend fun refreshCoinListIfNeeded() {
-        val coinList = databaseApi.getAllCoins().first()
+        val coinList = database.getAllCoins().first()
         if (coinList.isEmpty()) {
             forceRefreshCoinListAndSaveToDb()
         }
     }
 
     override fun getPortfolioCoinSymbols(): Flow<List<String>> =
-        databaseApi.getPortfolioCoinSymbols()
+        database.getPortfolioCoinSymbols()
 
     override fun addTemporarySubscription(symbol: String, currency: String) {
         webSocket.addTemporarySubscription(symbol, currency)
@@ -122,9 +118,7 @@ internal class RepositoryImpl constructor(
     }
 
     override fun connectToLivePrices(symbols: Collection<String>, currency: String) {
-        webSocket.connect { socket ->
-            socket.setPortfolioSubscriptions(symbols, currency)
-        }
+        webSocket.connect { socket -> socket.setPortfolioSubscriptions(symbols, currency) }
     }
 
     override fun disconnectFromLivePrices() {
@@ -135,12 +129,11 @@ internal class RepositoryImpl constructor(
         webSocket.priceUpdateReceived()
 
     override suspend fun addPortfolioCoin(symbol: String, amountOwned: Double) =
-        databaseApi.addCoinToPortfolios(DbPortfolioCoin(symbol, amountOwned))
+        database.addCoinToPortfolios(DbPortfolioCoin(symbol, amountOwned))
 
     override suspend fun removeCoinFromPortfolio(symbol: String) =
-        databaseApi.removeCoinFromPortfolios(symbol)
+        database.removeCoinFromPortfolios(symbol)
 
-    //TODO Save to DB
     override suspend fun getHistoricalDataForCoin(
         symbol: String,
         timePeriod: CoinHistoryTimePeriod,
@@ -168,6 +161,6 @@ internal class RepositoryImpl constructor(
     }
 
     override suspend fun updatePriceForCoin(coinSymbol: String, price: Double) =
-        databaseApi.updatePrice(coinSymbol, price)
+        database.updatePrice(coinSymbol, price)
 
 }

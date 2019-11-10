@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name = "cardStyle">
-        <attr name="cardStyle" format="reference" />
-    </declare-styleable>
-
-    <declare-styleable name = "cardStyleSecondary">
-        <attr name="cardStyleSecondary" format="reference" />
-    </declare-styleable>
+    <attr name="themeColorPrimary" format="reference" />
+    <attr name="themeColorPrimaryDark" format="reference" />
+    <attr name="themeColorAccent" format="reference" />
+    <attr name="themeTextColor" format="reference" />
+    <attr name="themeTextColorSecondary" format="reference" />
 
     <declare-styleable name = "positivePriceGreen">
         <attr name="positivePriceGreen" format="reference" />

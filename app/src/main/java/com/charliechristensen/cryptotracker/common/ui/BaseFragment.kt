@@ -27,7 +27,7 @@ abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int)
     }
 
     inline fun <T> LiveData<T>.bind(crossinline observer: (T) -> Unit) {
-        this.observe(this@BaseFragment, Observer { observer(it) })
+        this.observe(viewLifecycleOwner, Observer { observer(it) })
     }
 
     protected inline fun <T> Flow<T>.bind(crossinline action: suspend (value: T) -> Unit): Job {

@@ -73,14 +73,14 @@ interface SettingsViewModel {
         //endregion
 
         private fun themeFromButtonId(buttonId: Int): AppTheme = when (buttonId) {
-            R.id.lightRadioButton -> Light
+//            R.id.lightRadioButton -> Light
             R.id.tealRadioButton -> Teal
             R.id.darkRadioButton -> Dark
             else -> error("Unknown app theme")
         }
 
         private fun buttonIdFromTheme(appTheme: AppTheme) = when (appTheme) {
-            Light -> R.id.lightRadioButton
+//            Light -> R.id.lightRadioButton
             Teal -> R.id.tealRadioButton
             Dark -> R.id.darkRadioButton
         }

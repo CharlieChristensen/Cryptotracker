@@ -55,7 +55,7 @@ interface SearchCoinsViewModel {
             try {
                 interactor.forceRefreshCoinListAndSaveToDb()
             } catch (exception: Exception) {
-                withContext(Dispatchers.Main) { showNetworkErrorChannel.call() }
+                withContext(Dispatchers.Main.immediate) { showNetworkErrorChannel.call() }
             }
         }
 

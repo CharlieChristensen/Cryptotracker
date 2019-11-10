@@ -67,6 +67,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
     implementation "com.github.akarnokd:kotlin-flow-extensions:$versions.flow_extensions"
     implementation "ru.ldralighieri.corbind:corbind:$versions.corbind"
+    implementation "androidx.work:work-runtime-ktx:$versions.work_manager"
 
     implementation "com.google.dagger:dagger:$versions.dagger"
     compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$versions.assistedInject"

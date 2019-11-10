@@ -1,6 +1,7 @@
 package com.charliechristensen.cryptotracker.common.extensions
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
@@ -14,6 +15,9 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.ListenableWorker
+import androidx.work.WorkerFactory
+import androidx.work.WorkerParameters
 import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
@@ -59,7 +63,7 @@ inline fun <reified T : ViewModel> Fragment.savedStateViewModel(
     }
 }
 
-fun Activity.getColorFromResource(colorAttribute: Int): Int{
+fun Activity.getColorFromResource(colorAttribute: Int): Int {
     val typedValue = TypedValue()
     val theme = theme
     theme.resolveAttribute(colorAttribute, typedValue, true)
@@ -84,7 +88,9 @@ fun Context.getColorAttribute(color: ValueChangeColor, success: (Int) -> Unit) {
     if (theme.resolveAttribute(
             ColorUtils.getColorInt(
                 color
-            ), typedValue, true)) {
+            ), typedValue, true
+        )
+    ) {
         success(typedValue.data)
     }
 }

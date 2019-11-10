@@ -7,9 +7,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/searchViewCard"
-        style="?attr/cardStyle"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:cardUseCompatPadding="true">
@@ -19,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/coinsRecyclerView"
