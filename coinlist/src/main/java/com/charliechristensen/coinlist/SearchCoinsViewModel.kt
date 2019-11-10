@@ -78,8 +78,11 @@ interface SearchCoinsViewModel {
         //region Outputs
 
         override val coinList: LiveData<List<SearchCoinsListItem>> =
-            searchQueryChannel.asFlow()
-                .debounce(400)
+            flowOf(
+                flowOf(searchQueryChannel.valueOrNull ?: ""),
+                searchQueryChannel.asFlow()
+                    .debounce(400)
+            ).flattenMerge()
                 .distinctUntilChanged()
                 .onEach { savedState.set(KEY_SEARCH_QUERY_SAVED_STATE, it) }
                 .flatMapLatest { interactor.searchCoinsWithQuery(it, filterOutOwnedCoins) }

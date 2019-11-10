@@ -14,8 +14,9 @@ import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.navigation.NavigationHelper
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import kotlinx.android.synthetic.main.view_search_coins.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.ldralighieri.corbind.appcompat.queryTextChanges
 
 @ExperimentalCoroutinesApi
@@ -43,7 +44,8 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
 
         searchView.setOnClickListener { searchView.isIconified = false }
         searchView.queryTextChanges()
-            .bind { viewModel.inputs.setSearchQuery(it) }
+            .onEach { viewModel.inputs.setSearchQuery(it) }
+            .launchIn(viewBindingScope)
 
         viewModel.outputs.coinList
             .bind {

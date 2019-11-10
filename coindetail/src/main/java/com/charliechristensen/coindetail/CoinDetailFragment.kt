@@ -26,7 +26,9 @@ import kotlinx.android.synthetic.main.view_line_graph.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import ru.ldralighieri.corbind.material.selections
 
 @FlowPreview
@@ -116,7 +118,8 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         dateTabLayout.selections()
             .distinctUntilChanged()
             .map { it.position }
-            .bind { viewModel.inputs.graphDateSelectionChanged(it) }
+            .onEach { viewModel.inputs.graphDateSelectionChanged(it) }
+            .launchIn(viewBindingScope)
 
         addToPortfolioButton.setOnClickListener {
             viewModel.inputs.addCoinButtonClicked()

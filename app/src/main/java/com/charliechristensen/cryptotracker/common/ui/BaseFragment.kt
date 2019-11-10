@@ -18,6 +18,14 @@ abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int)
 
     protected abstract val viewModel: VM
 
+    private val viewBidingJob = Job()
+    protected val viewBindingScope = CoroutineScope(Dispatchers.Main.immediate + viewBidingJob)
+
+    override fun onDestroyView() {
+        viewBidingJob.cancel()
+        super.onDestroyView()
+    }
+
     protected fun setActionBarTitle(@StringRes resId: Int) {
         if (activity is AppCompatActivity) {
             val appCompatActivity = activity as AppCompatActivity?
@@ -31,7 +39,7 @@ abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int)
     }
 
     protected inline fun <T> Flow<T>.bind(crossinline action: suspend (value: T) -> Unit): Job {
-        return lifecycleScope.launchWhenStarted {
+        return lifecycleScope.launch {
             this@bind
                 .flowOn(Dispatchers.Main.immediate)
                 .collect { action(it) }
