@@ -16,9 +16,4 @@ abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity
     inline fun <T> LiveData<T>.bind(crossinline observer: (T) -> Unit) {
         this.observe(this@BaseActivity, Observer { observer(it) })
     }
-
-    inline fun <T> Flow<T>.bind(crossinline action: suspend (value: T) -> Unit) =
-        this.onEach { action(it) }
-            .launchIn(lifecycleScope)
-
 }

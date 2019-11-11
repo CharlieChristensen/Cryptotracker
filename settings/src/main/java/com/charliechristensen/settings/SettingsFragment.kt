@@ -55,15 +55,15 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view
         selectedRadioButtonId: Int
     ) {
         if (activity == null) return
-        val radioGroupView =
-            activity.layoutInflater.inflate(R.layout.dialog_choose_theme, null)
+        val radioGroupView = activity.layoutInflater.inflate(R.layout.dialog_choose_theme, null)
         val radioGroup = radioGroupView.radioGroup
         radioGroup.check(selectedRadioButtonId)
         MaterialAlertDialogBuilder(activity)
             .setTitle("Choose Theme")
             .setView(radioGroupView)
-            .setPositiveButton("OK") { _, _ ->
+            .setPositiveButton("OK") { dialog, _ ->
                 viewModel.inputs.themeChosen(radioGroup.checkedRadioButtonId)
+                dialog.dismiss()
             }
             .setNegativeButton("CANCEL", null)
             .show()

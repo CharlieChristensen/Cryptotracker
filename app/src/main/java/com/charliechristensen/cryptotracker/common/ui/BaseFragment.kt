@@ -38,18 +38,4 @@ abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int)
         this.observe(viewLifecycleOwner, Observer { observer(it) })
     }
 
-    protected inline fun <T> Flow<T>.bind(crossinline action: suspend (value: T) -> Unit): Job {
-        return lifecycleScope.launch {
-            this@bind
-                .flowOn(Dispatchers.Main.immediate)
-                .collect { action(it) }
-        }
-    }
-
-    protected fun <T> Flow<T>.launch(): Job = lifecycleScope.launch {
-        whenStarted {
-            collect() // tail-call
-        }
-    }
-
 }

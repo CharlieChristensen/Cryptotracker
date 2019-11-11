@@ -50,7 +50,6 @@ interface MainActivityViewModel {
             appPreferences.getTheme()
 
         override val theme: LiveData<AppTheme> = appPreferences.theme()
-            .drop(1)
             .asLiveData()
 
         //endregion

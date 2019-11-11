@@ -11,6 +11,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.extensions.injector
+import com.charliechristensen.cryptotracker.common.extensions.skip
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.navigation.NavigationHelper
 import com.charliechristensen.cryptotracker.common.ui.BaseActivity
@@ -56,7 +57,10 @@ class MainActivity : BaseActivity(R.layout.activity_navigation_drawer) {
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
         viewModel.outputs.theme
-            .bind { changeTheme(it, true) }
+            .skip(1)
+            .bind {
+                changeTheme(it, true)
+            }
     }
 
     override fun onSupportNavigateUp(): Boolean = navigateUp(navController, drawerLayout)

@@ -3,9 +3,9 @@ package com.charliechristensen.settings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
 import com.charliechristensen.cryptotracker.common.AppTheme
-import com.charliechristensen.cryptotracker.common.AppTheme.*
+import com.charliechristensen.cryptotracker.common.AppTheme.Dark
+import com.charliechristensen.cryptotracker.common.AppTheme.Teal
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
@@ -36,7 +36,7 @@ interface SettingsViewModel {
     class ViewModel @Inject constructor(private val appPreferences: AppPreferences) :
         BaseViewModel(), Inputs, Outputs {
 
-        private val showChooseThemeChannel = SingleLiveEvent<AppTheme>()
+        private val showChooseThemeChannel = SingleLiveEvent<Int>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -44,7 +44,7 @@ interface SettingsViewModel {
         //region Inputs
 
         override fun themeButtonClicked() {
-            showChooseThemeChannel.value = appPreferences.getTheme()
+            showChooseThemeChannel.value = buttonIdFromTheme(appPreferences.getTheme())
         }
 
         override fun liveUpdatePricesToggled(isChecked: Boolean) {
@@ -67,20 +67,17 @@ interface SettingsViewModel {
         override val liveUpdatePrices: LiveData<Boolean> =
             MutableLiveData(appPreferences.getLiveUpdatePrices())
 
-        override val showChooseThemeDialog: LiveData<Int> =
-            showChooseThemeChannel.map { buttonIdFromTheme(it) }
+        override val showChooseThemeDialog: LiveData<Int> = showChooseThemeChannel
 
         //endregion
 
         private fun themeFromButtonId(buttonId: Int): AppTheme = when (buttonId) {
-//            R.id.lightRadioButton -> Light
             R.id.tealRadioButton -> Teal
             R.id.darkRadioButton -> Dark
             else -> error("Unknown app theme")
         }
 
         private fun buttonIdFromTheme(appTheme: AppTheme) = when (appTheme) {
-//            Light -> R.id.lightRadioButton
             Teal -> R.id.tealRadioButton
             Dark -> R.id.darkRadioButton
         }

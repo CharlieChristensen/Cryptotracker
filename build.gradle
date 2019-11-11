@@ -8,6 +8,7 @@ buildscript {
             'minSDK'          : 21,
             'targetSDK'       : 29,
             'constraintLayout': '2.0.0-beta3',
+            'compose'         : '0.1.0-dev02',
             'activity'        : '1.1.0-rc02',
             'fragment'        : '1.2.0-rc02',
             'saved_state'     : '1.0.0-rc02',

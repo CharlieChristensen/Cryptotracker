@@ -42,12 +42,12 @@ object RemoteModule {
         val okHttpClient = provideOkHttpClient()
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(okHttpClient)
+            .callFactory { okHttpClient.get().newCall(it) }
             .addConverterFactory(provideMoshiConverterFactory(moshi))
             .build()
     }
 
-    private fun provideOkHttpClient(): OkHttpClient = OkHttpClient()
+    private fun provideOkHttpClient(): dagger.Lazy<OkHttpClient> = dagger.Lazy { OkHttpClient() }
 
     private fun provideMoshi(): Moshi = Moshi.Builder().build()
 
