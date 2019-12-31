@@ -9,10 +9,8 @@ import com.charliechristensen.cryptotracker.common.AppTheme.Teal
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlinx.coroutines.flow.map
 
 /**
  * Settings ViewModel
@@ -31,8 +29,6 @@ interface SettingsViewModel {
         val showChooseThemeDialog: LiveData<Int>
     }
 
-    @FlowPreview
-    @ExperimentalCoroutinesApi
     class ViewModel @Inject constructor(private val appPreferences: AppPreferences) :
         BaseViewModel(), Inputs, Outputs {
 
@@ -81,7 +77,5 @@ interface SettingsViewModel {
             Teal -> R.id.tealRadioButton
             Dark -> R.id.darkRadioButton
         }
-
     }
-
 }

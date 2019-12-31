@@ -8,5 +8,4 @@ abstract class BaseViewHolder<T>(override val containerView: View) :
     RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     open fun bind(listItem: T) {}
-
 }

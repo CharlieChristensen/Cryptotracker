@@ -3,7 +3,6 @@ package com.charliechristensen.database.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
 @Entity(tableName = "coin_price_data")
 class DbCoinPriceData(
     @PrimaryKey val symbol: String,

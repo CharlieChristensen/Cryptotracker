@@ -1,6 +1,11 @@
 package com.charliechristensen.coindetail
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import com.charliechristensen.coindetail.data.CoinDetailGraphState
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.Constants
@@ -14,8 +19,12 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
@@ -52,8 +61,6 @@ interface CoinDetailViewModel {
         val showNetworkError: LiveData<Unit>
     }
 
-
-    @FlowPreview
     @ExperimentalCoroutinesApi
     class ViewModel @AssistedInject constructor(
         private val formatterFactory: FormatterFactory,
@@ -193,7 +200,6 @@ interface CoinDetailViewModel {
                 ColorValueString.create(percentChange, formatterFactory.percentFormatter())
             }.distinctUntilChanged()
 
-
         override val walletUnitsOwned: LiveData<String> = walletUnitsOwnedChannel
                 .distinctUntilChanged()
                 .map { formatterFactory.decimalFormatter().format(it) }
@@ -236,6 +242,5 @@ interface CoinDetailViewModel {
         interface Factory {
             fun create(coinSymbol: String): ViewModel
         }
-
     }
 }

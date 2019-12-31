@@ -1,3 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/navigation_graph"/>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigationGraph"
+    app:startDestination="@id/portfolioRoot"
+    tools:ignore="UnusedNavigation">
+
+    <action
+        android:id="@+id/actionToCoinDetail"
+        app:destination="@id/coinDetailFragment" />
+
+    <action
+        android:id="@+id/actionToCoinList"
+        app:destination="@id/coins" />
+
+    <fragment
+        android:id="@+id/portfolioRoot"
+        android:name="com.charliechristensen.portfolio.PortfolioFragment"
+        app:moduleName="portfolio">
+        <deepLink
+            android:id="@+id/portfolioDeepLink"
+            app:uri="cryptotracker://portfolio" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsRoot"
+        android:name="com.charliechristensen.settings.SettingsFragment"
+        android:label="Settings"
+        app:moduleName="settings">
+        <deepLink
+            android:id="@+id/settingsDeepLink"
+            app:uri="cryptotracker://settings" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/coinsRoot"
+        android:name="com.charliechristensen.coinlist.SearchCoinsFragment"
+        android:label="SearchCoinsFragment"
+        app:moduleName="coinlist">
+        <argument
+            android:name="filterOwnedCoins"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <deepLink
+            android:id="@+id/coinsRootDeepLink"
+            app:uri="cryptotracker://coinsRoot" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/coins"
+        android:name="com.charliechristensen.coinlist.SearchCoinsFragment"
+        android:label="SearchCoinsFragment"
+        app:moduleName="coinlist">
+        <deepLink
+            android:id="@+id/coinsDeepLink"
+            app:uri="cryptotracker://coins/{filterOwnedCoins}" />
+        <argument
+            android:name="filterOwnedCoins"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/coinDetailFragment"
+        android:name="com.charliechristensen.coindetail.CoinDetailFragment"
+        android:label="CoinDetailFragment"
+        app:moduleName="coindetail">
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="cryptotracker://coin/{coin_symbol}" />
+        <argument
+            android:name="coin_symbol"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

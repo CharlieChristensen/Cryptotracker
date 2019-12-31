@@ -13,7 +13,6 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -50,7 +49,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
-    implementation "com.github.akarnokd:kotlin-flow-extensions:$versions.flow_extensions"
 
     implementation "com.google.dagger:dagger:$versions.dagger"
     compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$versions.assistedInject"

@@ -71,6 +71,26 @@
         <item name="tabIndicatorColor">?themeColorAccent</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
+    
+    <style name="PlaygroundStyle" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/blue_500</item>
+        <item name="colorSecondary">@color/teal_500</item>
+        <item name="colorError">@color/red_900</item>
+
+        <item name="colorPrimaryVariant">@color/pink_500</item>
+        <item name="colorSecondaryVariant">@color/green_500</item>
+        <item name="colorSurface">@color/green_500</item>
+        <item name="colorOnPrimary">@color/green_500</item>
+        <item name="colorOnSecondary">@color/green_500</item>
+        <item name="colorOnBackground">@color/green_500</item>
+        <item name="colorOnError">@color/green_500</item>
+        <item name="colorOnSurface">@color/purple_500</item>
+        <item name="scrimBackground">@color/orange_500</item>
+
+
+        <item name="fontFamily">@font/open_sans</item>
+
+    </style>
 
 </resources>
 

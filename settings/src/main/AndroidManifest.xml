@@ -1,6 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:dist="http://schemas.android.com/apk/distribution"
-    xmlns:tools="http://schemas.android.com/tools"
+<manifest xmlns:dist="http://schemas.android.com/apk/distribution"
     package="com.charliechristensen.settings">
 
     <dist:module
@@ -11,13 +9,6 @@
         </dist:delivery>
         <dist:fusing dist:include="true" />
     </dist:module>
-
-    <application tools:ignore="GoogleAppIndexingWarning">
-        <provider
-            android:name=".contentprovider.SettingsContentProvider"
-            android:authorities="com.charliechristensen.cryptotracker.settings"
-            android:exported="false"/>
-    </application>
 
 </manifest>
 

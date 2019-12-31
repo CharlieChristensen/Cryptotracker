@@ -7,12 +7,9 @@ import com.charliechristensen.cryptotracker.data.workers.FetchCoinListWorker
 import com.charliechristensen.cryptotracker.di.AppComponent
 import com.charliechristensen.cryptotracker.di.DaggerAppComponent
 import com.google.android.play.core.splitcompat.SplitCompatApplication
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import java.util.concurrent.TimeUnit
 
-@ExperimentalCoroutinesApi
-@FlowPreview
+
 class MainApplication : SplitCompatApplication() {
 
     val appComponent: AppComponent by lazy {
@@ -36,5 +33,4 @@ class MainApplication : SplitCompatApplication() {
                 coinRefreshWorker
             )
     }
-
 }

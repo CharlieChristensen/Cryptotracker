@@ -1,22 +1,22 @@
-//package com.charliechristensen.cryptotracker.data
+ package com.charliechristensen.cryptotracker.data
 //
-//import com.charliechristensen.cryptotracker.data.database.daos.CoinDao
-//import com.charliechristensen.cryptotracker.data.database.daos.CombinedTableDao
-//import com.charliechristensen.cryptotracker.data.database.daos.PortfolioCoinDao
-//import com.nhaarman.mockito_kotlin.any
-//import com.nhaarman.mockito_kotlin.doReturn
-//import com.nhaarman.mockito_kotlin.mock
-//import com.nhaarman.mockito_kotlin.verify
-//import io.reactivex.Observable
-//import kotlinx.coroutines.ExperimentalCoroutinesApi
-//import org.junit.Before
-//import org.junit.Test
+// import com.charliechristensen.cryptotracker.data.database.daos.CoinDao
+// import com.charliechristensen.cryptotracker.data.database.daos.CombinedTableDao
+// import com.charliechristensen.cryptotracker.data.database.daos.PortfolioCoinDao
+// import com.nhaarman.mockito_kotlin.any
+// import com.nhaarman.mockito_kotlin.doReturn
+// import com.nhaarman.mockito_kotlin.mock
+// import com.nhaarman.mockito_kotlin.verify
+// import io.reactivex.Observable
+// import kotlinx.coroutines.ExperimentalCoroutinesApi
+// import org.junit.Before
+// import org.junit.Test
 //
-///**
+// /**
 // * Created by Chuck on 1/17/2018.
 // */
-//@ExperimentalCoroutinesApi
-//class RepositoryTest {
+// @ExperimentalCoroutinesApi
+// class RepositoryTest {
 //
 //    private lateinit var repository: Repository
 //    private lateinit var coinDao: CoinDao
@@ -119,4 +119,4 @@
 //    fun updatePriceForCoin() {
 //    }
 //
-//}
+// }

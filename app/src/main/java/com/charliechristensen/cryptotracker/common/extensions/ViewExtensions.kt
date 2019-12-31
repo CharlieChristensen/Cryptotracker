@@ -1,7 +1,6 @@
 package com.charliechristensen.cryptotracker.common.extensions
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
@@ -15,14 +14,9 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.work.ListenableWorker
-import androidx.work.WorkerFactory
-import androidx.work.WorkerParameters
 import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 
 inline fun <reified T : Fragment> fragment(block: Bundle.() -> Unit): T =
     T::class.java.newInstance().apply {
@@ -70,13 +64,9 @@ fun Activity.getColorFromResource(colorAttribute: Int): Int {
     return typedValue.data
 }
 
-@FlowPreview
-@ExperimentalCoroutinesApi
 val Activity.injector
     get() = (application as MainApplication).appComponent
 
-@FlowPreview
-@ExperimentalCoroutinesApi
 val Fragment.injector
     get() = (requireActivity().application as MainApplication).appComponent
 

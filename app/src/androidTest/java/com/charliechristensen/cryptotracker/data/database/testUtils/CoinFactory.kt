@@ -4,7 +4,6 @@ import com.charliechristensen.database.models.DbCoin
 import com.charliechristensen.database.models.DbCoinPriceData
 import com.charliechristensen.database.models.DbPortfolioCoin
 
-
 /**
  * Creates models for testing
  */
@@ -50,7 +49,6 @@ object CoinFactory {
         )
     }
 
-
     fun makePortfolioCoinList(count: Int): List<DbPortfolioCoin> {
         val coins = mutableListOf<DbPortfolioCoin>()
         repeat(count) {
@@ -81,10 +79,9 @@ object CoinFactory {
 
     fun makeCoinPriceDataList(count: Int): List<DbCoinPriceData> {
         val coinPriceList = mutableListOf<DbCoinPriceData>()
-        repeat(count){
+        repeat(count) {
             coinPriceList.add(makeCoinPriceData())
         }
         return coinPriceList
     }
-
 }

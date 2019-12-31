@@ -22,5 +22,4 @@ sealed class AppTheme constructor(
             else -> Dark
         }
     }
-
 }

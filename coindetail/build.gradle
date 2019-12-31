@@ -12,18 +12,7 @@ android {
         targetSdkVersion versions.targetSDK
         versionCode 1
         versionName "1.0"
-
     }
-
-    buildTypes {
-        debug {
-            minifyEnabled false
-        }
-        release {
-            minifyEnabled false
-        }
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -33,7 +22,6 @@ android {
             jvmTarget = "1.8"
         }
     }
-
 }
 
 androidExtensions {
@@ -60,7 +48,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
-    implementation "com.github.akarnokd:kotlin-flow-extensions:$versions.flow_extensions"
     implementation "ru.ldralighieri.corbind:corbind-material:$versions.corbind"
 
     implementation "com.google.dagger:dagger:$versions.dagger"

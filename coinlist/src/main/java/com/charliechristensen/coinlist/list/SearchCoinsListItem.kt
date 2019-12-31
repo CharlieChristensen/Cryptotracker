@@ -41,5 +41,4 @@ sealed class SearchCoinsListItem : ListItem {
         override fun areContentsTheSame(otherItem: ListItem): Boolean =
             otherItem == this
     }
-
 }

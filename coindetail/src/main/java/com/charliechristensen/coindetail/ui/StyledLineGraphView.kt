@@ -1,8 +1,8 @@
 package com.charliechristensen.coindetail.ui
 
 import android.content.Context
-import androidx.annotation.ColorInt
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
@@ -11,14 +11,16 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 /**
  * LineChart with styling applied to remove some boilerplate
  */
-class StyledLineGraphView @JvmOverloads constructor(context: Context,
-                                                    attrs: AttributeSet? = null,
-                                                    defStyleAttr: Int = 0) : LineChart(context, attrs, defStyleAttr) {
+class StyledLineGraphView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : LineChart(context, attrs, defStyleAttr) {
     init {
         description.isEnabled = false
         axisLeft.setDrawLabels(false)
@@ -36,7 +38,7 @@ class StyledLineGraphView @JvmOverloads constructor(context: Context,
         setBorderColor(R.color.grey_500)
         setNoDataText("Loading...")
         setScaleEnabled(false)
-        setViewPortOffsets(0f,8f,0f,0f)
+        setViewPortOffsets(0f, 8f, 0f, 0f)
         val priceDateMarkerView = PriceDateMarkerView(
             context,
             DecimalFormat("$###,###,###.##").apply {
@@ -44,12 +46,12 @@ class StyledLineGraphView @JvmOverloads constructor(context: Context,
                 maximumFractionDigits = 4
             },
             SimpleDateFormat("MM/d/yyyy, hh:mm a", Locale.getDefault())
-        )//TODO PASS FORMATTER FROM CONTROLLER
+        ) // TODO PASS FORMATTER FROM CONTROLLER
         priceDateMarkerView.chartView = this
         marker = priceDateMarkerView
     }
 
-    fun setDataSet(entries: List<Entry>, label: String, @ColorInt color: Int){
+    fun setDataSet(entries: List<Entry>, label: String, @ColorInt color: Int) {
         val dataSet = LineDataSet(entries, label)
         dataSet.color = color
         dataSet.fillColor = color
@@ -59,22 +61,21 @@ class StyledLineGraphView @JvmOverloads constructor(context: Context,
         dataSet.setDrawFilled(true)
         val lineData = LineData(dataSet)
         data = lineData
-        animateY(500, Easing.EasingOption.EaseOutQuad)
+        animateY(500, Easing.EaseOutQuad)
     }
 
-    fun showLoading(){
+    fun showLoading() {
         setNoDataText("Loading...")
         invalidate()
     }
 
-    fun showNoData(){
+    fun showNoData() {
         setNoDataText("Data unavailable :(")
         invalidate()
     }
 
-    fun showError(){
+    fun showError() {
         setNoDataText("Error loading graph :(")
         invalidate()
     }
-
 }

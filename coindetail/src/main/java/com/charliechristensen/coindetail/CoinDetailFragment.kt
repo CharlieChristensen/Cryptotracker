@@ -24,20 +24,17 @@ import kotlinx.android.synthetic.main.dialog_text_input_layout.view.*
 import kotlinx.android.synthetic.main.view_coin_detail.*
 import kotlinx.android.synthetic.main.view_line_graph.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.ldralighieri.corbind.material.selections
 
-@FlowPreview
 @ExperimentalCoroutinesApi
 class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.view_coin_detail) {
 
-    private val fragmentArgs: CoinDetailFragmentArgs by navArgs()
-
     override val viewModel: CoinDetailViewModel.ViewModel by viewModel {
+        val fragmentArgs: CoinDetailFragmentArgs by navArgs()
         DaggerCoinDetailComponent.builder()
             .appComponent(injector)
             .build()
@@ -194,7 +191,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
     }
 
     private fun setButtonLayout(inPortfolio: Boolean) {
-        if(inPortfolio){
+        if (inPortfolio) {
             constraintLayout.transitionToState(R.id.editCoin)
         } else {
             constraintLayout.transitionToState(R.id.addCoin)

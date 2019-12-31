@@ -11,22 +11,23 @@ import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.navigateRight
 import com.charliechristensen.cryptotracker.common.extensions.savedStateViewModel
 import com.charliechristensen.cryptotracker.common.extensions.showToast
-import com.charliechristensen.cryptotracker.common.navigation.NavigationHelper
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
+import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
 import kotlinx.android.synthetic.main.view_search_coins.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.ldralighieri.corbind.appcompat.queryTextChanges
 
-@ExperimentalCoroutinesApi
+
 @FlowPreview
+@ExperimentalCoroutinesApi
 class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layout.view_search_coins),
     SearchCoinsAdapter.SearchCoinAdapterCallback {
 
-    private val fragmentArgs: SearchCoinsFragmentArgs by navArgs()
-
     override val viewModel: SearchCoinsViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
+        val fragmentArgs: SearchCoinsFragmentArgs by navArgs()
         DaggerCoinListComponent.builder()
             .appComponent(injector)
             .build()
@@ -50,7 +51,7 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
         viewModel.outputs.coinList
             .bind {
                 adapter.submitList(it)
-                if (coinsRecyclerView.adapter == null) { //Attaching the adapter here allows automatic state restore to work properly with async data
+                if (coinsRecyclerView.adapter == null) { // Attaching the adapter here allows automatic state restore to work properly with async data
                     coinsRecyclerView.adapter = adapter
                 }
             }
@@ -77,7 +78,7 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
     //endregion
 
     private fun pushCoinDetailController(symbol: String) {
-        findNavController().navigateRight(NavigationHelper.coinDetailUri(symbol))
+//        findNavController().navigateRight(NavigationHelper.coinDetailUri(symbol))
+        findNavController().navigateRight(NavigationGraphDirections.actionToCoinDetail(symbol))
     }
-
 }

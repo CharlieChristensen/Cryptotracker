@@ -1,6 +1,5 @@
 package com.charliechristensen.database.models
 
-
 class DbCoinWithPriceAndAmount(
     val symbol: String,
     val imageUrl: String,

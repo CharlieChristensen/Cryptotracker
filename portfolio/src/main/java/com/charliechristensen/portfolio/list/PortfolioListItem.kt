@@ -34,5 +34,4 @@ sealed class PortfolioListItem : ListItem {
         override fun areContentsTheSame(otherItem: ListItem): Boolean =
             otherItem == this
     }
-
 }

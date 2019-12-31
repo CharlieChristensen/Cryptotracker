@@ -20,5 +20,4 @@ object DatabaseModule {
             .build()
         return DatabaseApiImpl(database)
     }
-
 }

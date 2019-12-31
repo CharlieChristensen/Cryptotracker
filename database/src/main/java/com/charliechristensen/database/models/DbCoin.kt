@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-
 @Entity(tableName = "coin", indices = [(Index(value = ["sortOrder"], name = "idx"))])
 data class DbCoin(
     @PrimaryKey val symbol: String,

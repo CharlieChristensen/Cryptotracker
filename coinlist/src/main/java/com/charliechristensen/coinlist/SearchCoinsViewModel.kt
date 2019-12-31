@@ -1,19 +1,32 @@
 package com.charliechristensen.coinlist
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.charliechristensen.coinlist.list.SearchCoinsListItem
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.common.call
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-/**
- * View Model for searching all coins
- */
+
 interface SearchCoinsViewModel {
 
     interface Inputs {
@@ -80,8 +93,7 @@ interface SearchCoinsViewModel {
         override val coinList: LiveData<List<SearchCoinsListItem>> =
             flowOf(
                 flowOf(searchQueryChannel.valueOrNull ?: ""),
-                searchQueryChannel.asFlow()
-                    .debounce(400)
+                searchQueryChannel.asFlow().debounce(400)
             ).flattenMerge()
                 .distinctUntilChanged()
                 .onEach { savedState.set(KEY_SEARCH_QUERY_SAVED_STATE, it) }
@@ -104,7 +116,5 @@ interface SearchCoinsViewModel {
         companion object {
             const val KEY_SEARCH_QUERY_SAVED_STATE = "KeySearchQuerySavedState"
         }
-
     }
-
 }

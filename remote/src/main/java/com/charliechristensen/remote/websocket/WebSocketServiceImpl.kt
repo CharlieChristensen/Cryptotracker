@@ -22,7 +22,7 @@ class WebSocketServiceImpl(url: String) : WebSocketService {
     private val errorConnectingToSocketChannel = BroadcastChannel<Unit>(1)
 
     init {
-        webSocket.on("m"){
+        webSocket.on("m") {
             val socketResponse = SocketResponseMapper.mapResponse(it) ?: return@on
             if (socketResponse.subscriptionId == 5) {
                 if (socketResponse.priceDirection == 1 || socketResponse.priceDirection == 2) {
@@ -37,21 +37,21 @@ class WebSocketServiceImpl(url: String) : WebSocketService {
         }
     }
 
-    override fun connect(onConnection: (WebSocketService) -> Unit){
-        if(!webSocket.connected()){
+    override fun connect(onConnection: (WebSocketService) -> Unit) {
+        if (!webSocket.connected()) {
             webSocket.connect()
-            webSocket.on(Socket.EVENT_CONNECT){
+            webSocket.on(Socket.EVENT_CONNECT) {
                 onConnection.invoke(this)
             }
             webSocket.on(Socket.EVENT_ERROR) {
                 errorConnectingToSocketChannel.offer(Unit)
             }
-        }else{
+        } else {
             onConnection.invoke(this)
         }
     }
 
-    override fun disconnect(){
+    override fun disconnect() {
         temporarySubscriptions.clear()
         portfolioSubscriptions.clear()
         webSocket.disconnect()
@@ -60,7 +60,7 @@ class WebSocketServiceImpl(url: String) : WebSocketService {
     override fun priceUpdateReceived(): Flow<SymbolPricePair> =
         priceUpdateReceivedChannel.asFlow()
 
-    override fun setPortfolioSubscriptions(symbols: Collection<String>, currency: String){
+    override fun setPortfolioSubscriptions(symbols: Collection<String>, currency: String) {
         val symbolsToUnsubscribe = portfolioSubscriptions.minus(symbols).minus(temporarySubscriptions)
         val symbolsToSubscribe = symbols.minus(portfolioSubscriptions).minus(temporarySubscriptions)
         portfolioSubscriptions.clear()
@@ -69,21 +69,21 @@ class WebSocketServiceImpl(url: String) : WebSocketService {
         addSubscriptions(symbolsToSubscribe, currency)
     }
 
-    override fun addTemporarySubscription(symbol: String, currency: String){
+    override fun addTemporarySubscription(symbol: String, currency: String) {
         temporarySubscriptions.add(symbol)
-        if(!portfolioSubscriptions.contains(symbol)) {
+        if (!portfolioSubscriptions.contains(symbol)) {
             addSubscriptions(listOf(symbol), currency)
         }
     }
 
-    override fun clearTemporarySubscriptions(currency: String){
+    override fun clearTemporarySubscriptions(currency: String) {
         val symbolsToUnsubscribe = temporarySubscriptions.minus(portfolioSubscriptions)
         temporarySubscriptions.clear()
         removeSubscriptions(symbolsToUnsubscribe, currency)
     }
 
-    private fun addSubscriptions(symbols: List<String>, currency: String): Boolean{
-        if(webSocket.connected() && symbols.isNotEmpty()) {
+    private fun addSubscriptions(symbols: List<String>, currency: String): Boolean {
+        if (webSocket.connected() && symbols.isNotEmpty()) {
             try {
                 val jsonArray = JSONArray()
                 symbols.forEach {
@@ -94,14 +94,14 @@ class WebSocketServiceImpl(url: String) : WebSocketService {
                 webSocket.emit("SubAdd", jsonParams)
                 return true
             } catch (e: Exception) {
-                //JSON Exception
+                // JSON Exception
             }
         }
         return false
     }
 
-    private fun removeSubscriptions(symbols: Iterable<String>, currency: String): Boolean{
-        if(webSocket.connected()) {
+    private fun removeSubscriptions(symbols: Iterable<String>, currency: String): Boolean {
+        if (webSocket.connected()) {
             try {
                 val jsonArray = JSONArray()
                 symbols.forEach {
@@ -112,7 +112,7 @@ class WebSocketServiceImpl(url: String) : WebSocketService {
                 webSocket.emit("SubRemove", jsonParams)
                 return true
             } catch (e: Exception) {
-                //JSON Exception
+                // JSON Exception
             }
         }
         return false

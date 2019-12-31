@@ -34,13 +34,14 @@ class SocketResponseMapper {
             }
             return null
         }
-
     }
 }
 
-data class SocketResponse(val subscriptionId: Int,
-                          val exchangeName: String,
-                          val fromCurrency: String,
-                          val toCurrency: String,
-                          val priceDirection: Int,
-                          val price: Double)
+data class SocketResponse(
+    val subscriptionId: Int,
+    val exchangeName: String,
+    val fromCurrency: String,
+    val toCurrency: String,
+    val priceDirection: Int,
+    val price: Double
+)

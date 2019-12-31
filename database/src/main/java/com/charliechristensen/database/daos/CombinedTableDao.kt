@@ -16,7 +16,7 @@ interface CombinedTableDao {
         "SELECT * FROM coin " +
                 "WHERE NOT EXISTS " +
                 "(SELECT NULL FROM portfolio_coin WHERE coin.symbol = portfolio_coin.symbol) AND " +
-                "coin.coinName LIKE '%' || :query || '%' "+
+                "coin.coinName LIKE '%' || :query || '%' " +
                 "ORDER BY sortOrder"
     )
     fun searchUnownedCoinsByName(query: String): Flow<List<DbCoin>>
@@ -28,5 +28,4 @@ interface CombinedTableDao {
                 "INNER JOIN coin_price_data ON coin_price_data.symbol = portfolio_coin.symbol"
     )
     fun getPortfolioData(): Flow<List<DbCoinWithPriceAndAmount>>
-
 }

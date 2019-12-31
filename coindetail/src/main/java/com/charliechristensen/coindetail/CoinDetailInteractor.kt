@@ -11,14 +11,12 @@ import com.charliechristensen.cryptotracker.data.models.ui.ImageAndNamePair
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-@FlowPreview
 @ExperimentalCoroutinesApi
 class CoinDetailInteractor @Inject constructor(
     private val repository: Repository,
@@ -109,5 +107,4 @@ class CoinDetailInteractor @Inject constructor(
     fun clearTemporarySubscriptions(currency: String) {
         repository.clearTemporarySubscriptions(currency)
     }
-
 }

@@ -2,21 +2,17 @@ package com.charliechristensen.portfolio
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.common.call
 import com.charliechristensen.portfolio.list.PortfolioListItem
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
 
-@FlowPreview
-@ExperimentalCoroutinesApi
 interface PortfolioCoinListViewModel {
 
     interface Inputs {
@@ -30,6 +26,7 @@ interface PortfolioCoinListViewModel {
         val showNetworkError: LiveData<Unit>
     }
 
+    @ExperimentalCoroutinesApi
     class ViewModel @Inject constructor(
         portfolioInteractor: PortfolioInteractor
     ) : BaseViewModel(), Inputs, Outputs {
@@ -68,7 +65,5 @@ interface PortfolioCoinListViewModel {
         override val showNetworkError: LiveData<Unit> = showNetworkErrorChannel
 
         //endregion
-
     }
-
 }

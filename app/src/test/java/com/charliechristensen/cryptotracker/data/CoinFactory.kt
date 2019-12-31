@@ -51,7 +51,6 @@ object CoinFactory {
         )
     }
 
-
     fun makePortfolioCoinList(count: Int): List<DbPortfolioCoin> {
         val coins = mutableListOf<DbPortfolioCoin>()
         repeat(count) {
@@ -115,5 +114,4 @@ object CoinFactory {
         }
         return list
     }
-
 }

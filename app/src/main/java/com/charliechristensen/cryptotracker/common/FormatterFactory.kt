@@ -23,5 +23,4 @@ class FormatterFactory @Inject constructor() {
             NumberFormat.getPercentInstance().apply {
                 minimumFractionDigits = 2
             }
-
 }

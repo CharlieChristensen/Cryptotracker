@@ -46,5 +46,4 @@ interface CryptoService {
         @Query("aggregate") aggregate: Int = 1,
         @Query("e") exchange: String = "CCCAGG"
     ): ServerHistoryResponse
-
 }

@@ -51,5 +51,4 @@ class PortfolioCoinCell(
                 .into(logoImageView)
         }
     }
-
 }

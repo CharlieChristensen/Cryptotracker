@@ -24,5 +24,4 @@ class AddCoinCell(
             onClickItemCallback(listItem)
         }
     }
-
 }

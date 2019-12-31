@@ -9,7 +9,7 @@ class SearchCoinsRefreshCell(
     inflater: LayoutInflater,
     parent: ViewGroup,
     callback: SearchCoinsAdapter.SearchCoinAdapterCallback
-): BaseViewHolder<SearchCoinsListItem>(
+) : BaseViewHolder<SearchCoinsListItem>(
     inflater.inflate(R.layout.cell_coin_list_footer, parent, false)
 ) {
     init {

@@ -2,17 +2,20 @@ package com.charliechristensen.cryptotracker.common
 
 import com.charliechristensen.cryptotracker.common.extensions.mapItems
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 
 /**
- * Exposes observable while deciding when to call network and cache
+ * Exposes Flow while deciding when to call network and cache
  */
-@ExperimentalCoroutinesApi
 abstract class RxNetworkBoundResource<DbType, RemoteType, UiType> {
 
     private var isFirstElement: Boolean = true
 
-    val flow : Flow<List<UiType>> by lazy {
+    @ExperimentalCoroutinesApi
+    val flow: Flow<List<UiType>> by lazy {
         loadFromDb()
             .flatMapLatest { dbList ->
                 if (isFirstElement && shouldFetch(dbList)) {
@@ -46,5 +49,4 @@ abstract class RxNetworkBoundResource<DbType, RemoteType, UiType> {
     protected abstract fun mapToDbType(value: RemoteType): List<DbType>
 
     protected abstract fun mapToUiType(value: DbType): UiType
-
 }

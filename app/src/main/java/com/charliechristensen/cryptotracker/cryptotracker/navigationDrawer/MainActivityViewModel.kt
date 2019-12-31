@@ -7,14 +7,11 @@ import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.LiveUpdatePriceClient
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.drop
 import javax.inject.Inject
 
 interface MainActivityViewModel {
 
-    interface Inputs {
-    }
+    interface Inputs
 
     interface Outputs {
         val theme: LiveData<AppTheme>
@@ -22,7 +19,6 @@ interface MainActivityViewModel {
     }
 
     @ExperimentalCoroutinesApi
-    @FlowPreview
     class ViewModel @Inject constructor(
         private val liveUpdatePriceClient: LiveUpdatePriceClient,
         private val appPreferences: AppPreferences
@@ -53,7 +49,5 @@ interface MainActivityViewModel {
             .asLiveData()
 
         //endregion
-
     }
-
 }

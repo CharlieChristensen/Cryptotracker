@@ -27,5 +27,4 @@ class SearchCoinsCell(
                 .into(logoImageView)
         }
     }
-
 }

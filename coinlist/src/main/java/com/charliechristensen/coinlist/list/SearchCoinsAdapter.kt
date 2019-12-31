@@ -25,5 +25,4 @@ class SearchCoinsAdapter(private val callback: SearchCoinAdapterCallback) : Base
             else -> error("No view for viewType:$viewType exists for ${SearchCoinsAdapter::class.java.simpleName}")
         }
     }
-
 }

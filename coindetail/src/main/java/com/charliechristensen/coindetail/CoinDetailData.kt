@@ -15,7 +15,7 @@ data class CoinDetailData(
     val toolbarImageData: ImageAndNamePair = ImageAndNamePair()
 )
 
-//data class CoinDetailDatas(
+// data class CoinDetailDatas(
 //    val coinIsInPortfolio: CoinDetailField<Boolean> = CoinDetailField(false),
 //    val walletUnitsOwned: CoinDetailField<Double> = CoinDetailField(0.0),
 //    val pricePerUnit: CoinDetailField<Double> = CoinDetailField(0.0),
@@ -27,15 +27,15 @@ data class CoinDetailData(
 //        ValueChangeColor.RED
 //    ),
 //    val toolbarImageData: ImageAndNamePair = ImageAndNamePair()
-//) {
+// ) {
 //
 //    fun compare(other: CoinDetailDatas) {
 //
 //    }
 //
-//}
+// }
 //
-//class CoinDetailField<T>(
+// class CoinDetailField<T>(
 //    val value: T,
 //    val isDirty: Boolean = true
-//)
+// )

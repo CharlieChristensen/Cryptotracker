@@ -1,6 +1,5 @@
 package com.charliechristensen.remote.models
 
-import com.charliechristensen.remote.models.ServerCoinData
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

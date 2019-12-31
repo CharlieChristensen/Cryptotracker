@@ -21,5 +21,4 @@ interface CoinPriceDao {
 
     @Query("UPDATE coin_price_data SET price = :price WHERE symbol = :coinSymbol")
     suspend fun updatePrice(coinSymbol: String, price: Double)
-
 }

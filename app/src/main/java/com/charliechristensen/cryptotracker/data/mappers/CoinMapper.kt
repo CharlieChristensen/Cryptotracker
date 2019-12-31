@@ -7,7 +7,6 @@ import com.charliechristensen.database.models.DbCoin
 import com.charliechristensen.database.models.DbCoinPriceData
 import com.charliechristensen.database.models.DbCoinWithPriceAndAmount
 
-
 fun DbCoin.toUi(): Coin = Coin(
     imageUrl,
     symbol,

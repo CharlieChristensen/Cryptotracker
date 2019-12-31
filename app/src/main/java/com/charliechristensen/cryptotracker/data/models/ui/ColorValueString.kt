@@ -2,7 +2,6 @@ package com.charliechristensen.cryptotracker.data.models.ui
 
 import java.text.NumberFormat
 
-
 /**
  * Represents a value with a corresponding color
  *
@@ -10,16 +9,19 @@ import java.text.NumberFormat
  * RED if the value is < 0
  *
  */
-data class ColorValueString constructor(val value: String,
-                                        val color: ValueChangeColor
+data class ColorValueString constructor(
+    val value: String,
+    val color: ValueChangeColor
 ) {
 
     companion object {
-        fun create(valueChangeDouble: Double = 0.0,
-                   formatter: NumberFormat = NumberFormat.getInstance().apply {
-                       minimumFractionDigits = 2
-                       maximumFractionDigits = 2
-                   }): ColorValueString {
+        fun create(
+            valueChangeDouble: Double = 0.0,
+            formatter: NumberFormat = NumberFormat.getInstance().apply {
+                minimumFractionDigits = 2
+                maximumFractionDigits = 2
+            }
+        ): ColorValueString {
             val color: ValueChangeColor
             val value: String
             when {
@@ -39,7 +41,6 @@ data class ColorValueString constructor(val value: String,
             )
         }
     }
-
 }
 
 enum class ValueChangeColor {

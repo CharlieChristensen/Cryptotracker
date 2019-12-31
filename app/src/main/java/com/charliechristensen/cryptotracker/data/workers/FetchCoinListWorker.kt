@@ -4,11 +4,8 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.charliechristensen.cryptotracker.MainApplication
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 
-@FlowPreview
-@ExperimentalCoroutinesApi
+
 class FetchCoinListWorker(
     context: Context,
     params: WorkerParameters

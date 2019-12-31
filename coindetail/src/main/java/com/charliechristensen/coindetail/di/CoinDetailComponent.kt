@@ -5,10 +5,8 @@ import com.charliechristensen.cryptotracker.di.AppComponent
 import com.charliechristensen.cryptotracker.di.PerModuleScope
 import dagger.Component
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 
 @ExperimentalCoroutinesApi
-@FlowPreview
 @PerModuleScope
 @Component(
     dependencies = [AppComponent::class],
@@ -17,5 +15,4 @@ import kotlinx.coroutines.FlowPreview
 interface CoinDetailComponent {
 
     val coinDetailViewModelFactory: CoinDetailViewModel.ViewModel.Factory
-
 }

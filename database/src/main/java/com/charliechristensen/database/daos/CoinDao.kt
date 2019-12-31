@@ -31,5 +31,4 @@ interface CoinDao {
                 "ORDER BY sortOrder"
     )
     fun searchCoinsByName(query: String): Flow<List<DbCoin>>
-
 }

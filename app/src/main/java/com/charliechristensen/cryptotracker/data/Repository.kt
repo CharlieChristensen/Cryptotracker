@@ -6,13 +6,10 @@ import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
 import com.charliechristensen.remote.models.SymbolPricePair
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 
-@ExperimentalCoroutinesApi
-@FlowPreview
 interface Repository {
+
     fun searchCoinsWithQuery(query: CharSequence): Flow<List<Coin>>
     fun searchUnownedCoinWithQuery(query: CharSequence): Flow<List<Coin>>
     fun getCoinDetails(symbol: String): Flow<List<Coin>>
@@ -34,10 +31,11 @@ interface Repository {
     suspend fun refreshCoinListIfNeeded()
     suspend fun addPortfolioCoin(symbol: String, amountOwned: Double)
     suspend fun removeCoinFromPortfolio(symbol: String)
+    suspend fun updatePriceForCoin(coinSymbol: String, price: Double)
     suspend fun getHistoricalDataForCoin(
         symbol: String,
         timePeriod: CoinHistoryTimePeriod,
         forceRefresh: Boolean = true
     ): CoinHistory
-    suspend fun updatePriceForCoin(coinSymbol: String, price: Double)
+
 }

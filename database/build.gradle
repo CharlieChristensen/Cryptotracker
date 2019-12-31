@@ -11,14 +11,7 @@ android {
         targetSdkVersion versions.targetSDK
         versionCode 1
         versionName "1.0"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.incremental":"true"]
-            }
-        }
-
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

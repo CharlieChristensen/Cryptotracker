@@ -13,7 +13,6 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -51,7 +50,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
-    implementation "com.github.akarnokd:kotlin-flow-extensions:$versions.flow_extensions"
     implementation "ru.ldralighieri.corbind:corbind:$versions.corbind"
     implementation "ru.ldralighieri.corbind:corbind-appcompat:$versions.corbind"
 

@@ -8,7 +8,9 @@ import com.charliechristensen.cryptotracker.data.mappers.toUi
 import com.charliechristensen.cryptotracker.data.models.graph.CoinHistory
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
-import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits.*
+import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits.DAY
+import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits.HOUR
+import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits.MINUTE
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
 import com.charliechristensen.database.DatabaseApi
@@ -18,18 +20,15 @@ import com.charliechristensen.remote.models.ServerCoinPriceData
 import com.charliechristensen.remote.models.SymbolPricePair
 import com.charliechristensen.remote.webservice.CryptoService
 import com.charliechristensen.remote.websocket.WebSocketService
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 
 /**
  * Repository
  */
-@FlowPreview
-@ExperimentalCoroutinesApi
-internal class RepositoryImpl constructor(
+class RepositoryImpl @Inject constructor(
     private val service: CryptoService,
     private val database: DatabaseApi,
     private val webSocket: WebSocketService
@@ -54,6 +53,7 @@ internal class RepositoryImpl constructor(
         database.getPortfolioData()
             .mapItems { it.toUi() }
 
+    @ExperimentalCoroutinesApi
     override fun getCoinPriceData(
         symbol: String,
         forceRefresh: Boolean
@@ -89,7 +89,6 @@ internal class RepositoryImpl constructor(
                 service.getFullCoinPrice(symbol, Constants.MyCurrency)
 
             override fun mapToUiType(value: DbCoinPriceData): CoinPriceData = value.toUi()
-
         }.flow
 
     override suspend fun forceRefreshCoinListAndSaveToDb() {
@@ -162,5 +161,4 @@ internal class RepositoryImpl constructor(
 
     override suspend fun updatePriceForCoin(coinSymbol: String, price: Double) =
         database.updatePrice(coinSymbol, price)
-
 }

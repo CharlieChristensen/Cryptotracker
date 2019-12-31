@@ -5,17 +5,18 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.charliechristensen.cryptotracker.common.ColorUtils
-import com.charliechristensen.cryptotracker.common.extensions.*
-import com.charliechristensen.cryptotracker.common.navigation.NavigationHelper
+import com.charliechristensen.cryptotracker.common.extensions.getColorFromResource
+import com.charliechristensen.cryptotracker.common.extensions.injector
+import com.charliechristensen.cryptotracker.common.extensions.navigateRight
+import com.charliechristensen.cryptotracker.common.extensions.showToast
+import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
+import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
 import com.charliechristensen.portfolio.di.DaggerPortfolioComponent
 import com.charliechristensen.portfolio.list.PortfolioAdapter
 import kotlinx.android.synthetic.main.view_portfolio_coin_list.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 
-
-@FlowPreview
 @ExperimentalCoroutinesApi
 class PortfolioFragment :
     BaseFragment<PortfolioCoinListViewModel.ViewModel>(R.layout.view_portfolio_coin_list) {
@@ -43,7 +44,6 @@ class PortfolioFragment :
 
         viewModel.outputs.showChooseCoinsListController
             .bind { pushChooseCoinsListController() }
-
     }
 
     private fun renderViewState(portfolioState: PortfolioListData) {
@@ -65,7 +65,6 @@ class PortfolioFragment :
             ?.let { colorInt ->
                 portfolio24HourChangeTextView.setTextColor(colorInt)
             }
-
     }
 
     private fun getAdapter(): PortfolioAdapter =
@@ -78,12 +77,10 @@ class PortfolioFragment :
             })
 
     private fun pushCoinDetailController(symbol: String) {
-        findNavController().navigateRight(NavigationHelper.coinDetailUri(symbol))
+        findNavController().navigateRight(NavigationGraphDirections.actionToCoinDetail(symbol))
     }
 
     private fun pushChooseCoinsListController() {
-        findNavController().navigateRight(NavigationHelper.coinListUri(true))
+        findNavController().navigateRight(NavigationGraphDirections.actionToCoinList(true))
     }
-
 }
-

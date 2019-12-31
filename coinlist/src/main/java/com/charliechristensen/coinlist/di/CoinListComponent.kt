@@ -7,8 +7,6 @@ import dagger.Component
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
-@ExperimentalCoroutinesApi
-@FlowPreview
 @PerModuleScope
 @Component(
     dependencies = [AppComponent::class],
@@ -16,6 +14,8 @@ import kotlinx.coroutines.FlowPreview
 )
 interface CoinListComponent {
 
+    @FlowPreview
+    @ExperimentalCoroutinesApi
     val searchCoinsViewModelFactory: SearchCoinsViewModel.ViewModel.Factory
 
 }

@@ -2,14 +2,10 @@ package com.charliechristensen.coinlist
 
 import com.charliechristensen.coinlist.list.SearchCoinsListItem
 import com.charliechristensen.cryptotracker.data.Repository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-@FlowPreview
-@ExperimentalCoroutinesApi
 class SearchCoinsInteractor @Inject constructor(
     private val repository: Repository
 ) {
@@ -37,5 +33,4 @@ class SearchCoinsInteractor @Inject constructor(
     suspend fun forceRefreshCoinListAndSaveToDb() {
         repository.forceRefreshCoinListAndSaveToDb()
     }
-
 }

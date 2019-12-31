@@ -3,12 +3,20 @@ package com.charliechristensen.cryptotracker.common
 import android.util.Log
 import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@FlowPreview
 @ExperimentalCoroutinesApi
 @Singleton
 class LiveUpdatePriceClient @Inject constructor(
@@ -19,7 +27,6 @@ class LiveUpdatePriceClient @Inject constructor(
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
     fun start() {
-
         appPreferences.liveUpdatePrices()
             .flatMapLatest { isSet ->
                 if (isSet) {
@@ -40,11 +47,9 @@ class LiveUpdatePriceClient @Inject constructor(
         repository.priceUpdateReceived()
             .onEach { repository.updatePriceForCoin(it.symbol, it.price) }
             .launchIn(scope)
-
     }
 
     fun stop() {
         scope.coroutineContext.cancelChildren()
     }
-
 }

@@ -7,7 +7,7 @@ import com.charliechristensen.database.daos.PortfolioCoinDao
 import javax.inject.Inject
 
 internal class DatabaseApiImpl @Inject constructor(
-    val database: AppDatabase
+    private val database: AppDatabase
 ) : DatabaseApi,
     CoinDao by database.coinDao(),
     CoinPriceDao by database.coinPriceDao(),

@@ -5,13 +5,11 @@ import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.portfolio.list.PortfolioListItem
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-@FlowPreview
 @ExperimentalCoroutinesApi
 class PortfolioInteractor @Inject constructor(
     private val repository: Repository,
@@ -57,7 +55,7 @@ class PortfolioInteractor @Inject constructor(
                 )
             }
             .plus(PortfolioListItem.AddCoin)
-        val percentChange24Hour = if(portfolioOpenDouble > 0.0) {
+        val percentChange24Hour = if (portfolioOpenDouble > 0.0) {
             val percentChange = (portfolioValueDouble - portfolioOpenDouble) / portfolioOpenDouble
             ColorValueString.create(percentChange, formatterFactory.percentFormatter())
         } else {
@@ -72,6 +70,4 @@ class PortfolioInteractor @Inject constructor(
             formatterFactory.currencyFormatter().format(portfolioValueDouble)
         )
     }
-
 }
-

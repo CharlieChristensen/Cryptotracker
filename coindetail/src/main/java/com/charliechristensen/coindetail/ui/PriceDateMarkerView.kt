@@ -8,13 +8,11 @@ import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
-import kotlinx.android.synthetic.main.view_price_date_marker.view.*
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import kotlinx.android.synthetic.main.view_price_date_marker.view.*
 
-/**
- * Created by Chuck on 1/8/2018.
- */
+
 @SuppressLint("SimpleDateFormat")
 class PriceDateMarkerView @JvmOverloads constructor(
     context: Context,
@@ -34,14 +32,10 @@ class PriceDateMarkerView @JvmOverloads constructor(
     }
 
     override fun draw(canvas: Canvas, posX: Float, posY: Float) {
-
         val offset = getOffsetForDrawingAtPoint(posX, posY)
-
         val saveId = canvas.save()
-        // translate to the correct position and draw
         canvas.translate(posX + offset.x, 0f)
         draw(canvas)
         canvas.restoreToCount(saveId)
     }
-
 }

@@ -6,16 +6,14 @@ import com.charliechristensen.remote.websocket.WebSocketServiceImpl
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import javax.inject.Named
+import javax.inject.Singleton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import javax.inject.Named
-import javax.inject.Singleton
 
-@ExperimentalCoroutinesApi
-@FlowPreview
 @Suppress("unused")
 @Module
 object RemoteModule {
@@ -29,6 +27,8 @@ object RemoteModule {
         return retrofit.create(CryptoService::class.java)
     }
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
     @Provides
     @Singleton
     fun provideWebSocket(
@@ -40,14 +40,15 @@ object RemoteModule {
     ): Retrofit {
         val moshi = provideMoshi()
         val okHttpClient = provideOkHttpClient()
+        val moshiConverterFactory = provideMoshiConverterFactory(moshi)
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .callFactory { okHttpClient.get().newCall(it) }
-            .addConverterFactory(provideMoshiConverterFactory(moshi))
+            .client(okHttpClient)
+            .addConverterFactory(moshiConverterFactory)
             .build()
     }
 
-    private fun provideOkHttpClient(): dagger.Lazy<OkHttpClient> = dagger.Lazy { OkHttpClient() }
+    private fun provideOkHttpClient(): OkHttpClient = OkHttpClient()
 
     private fun provideMoshi(): Moshi = Moshi.Builder().build()
 
@@ -55,5 +56,4 @@ object RemoteModule {
         MoshiConverterFactory.create(
             moshi
         )
-
 }

@@ -34,8 +34,7 @@ android {
         }
     }
 
-    dynamicFeatures = [":coindetail", ":settings", ":coinlist", ":portfolio"]
-
+    dynamicFeatures = [":coindetail", ":settings", ":coinlist", ":portfolio", ":themeplayground"]
 }
 
 androidExtensions {
@@ -43,6 +42,7 @@ androidExtensions {
 }
 
 dependencies {
+    api 'androidx.core:core-ktx:1.1.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':remote')
     implementation project(':database')
@@ -62,11 +62,12 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:$versions.fragment"
     implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$versions.navigation"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$versions.dynamic_navigation"
     implementation "com.google.android.play:core:$versions.play_core"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
-    implementation "com.github.akarnokd:kotlin-flow-extensions:$versions.flow_extensions"
     implementation "ru.ldralighieri.corbind:corbind:$versions.corbind"
+    implementation "com.github.tfcporciuncula:flow-preferences:$versions.flow_prefs"
     implementation "androidx.work:work-runtime-ktx:$versions.work_manager"
 
     implementation "com.google.dagger:dagger:$versions.dagger"

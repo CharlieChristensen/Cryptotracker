@@ -33,5 +33,4 @@ interface PortfolioCoinDao {
 
     @Query("SELECT amountOwned FROM portfolio_coin WHERE symbol = :symbol")
     fun getUnitsOwnedForSymbol(symbol: String): Flow<List<Double>>
-
 }
