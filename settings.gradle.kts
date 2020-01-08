@@ -1,0 +1,10 @@
+include(
+    ":app",
+    ":coindetail",
+    ":settings",
+    ":coinlist",
+    ":portfolio",
+    ":remote",
+    ":database",
+    ":themeplayground"
+)
