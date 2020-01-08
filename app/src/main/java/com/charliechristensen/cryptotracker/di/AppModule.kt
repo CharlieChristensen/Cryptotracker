@@ -3,6 +3,8 @@ package com.charliechristensen.cryptotracker.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.charliechristensen.cryptotracker.common.navigator.Navigator
+import com.charliechristensen.cryptotracker.common.navigator.NavigatorImpl
 import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.charliechristensen.cryptotracker.data.Repository
@@ -15,9 +17,9 @@ import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Suppress("unused")
 @AssistedModule
@@ -48,6 +50,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideNavigator(
+        navigator: NavigatorImpl
+    ): Navigator = navigator
+
+    @Provides
+    @Singleton
     fun provideSharedPreferences(applicationContext: Context): SharedPreferences =
         applicationContext.getSharedPreferences(
             "cryptotracker-shared-preferences",
@@ -59,5 +67,4 @@ object AppModule {
     @Reusable
     fun provideAppPreferences(appPreferencesImpl: AppPreferencesImpl): AppPreferences =
         appPreferencesImpl
-
 }

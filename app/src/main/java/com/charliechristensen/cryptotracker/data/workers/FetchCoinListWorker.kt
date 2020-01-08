@@ -5,7 +5,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.charliechristensen.cryptotracker.MainApplication
 
-
 class FetchCoinListWorker(
     context: Context,
     params: WorkerParameters

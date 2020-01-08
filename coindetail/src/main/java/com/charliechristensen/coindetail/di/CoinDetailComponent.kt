@@ -13,6 +13,5 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
     modules = [CoinDetailModule::class]
 )
 interface CoinDetailComponent {
-
     val coinDetailViewModelFactory: CoinDetailViewModel.ViewModel.Factory
 }

@@ -7,7 +7,6 @@ import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.charliechristensen.coindetail.data.CoinDetailGraphState
@@ -25,16 +24,15 @@ import kotlinx.android.synthetic.main.view_coin_detail.*
 import kotlinx.android.synthetic.main.view_line_graph.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import ru.ldralighieri.corbind.material.selections
+import ru.ldralighieri.corbind.view.clicks
 
 @ExperimentalCoroutinesApi
 class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.view_coin_detail) {
 
     override val viewModel: CoinDetailViewModel.ViewModel by viewModel {
-        val fragmentArgs: CoinDetailFragmentArgs by navArgs()
+        val fragmentArgs = CoinDetailFragmentArgs.fromBundle(requireArguments())
         DaggerCoinDetailComponent.builder()
             .appComponent(injector)
             .build()
@@ -115,20 +113,16 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         dateTabLayout.selections()
             .distinctUntilChanged()
             .map { it.position }
-            .onEach { viewModel.inputs.graphDateSelectionChanged(it) }
-            .launchIn(viewBindingScope)
+            .bind { viewModel.inputs.graphDateSelectionChanged(it) }
 
-        addToPortfolioButton.setOnClickListener {
-            viewModel.inputs.addCoinButtonClicked()
-        }
+        addToPortfolioButton.clicks()
+            .bind { viewModel.inputs.addCoinButtonClicked() }
 
-        editQuantityButton.setOnClickListener {
-            viewModel.inputs.editQuantityButtonClicked()
-        }
+        editQuantityButton.clicks()
+            .bind { viewModel.inputs.editQuantityButtonClicked() }
 
-        removeFromPortfolioButton.setOnClickListener {
-            viewModel.inputs.removeFromPortfolioButtonClicked()
-        }
+        removeFromPortfolioButton.clicks()
+            .bind { viewModel.inputs.removeFromPortfolioButtonClicked() }
     }
 
     //region View Helpers
@@ -138,7 +132,8 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         when (graphState) {
             is CoinDetailGraphState.Success -> {
                 val color = activity.getColorFromResource(ColorUtils.getColorInt(graphState.color))
-                val title = activity.getString(com.charliechristensen.cryptotracker.cryptotracker.R.string.history)
+                val title =
+                    activity.getString(com.charliechristensen.cryptotracker.cryptotracker.R.string.history)
                 lineGraphView?.setDataSet(graphState.coinHistoryList, title, color)
             }
             CoinDetailGraphState.Loading -> {

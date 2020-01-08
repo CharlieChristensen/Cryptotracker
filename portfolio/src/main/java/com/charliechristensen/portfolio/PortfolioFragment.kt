@@ -2,16 +2,13 @@ package com.charliechristensen.portfolio
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.common.extensions.getColorFromResource
 import com.charliechristensen.cryptotracker.common.extensions.injector
-import com.charliechristensen.cryptotracker.common.extensions.navigateRight
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
-import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
 import com.charliechristensen.portfolio.di.DaggerPortfolioComponent
 import com.charliechristensen.portfolio.list.PortfolioAdapter
 import kotlinx.android.synthetic.main.view_portfolio_coin_list.*
@@ -38,12 +35,6 @@ class PortfolioFragment :
 
         viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
-
-        viewModel.outputs.showCoinDetailController
-            .bind { pushCoinDetailController(it) }
-
-        viewModel.outputs.showChooseCoinsListController
-            .bind { pushChooseCoinsListController() }
     }
 
     private fun renderViewState(portfolioState: PortfolioListData) {
@@ -76,11 +67,4 @@ class PortfolioFragment :
                 recyclerView.layoutManager = LinearLayoutManager(context)
             })
 
-    private fun pushCoinDetailController(symbol: String) {
-        findNavController().navigateRight(NavigationGraphDirections.actionToCoinDetail(symbol))
-    }
-
-    private fun pushChooseCoinsListController() {
-        findNavController().navigateRight(NavigationGraphDirections.actionToCoinList(true))
-    }
 }

@@ -2,13 +2,16 @@ package com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer
 
 import android.os.Bundle
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.charliechristensen.cryptotracker.common.AppTheme
+import com.charliechristensen.cryptotracker.common.extensions.hideKeyboard
 import com.charliechristensen.cryptotracker.common.extensions.injector
+import com.charliechristensen.cryptotracker.common.extensions.navigateRight
 import com.charliechristensen.cryptotracker.common.extensions.skip
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseActivity
@@ -17,6 +20,9 @@ import kotlinx.android.synthetic.main.activity_navigation_drawer.*
 import kotlinx.android.synthetic.main.app_bar_navigation_drawer.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import ru.ldralighieri.corbind.navigation.destinationChanges
 
 @ExperimentalCoroutinesApi
 @FlowPreview
@@ -36,9 +42,16 @@ class MainActivity : BaseActivity(R.layout.activity_navigation_drawer) {
         setSupportActionBar(toolbar)
         setupNavigationMenus()
 
+        navController.destinationChanges()
+            .onEach { hideKeyboard() }
+            .launchIn(lifecycleScope)
+
         viewModel.outputs.theme
             .skip(1)
             .bind { changeTheme(it, true) }
+
+        viewModel.outputs.navigationEvents
+            .bind(navController::navigateRight)
     }
 
     override fun onSupportNavigateUp(): Boolean = navigateUp(navController, drawerLayout)

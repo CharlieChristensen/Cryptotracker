@@ -5,13 +5,14 @@ import androidx.lifecycle.asLiveData
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.common.call
+import com.charliechristensen.cryptotracker.common.navigator.Navigator
+import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
 import com.charliechristensen.portfolio.list.PortfolioListItem
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
-
 
 interface PortfolioCoinListViewModel {
 
@@ -21,18 +22,15 @@ interface PortfolioCoinListViewModel {
 
     interface Outputs {
         val portfolioState: LiveData<PortfolioListData>
-        val showCoinDetailController: LiveData<String>
-        val showChooseCoinsListController: LiveData<Unit>
         val showNetworkError: LiveData<Unit>
     }
 
     @ExperimentalCoroutinesApi
     class ViewModel @Inject constructor(
+        private val navigator: Navigator,
         portfolioInteractor: PortfolioInteractor
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val showCoinDetailControllerChannel = SingleLiveEvent<String>()
-        private val showAddCoinListControllerChannel = SingleLiveEvent<Unit>()
         private val showNetworkErrorChannel = SingleLiveEvent<Unit>()
 
         val inputs: Inputs = this
@@ -42,8 +40,16 @@ interface PortfolioCoinListViewModel {
 
         override fun onClickItem(item: PortfolioListItem) {
             when (item) {
-                is PortfolioListItem.Coin -> showCoinDetailControllerChannel.setValue(item.symbol)
-                PortfolioListItem.AddCoin -> showAddCoinListControllerChannel.call()
+                is PortfolioListItem.Coin -> navigator.navigate(
+                    NavigationGraphDirections.actionToCoinDetail(
+                        item.symbol
+                    )
+                )
+                PortfolioListItem.AddCoin -> navigator.navigate(
+                    NavigationGraphDirections.actionToCoinList(
+                        true
+                    )
+                )
             }
         }
 
@@ -56,11 +62,6 @@ interface PortfolioCoinListViewModel {
                 .flowOn(Dispatchers.IO)
                 .catch { showNetworkErrorChannel.call() }
                 .asLiveData()
-
-        override val showCoinDetailController: LiveData<String> = showCoinDetailControllerChannel
-
-        override val showChooseCoinsListController: LiveData<Unit> =
-            showAddCoinListControllerChannel
 
         override val showNetworkError: LiveData<Unit> = showNetworkErrorChannel
 

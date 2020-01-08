@@ -9,7 +9,11 @@ import androidx.lifecycle.Observer
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int) :
     Fragment(contentLayoutId) {
@@ -34,5 +38,11 @@ abstract class BaseFragment<VM : BaseViewModel>(@LayoutRes contentLayoutId: Int)
 
     inline fun <T> LiveData<T>.bind(crossinline observer: (T) -> Unit) {
         this.observe(viewLifecycleOwner, Observer { observer(it) })
+    }
+
+    @ExperimentalCoroutinesApi
+    protected inline fun <T> Flow<T>.bind(crossinline observer: (T) -> Unit) {
+        this.onEach { observer(it) }
+            .launchIn(viewBindingScope)
     }
 }

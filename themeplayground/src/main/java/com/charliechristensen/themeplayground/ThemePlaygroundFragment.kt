@@ -6,7 +6,6 @@ import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.charliechristensen.themeplayground.di.DaggerThemePlaygroundComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-
 class ThemePlaygroundFragment : BaseFragment<ThemePlaygroundViewModel>(R.layout.fragment_theme_playground) {
 
     @ExperimentalCoroutinesApi

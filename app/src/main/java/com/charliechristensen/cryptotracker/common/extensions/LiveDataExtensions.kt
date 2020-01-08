@@ -5,7 +5,11 @@ import androidx.lifecycle.MediatorLiveData
 
 object LiveDataExtensions {
 
-    fun <X, T, Z> combineLatest(first: LiveData<X>, second: LiveData<T>, combineFunction: (X, T) -> Z): LiveData<Z> {
+    fun <X, T, Z> combineLatest(
+        first: LiveData<X>,
+        second: LiveData<T>,
+        combineFunction: (X, T) -> Z
+    ): LiveData<Z> {
         val finalLiveData: MediatorLiveData<Z> = MediatorLiveData()
 
         var firstEmitted = false

@@ -37,5 +37,4 @@ interface Repository {
         timePeriod: CoinHistoryTimePeriod,
         forceRefresh: Boolean = true
     ): CoinHistory
-
 }

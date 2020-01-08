@@ -2,24 +2,18 @@ package com.charliechristensen.coinlist
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.charliechristensen.coinlist.di.DaggerCoinListComponent
 import com.charliechristensen.coinlist.list.SearchCoinsAdapter
 import com.charliechristensen.cryptotracker.common.extensions.injector
-import com.charliechristensen.cryptotracker.common.extensions.navigateRight
 import com.charliechristensen.cryptotracker.common.extensions.savedStateViewModel
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
-import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
 import kotlinx.android.synthetic.main.view_search_coins.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import ru.ldralighieri.corbind.appcompat.queryTextChanges
-
+import ru.ldralighieri.corbind.view.clicks
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -27,7 +21,7 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
     SearchCoinsAdapter.SearchCoinAdapterCallback {
 
     override val viewModel: SearchCoinsViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
-        val fragmentArgs: SearchCoinsFragmentArgs by navArgs()
+        val fragmentArgs = SearchCoinsFragmentArgs.fromBundle(requireArguments())
         DaggerCoinListComponent.builder()
             .appComponent(injector)
             .build()
@@ -43,10 +37,11 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
         val adapter = SearchCoinsAdapter(this)
         coinsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        searchView.setOnClickListener { searchView.isIconified = false }
+        searchView.clicks()
+            .bind { searchView.isIconified = false }
+
         searchView.queryTextChanges()
-            .onEach { viewModel.inputs.setSearchQuery(it) }
-            .launchIn(viewBindingScope)
+            .bind { viewModel.inputs.setSearchQuery(it) }
 
         viewModel.outputs.coinList
             .bind {
@@ -55,9 +50,6 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
                     coinsRecyclerView.adapter = adapter
                 }
             }
-
-        viewModel.outputs.showCoinDetailController
-            .bind { pushCoinDetailController(it) }
 
         viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
@@ -77,8 +69,4 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
 
     //endregion
 
-    private fun pushCoinDetailController(symbol: String) {
-//        findNavController().navigateRight(NavigationHelper.coinDetailUri(symbol))
-        findNavController().navigateRight(NavigationGraphDirections.actionToCoinDetail(symbol))
-    }
 }

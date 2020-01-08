@@ -10,10 +10,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import org.json.JSONArray
 import org.json.JSONObject
+import javax.inject.Inject
+import javax.inject.Named
 
-@FlowPreview
 @ExperimentalCoroutinesApi
-class WebSocketServiceImpl(url: String) : WebSocketService {
+class WebSocketServiceImpl @Inject constructor(@Named("WebSocketUrl")url: String) : WebSocketService {
 
     private val webSocket: Socket = IO.socket(url)
     private val temporarySubscriptions: MutableSet<String> = mutableSetOf()
@@ -57,6 +58,7 @@ class WebSocketServiceImpl(url: String) : WebSocketService {
         webSocket.disconnect()
     }
 
+    @FlowPreview
     override fun priceUpdateReceived(): Flow<SymbolPricePair> =
         priceUpdateReceivedChannel.asFlow()
 

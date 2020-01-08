@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
@@ -75,12 +76,15 @@ fun Fragment.showToast(@StringRes resId: Int) =
 
 fun Context.getColorAttribute(color: ValueChangeColor, success: (Int) -> Unit) {
     val typedValue = TypedValue()
-    if (theme.resolveAttribute(
-            ColorUtils.getColorInt(
-                color
-            ), typedValue, true
-        )
-    ) {
+    if (theme.resolveAttribute(ColorUtils.getColorInt(color), typedValue, true)) {
         success(typedValue.data)
+    }
+}
+
+fun Activity.hideKeyboard() {
+    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?
+    val currentFocus = currentFocus
+    if (currentFocus != null && imm != null) {
+        imm.hideSoftInputFromWindow(currentFocus.windowToken, 0)
     }
 }

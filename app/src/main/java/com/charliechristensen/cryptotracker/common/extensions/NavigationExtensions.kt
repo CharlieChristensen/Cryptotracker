@@ -5,7 +5,6 @@ import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import com.charliechristensen.cryptotracker.cryptotracker.R
 
-
 fun NavController.navigateRight(
     navDirections: NavDirections
 ) {

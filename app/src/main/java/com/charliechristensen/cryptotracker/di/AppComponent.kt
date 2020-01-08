@@ -2,6 +2,7 @@ package com.charliechristensen.cryptotracker.di
 
 import android.app.Application
 import com.charliechristensen.cryptotracker.common.FormatterFactory
+import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer.MainActivityViewModel
 import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
@@ -19,6 +20,7 @@ interface AppComponent {
     }
 
     fun repository(): Repository
+    fun navigator(): Navigator
     fun appPreferences(): AppPreferences
     fun formatterFactory(): FormatterFactory
 

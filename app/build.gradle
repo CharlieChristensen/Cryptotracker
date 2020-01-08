@@ -1,32 +1,32 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
+apply plugin: "kotlin-kapt"
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-    compileSdkVersion versions.targetSDK
+    compileSdkVersion(versions.targetSDK)
     defaultConfig {
-        applicationId "com.charliechristensen.cryptotracker.cryptotracker"
-        minSdkVersion versions.minSDK
-        targetSdkVersion versions.targetSDK
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        applicationId = "com.charliechristensen.cryptotracker.cryptotracker"
+        minSdkVersion(versions.minSDK)
+        targetSdkVersion(versions.targetSDK)
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         debug {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
@@ -37,53 +37,49 @@ android {
     dynamicFeatures = [":coindetail", ":settings", ":coinlist", ":portfolio", ":themeplayground"]
 }
 
-androidExtensions {
-    experimental = true
-}
-
 dependencies {
-    api 'androidx.core:core-ktx:1.1.0'
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':remote')
-    implementation project(':database')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "androidx.core:core-ktx:$versions.androidx_core"
-    implementation "androidx.appcompat:appcompat:$versions.appCompat"
-    implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
-    implementation "com.google.android.material:material:$versions.material"
-    implementation "androidx.cardview:cardview:$versions.cardView"
-    implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$versions.saved_state"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
-    implementation "androidx.activity:activity-ktx:$versions.activity"
-    implementation "androidx.fragment:fragment-ktx:$versions.fragment"
-    implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigation"
-    implementation "androidx.navigation:navigation-ui-ktx:$versions.navigation"
-    implementation "androidx.navigation:navigation-dynamic-features-fragment:$versions.dynamic_navigation"
-    implementation "com.google.android.play:core:$versions.play_core"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
-    implementation "ru.ldralighieri.corbind:corbind:$versions.corbind"
-    implementation "com.github.tfcporciuncula:flow-preferences:$versions.flow_prefs"
-    implementation "androidx.work:work-runtime-ktx:$versions.work_manager"
+    implementation(fileTree(include: ["*.jar"], dir: "libs"))
+    implementation(project(":remote"))
+    implementation(project(":database"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin")
+    implementation("androidx.core:core-ktx:$versions.androidx_core")
+    implementation("androidx.appcompat:appcompat:$versions.appCompat")
+    implementation("androidx.constraintlayout:constraintlayout:$versions.constraintLayout")
+    implementation("com.google.android.material:material:$versions.material")
+    implementation("androidx.cardview:cardview:$versions.cardView")
+    implementation("androidx.lifecycle:lifecycle-extensions:$versions.lifecycle")
+    implementation("androidx.lifecycle:lifecycle-common-java8:$versions.lifecycle")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$versions.saved_state")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle")
+    implementation("androidx.activity:activity-ktx:$versions.activity")
+    implementation("androidx.fragment:fragment-ktx:$versions.fragment")
+    implementation("androidx.navigation:navigation-fragment-ktx:$versions.navigation")
+    implementation("androidx.navigation:navigation-ui-ktx:$versions.navigation")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$versions.dynamic_navigation")
+    implementation("com.google.android.play:core:$versions.play_core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines")
+    implementation("ru.ldralighieri.corbind:corbind:$versions.corbind")
+    implementation 'ru.ldralighieri.corbind:corbind-navigation:1.3.0'
+    implementation("com.github.tfcporciuncula:flow-preferences:$versions.flow_prefs")
+    implementation("androidx.work:work-runtime-ktx:$versions.work_manager")
 
-    implementation "com.google.dagger:dagger:$versions.dagger"
-    compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$versions.assistedInject"
-    kapt "com.squareup.inject:assisted-inject-processor-dagger2:$versions.assistedInject"
-    kapt "com.google.dagger:dagger-compiler:$versions.dagger"
+    implementation("com.google.dagger:dagger:$versions.dagger")
+    compileOnly("com.squareup.inject:assisted-inject-annotations-dagger2:$versions.assistedInject")
+    kapt("com.squareup.inject:assisted-inject-processor-dagger2:$versions.assistedInject")
+    kapt("com.google.dagger:dagger-compiler:$versions.dagger")
 
-    implementation "com.github.bumptech.glide:glide:$versions.glide"
-    kapt "com.github.bumptech.glide:compiler:$versions.glide"
+    implementation("com.github.bumptech.glide:glide:$versions.glide")
+    kapt("com.github.bumptech.glide:compiler:$versions.glide")
 
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary"
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:$versions.leakcanary")
 
-    testImplementation "junit:junit:$versions.junit"
-    testImplementation "com.nhaarman:mockito-kotlin:$versions.mockitoKotlin"
+    testImplementation("junit:junit:$versions.junit")
+    testImplementation("com.nhaarman:mockito-kotlin:$versions.mockitoKotlin")
 
-    androidTestImplementation "androidx.arch.core:core-testing:$versions.coreTesting"
-    androidTestImplementation "androidx.test:runner:$versions.testRunner"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso"
+    androidTestImplementation("androidx.arch.core:core-testing:$versions.coreTesting")
+    androidTestImplementation("androidx.test:runner:$versions.testRunner")
+    androidTestImplementation("androidx.test.espresso:espresso-core:$versions.espresso")
 }

@@ -22,38 +22,28 @@ object RemoteModule {
     @Singleton
     fun provideApiService(
         @Named("BaseUrl") baseUrl: String
-    ): CryptoService {
-        val retrofit = provideRetrofit(baseUrl)
-        return retrofit.create(CryptoService::class.java)
-    }
+    ): CryptoService = provideRetrofit(baseUrl)
+        .create(CryptoService::class.java)
 
     @ExperimentalCoroutinesApi
-    @FlowPreview
     @Provides
     @Singleton
     fun provideWebSocket(
-        @Named("WebSocketUrl") webSocketUrl: String
-    ): WebSocketService = WebSocketServiceImpl(webSocketUrl)
+        webSocketService: WebSocketServiceImpl
+    ): WebSocketService = webSocketService
 
     private fun provideRetrofit(
         baseUrl: String
-    ): Retrofit {
-        val moshi = provideMoshi()
-        val okHttpClient = provideOkHttpClient()
-        val moshiConverterFactory = provideMoshiConverterFactory(moshi)
-        return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(okHttpClient)
-            .addConverterFactory(moshiConverterFactory)
-            .build()
-    }
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(provideOkHttpClient())
+        .addConverterFactory(provideMoshiConverterFactory(provideMoshi()))
+        .build()
 
     private fun provideOkHttpClient(): OkHttpClient = OkHttpClient()
 
     private fun provideMoshi(): Moshi = Moshi.Builder().build()
 
     private fun provideMoshiConverterFactory(moshi: Moshi): MoshiConverterFactory =
-        MoshiConverterFactory.create(
-            moshi
-        )
+        MoshiConverterFactory.create(moshi)
 }

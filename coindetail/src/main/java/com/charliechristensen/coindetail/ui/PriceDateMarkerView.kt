@@ -12,7 +12,6 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import kotlinx.android.synthetic.main.view_price_date_marker.view.*
 
-
 @SuppressLint("SimpleDateFormat")
 class PriceDateMarkerView @JvmOverloads constructor(
     context: Context,

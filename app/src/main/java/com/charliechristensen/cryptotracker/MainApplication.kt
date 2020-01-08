@@ -9,7 +9,6 @@ import com.charliechristensen.cryptotracker.di.DaggerAppComponent
 import com.google.android.play.core.splitcompat.SplitCompatApplication
 import java.util.concurrent.TimeUnit
 
-
 class MainApplication : SplitCompatApplication() {
 
     val appComponent: AppComponent by lazy {

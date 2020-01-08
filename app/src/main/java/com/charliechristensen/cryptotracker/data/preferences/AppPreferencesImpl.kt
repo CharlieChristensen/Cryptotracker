@@ -3,11 +3,11 @@ package com.charliechristensen.cryptotracker.data.preferences
 import android.content.SharedPreferences
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.tfcporciuncula.flow.FlowSharedPreferences
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class AppPreferencesImpl @Inject constructor(sharedPreferences: SharedPreferences) :
