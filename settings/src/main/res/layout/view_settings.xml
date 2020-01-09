@@ -55,7 +55,7 @@
             app:layout_constraintTop_toBottomOf="@+id/liveUpdatePricesButton">
 
             <TextView
-                android:id="@+id/textView8"
+                android:id="@+id/themeButtonTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
@@ -78,7 +78,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView8"
+                app:layout_constraintTop_toBottomOf="@+id/themeButtonTitle"
                 android:text="@{viewModel.outputs.themeDisplay}"
                 tools:text="Dark" />
 
