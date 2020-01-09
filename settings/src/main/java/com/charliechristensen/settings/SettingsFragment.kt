@@ -12,9 +12,6 @@ import com.charliechristensen.settings.databinding.ViewSettingsBinding
 import com.charliechristensen.settings.di.DaggerSettingsComponent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.drop
-import ru.ldralighieri.corbind.view.clicks
-import ru.ldralighieri.corbind.widget.checkedChanges
 
 @ExperimentalCoroutinesApi
 class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view_settings) {
@@ -29,27 +26,11 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view
         super.onViewCreated(view, savedInstanceState)
 
         val binding = ViewSettingsBinding.bind(view)
-
-        binding.liveUpdatePricesButton.clicks()
-            .bind { binding.liveUpdatePricesSwitch.toggle() }
-
-        binding.setThemeButton.clicks()
-            .bind { viewModel.inputs.themeButtonClicked() }
-
-        binding.liveUpdatePricesSwitch.checkedChanges()
-            .drop(1)
-            .bind { viewModel.inputs.liveUpdatePricesToggled(it) }
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
 
         viewModel.outputs.showChooseThemeDialog
             .bind { showSelectThemeDialog(activity, it) }
-
-        viewModel.outputs.liveUpdatePrices
-            .bind {
-                binding.liveUpdatePricesSwitch.isChecked = it
-            }
-
-        viewModel.outputs.themeDisplay
-            .bind { binding.themeNameTextView.setText(it) }
     }
 
     @SuppressLint("InflateParams")
@@ -60,9 +41,6 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view
         if (activity == null) return
         val binding = DialogChooseThemeBinding.inflate(activity.layoutInflater)
         binding.radioGroup.check(selectedRadioButtonId)
-//        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_choose_theme, null).apply {
-//            radioGroup.check(selectedRadioButtonId)
-//        }
         MaterialAlertDialogBuilder(activity)
             .setTitle("Choose Theme")
             .setView(binding.root)

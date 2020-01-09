@@ -4,7 +4,7 @@ plugins {
     id("com.android.dynamic-feature")
     id("kotlin-android")
     id("kotlin-kapt")
-    id("androidx.navigation.safeargs.kotlin")
+//    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -21,7 +21,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     viewBinding {
-        this.isEnabled = true
+        isEnabled = true
+    }
+    dataBinding {
+        isEnabled = true
     }
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {
@@ -35,7 +38,6 @@ dependencies {
     implementation(project(":app"))
 
     implementation(Libraries.kotlinStdLib)
-
     implementation(Libraries.ktxCore)
     implementation(Libraries.appCompat)
     implementation(Libraries.constraintLayout)
@@ -48,7 +50,6 @@ dependencies {
 
     implementation(Libraries.coroutines)
     implementation(Libraries.coroutinesAndroid)
-    implementation(Libraries.corbind)
 
     implementation(Libraries.dagger)
     kapt(Libraries.daggerCompiler)
