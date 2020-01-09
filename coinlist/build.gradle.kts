@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id(BuildPlugins.dynamicFeature)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.kotlinAndroidExtensions)
     id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.safeArgs)
 }
@@ -21,15 +20,17 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    viewBinding {
+        isEnabled = true
+    }
+    dataBinding {
+        isEnabled = true
+    }
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {
             jvmTarget = "1.8"
         }
     }
-}
-
-androidExtensions {
-    isExperimental = true
 }
 
 dependencies {
