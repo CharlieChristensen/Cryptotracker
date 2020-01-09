@@ -1,6 +1,6 @@
 package com.charliechristensen.cryptotracker.data.models.graph
 
-import com.charliechristensen.remote.models.ServerHistoryElement
+import com.charliechristensen.remote.models.RemoteHistoryElement
 
 @Suppress("unused")
 /**
@@ -15,13 +15,13 @@ class CoinHistoryElement(
     val volumeFrom: Double,
     val volumeTo: Double
 ) {
-    constructor(serverHistoryElement: ServerHistoryElement) : this(
-            serverHistoryElement.time,
-            serverHistoryElement.close,
-            serverHistoryElement.high,
-            serverHistoryElement.low,
-            serverHistoryElement.open,
-            serverHistoryElement.volumeFrom,
-            serverHistoryElement.volumeTo
+    constructor(remoteHistoryElement: RemoteHistoryElement) : this(
+            remoteHistoryElement.time,
+            remoteHistoryElement.close,
+            remoteHistoryElement.high,
+            remoteHistoryElement.low,
+            remoteHistoryElement.open,
+            remoteHistoryElement.volumeFrom,
+            remoteHistoryElement.volumeTo
     )
 }

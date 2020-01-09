@@ -32,7 +32,7 @@ interface SettingsViewModel {
     class ViewModel @Inject constructor(private val appPreferences: AppPreferences) :
         BaseViewModel(), Inputs, Outputs {
 
-        private val showChooseThemeChannel = SingleLiveEvent<Int>()
+        private val showChooseThemeEvent = SingleLiveEvent<Int>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -40,7 +40,7 @@ interface SettingsViewModel {
         //region Inputs
 
         override fun themeButtonClicked() {
-            showChooseThemeChannel.value = buttonIdFromTheme(appPreferences.getTheme())
+            showChooseThemeEvent.value = buttonIdFromTheme(appPreferences.getTheme())
         }
 
         override fun liveUpdatePricesToggled(isChecked: Boolean) {
@@ -60,10 +60,10 @@ interface SettingsViewModel {
             .map { it.displayId }
             .asLiveData()
 
-        override val liveUpdatePrices: LiveData<Boolean> =
-            MutableLiveData(appPreferences.getLiveUpdatePrices())
+        override val liveUpdatePrices: LiveData<Boolean>
+            get() = MutableLiveData(appPreferences.getLiveUpdatePrices())
 
-        override val showChooseThemeDialog: LiveData<Int> = showChooseThemeChannel
+        override val showChooseThemeDialog: LiveData<Int> = showChooseThemeEvent
 
         //endregion
 

@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class ServerHistoryElement(
+data class RemoteHistoryElement(
     @Json(name = "time") val time: Long,
     @Json(name = "close") val close: Double,
     @Json(name = "high") val high: Double,

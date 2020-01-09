@@ -16,7 +16,7 @@ import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmoun
 import com.charliechristensen.database.DatabaseApi
 import com.charliechristensen.database.models.DbCoinPriceData
 import com.charliechristensen.database.models.DbPortfolioCoin
-import com.charliechristensen.remote.models.ServerCoinPriceData
+import com.charliechristensen.remote.models.RemoteCoinPriceData
 import com.charliechristensen.remote.models.SymbolPricePair
 import com.charliechristensen.remote.webservice.CryptoService
 import com.charliechristensen.remote.websocket.WebSocketService
@@ -58,7 +58,7 @@ class RepositoryImpl @Inject constructor(
         symbol: String,
         forceRefresh: Boolean
     ): Flow<List<CoinPriceData>> =
-        object : RxNetworkBoundResource<DbCoinPriceData, ServerCoinPriceData, CoinPriceData>() {
+        object : RxNetworkBoundResource<DbCoinPriceData, RemoteCoinPriceData, CoinPriceData>() {
             override suspend fun saveToDb(data: List<DbCoinPriceData>) {
                 if (data.isNotEmpty()) {
                     database.setPrice(data[0])
@@ -70,7 +70,7 @@ class RepositoryImpl @Inject constructor(
             override fun shouldFetch(data: List<DbCoinPriceData>): Boolean =
                 data.isEmpty() || forceRefresh
 
-            override fun mapToDbType(value: ServerCoinPriceData): List<DbCoinPriceData> {
+            override fun mapToDbType(value: RemoteCoinPriceData): List<DbCoinPriceData> {
                 if (value.rawData?.containsKey(symbol) == true) {
                     val rawData = value.rawData!![symbol] ?: return emptyList()
                     if (rawData.containsKey(Constants.MyCurrency)) {
@@ -85,7 +85,7 @@ class RepositoryImpl @Inject constructor(
             override fun loadFromDb(): Flow<List<DbCoinPriceData>> =
                 database.getPrice(symbol)
 
-            override suspend fun loadFromNetwork(): ServerCoinPriceData =
+            override suspend fun loadFromNetwork(): RemoteCoinPriceData =
                 service.getFullCoinPrice(symbol, Constants.MyCurrency)
 
             override fun mapToUiType(value: DbCoinPriceData): CoinPriceData = value.toUi()

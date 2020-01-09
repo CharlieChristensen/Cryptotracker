@@ -7,13 +7,13 @@ import com.squareup.moshi.JsonClass
 
 @SuppressWarnings("SpellCheckingInspection")
 @JsonClass(generateAdapter = true)
-data class ServerCoinPriceData(
-    @Json(name = "RAW") val rawData: Map<String, Map<String, ServerCoinPriceRawData>>?,
+data class RemoteCoinPriceData(
+    @Json(name = "RAW") val rawData: Map<String, Map<String, RemoteCoinPriceRawData>>?,
     @Json(name = "DISPLAY") val displayData: Map<String, Map<String, ServerCoinPriceDisplayData>>
 )
 
 @JsonClass(generateAdapter = true)
-data class ServerCoinPriceRawData(
+data class RemoteCoinPriceRawData(
     @Json(name = "TYPE") val type: String,
     @Json(name = "MARKET") val market: String,
     @Json(name = "FROMSYMBOL") val fromSymbol: String,

@@ -1,6 +1,5 @@
 package com.charliechristensen.portfolio.list
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.charliechristensen.cryptotracker.common.GlideApp
 import com.charliechristensen.cryptotracker.common.extensions.getColorAttribute
@@ -9,18 +8,11 @@ import com.charliechristensen.portfolio.R
 import kotlinx.android.synthetic.main.cell_coin_portfolio.*
 
 class PortfolioCoinCell(
-    inflater: LayoutInflater,
     parent: ViewGroup,
     private val onClickItemCallback: (PortfolioListItem) -> Unit
 ) : BaseViewHolder<PortfolioListItem>(
-    inflater.inflate(R.layout.cell_coin_portfolio, parent, false)
+    inflateView(R.layout.cell_coin_portfolio, parent)
 ) {
-
-//    init {
-//        itemView.setOnClickListener {
-//            onClickItemCallback(adapterPosition)
-//        }
-//    }
 
     override fun bind(listItem: PortfolioListItem) {
         if (listItem is PortfolioListItem.Coin) {

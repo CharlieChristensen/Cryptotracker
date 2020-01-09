@@ -1,6 +1,5 @@
 package com.charliechristensen.coinlist.list
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bumptech.glide.request.RequestOptions
 import com.charliechristensen.coinlist.R
@@ -9,11 +8,10 @@ import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
 import kotlinx.android.synthetic.main.cell_coin_list.*
 
 class SearchCoinsCell(
-    inflater: LayoutInflater,
     parent: ViewGroup,
     private val callback: SearchCoinsAdapter.SearchCoinAdapterCallback
 ) : BaseViewHolder<SearchCoinsListItem>(
-    inflater.inflate(R.layout.cell_coin_list, parent, false)
+    inflateView(R.layout.cell_coin_list, parent)
 ) {
 
     override fun bind(listItem: SearchCoinsListItem) {

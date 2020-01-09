@@ -7,11 +7,12 @@ import android.view.View
 import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
+import com.charliechristensen.settings.databinding.DialogChooseThemeBinding
+import com.charliechristensen.settings.databinding.ViewSettingsBinding
 import com.charliechristensen.settings.di.DaggerSettingsComponent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.dialog_choose_theme.view.*
-import kotlinx.android.synthetic.main.view_settings.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.drop
 import ru.ldralighieri.corbind.view.clicks
 import ru.ldralighieri.corbind.widget.checkedChanges
 
@@ -27,23 +28,28 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        liveUpdatePricesButton.clicks()
-            .bind { liveUpdatePricesSwitch.toggle() }
+        val binding = ViewSettingsBinding.bind(view)
 
-        setThemeButton.clicks()
+        binding.liveUpdatePricesButton.clicks()
+            .bind { binding.liveUpdatePricesSwitch.toggle() }
+
+        binding.setThemeButton.clicks()
             .bind { viewModel.inputs.themeButtonClicked() }
 
-        liveUpdatePricesSwitch.checkedChanges()
+        binding.liveUpdatePricesSwitch.checkedChanges()
+            .drop(1)
             .bind { viewModel.inputs.liveUpdatePricesToggled(it) }
 
         viewModel.outputs.showChooseThemeDialog
             .bind { showSelectThemeDialog(activity, it) }
 
         viewModel.outputs.liveUpdatePrices
-            .bind { liveUpdatePricesSwitch.isChecked = it }
+            .bind {
+                binding.liveUpdatePricesSwitch.isChecked = it
+            }
 
         viewModel.outputs.themeDisplay
-            .bind { themeNameTextView.setText(it) }
+            .bind { binding.themeNameTextView.setText(it) }
     }
 
     @SuppressLint("InflateParams")
@@ -52,14 +58,16 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view
         selectedRadioButtonId: Int
     ) {
         if (activity == null) return
-        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_choose_theme, null).apply {
-            radioGroup.check(selectedRadioButtonId)
-        }
+        val binding = DialogChooseThemeBinding.inflate(activity.layoutInflater)
+        binding.radioGroup.check(selectedRadioButtonId)
+//        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_choose_theme, null).apply {
+//            radioGroup.check(selectedRadioButtonId)
+//        }
         MaterialAlertDialogBuilder(activity)
             .setTitle("Choose Theme")
-            .setView(dialogView)
+            .setView(binding.root)
             .setPositiveButton("OK") { dialog, _ ->
-                viewModel.inputs.themeChosen(dialogView.radioGroup.checkedRadioButtonId)
+                viewModel.inputs.themeChosen(binding.radioGroup.checkedRadioButtonId)
                 dialog.dismiss()
             }
             .setNegativeButton("CANCEL", null)
