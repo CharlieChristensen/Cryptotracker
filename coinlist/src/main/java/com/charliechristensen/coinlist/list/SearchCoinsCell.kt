@@ -10,10 +10,8 @@ class SearchCoinsCell(
     callback: SearchCoinsAdapter.SearchCoinAdapterCallback
 ) : BaseViewHolder<SearchCoinsListItem>(inflateView(R.layout.cell_coin_list, parent)) {
 
-    private val binding: CellCoinListBinding = CellCoinListBinding.bind(itemView)
-
-    init {
-        binding.callback = callback
+    private val binding = CellCoinListBinding.bind(itemView).apply {
+        this.callback = callback
     }
 
     override fun bind(listItem: SearchCoinsListItem) {
