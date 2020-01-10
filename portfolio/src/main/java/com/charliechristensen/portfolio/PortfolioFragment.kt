@@ -3,20 +3,20 @@ package com.charliechristensen.portfolio
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.charliechristensen.cryptotracker.common.ColorUtils
-import com.charliechristensen.cryptotracker.common.extensions.getColorFromResource
 import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
+import com.charliechristensen.portfolio.databinding.ViewPortfolioCoinListBinding
 import com.charliechristensen.portfolio.di.DaggerPortfolioComponent
 import com.charliechristensen.portfolio.list.PortfolioAdapter
-import kotlinx.android.synthetic.main.view_portfolio_coin_list.*
+import com.charliechristensen.portfolio.list.PortfolioListItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 class PortfolioFragment :
-    BaseFragment<PortfolioCoinListViewModel.ViewModel>(R.layout.view_portfolio_coin_list) {
+    BaseFragment<PortfolioCoinListViewModel.ViewModel>(R.layout.view_portfolio_coin_list),
+    PortfolioAdapter.PortfolioAdapterCallback {
 
     override val viewModel: PortfolioCoinListViewModel.ViewModel by viewModel {
         DaggerPortfolioComponent.builder()
@@ -30,41 +30,27 @@ class PortfolioFragment :
 
         setActionBarTitle(com.charliechristensen.cryptotracker.cryptotracker.R.string.portfolio)
 
-        viewModel.outputs.portfolioState
-            .bind { renderViewState(it) }
+        val binding: ViewPortfolioCoinListBinding = ViewPortfolioCoinListBinding.bind(view)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+
+        val adapter = PortfolioAdapter(this)
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+
+        viewModel.outputs.coinList
+            .bind {
+                adapter.submitList(it)
+                if(binding.recyclerView.adapter == null) {
+                    binding.recyclerView.adapter = adapter
+                }
+            }
 
         viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
     }
 
-    private fun renderViewState(portfolioState: PortfolioListData) {
-
-        getAdapter().submitList(portfolioState.coinList)
-
-        walletTotalValueTextView.text = portfolioState.formattedValue
-
-        val valueChange = portfolioState.portfolioValueChange
-        portfolio24HourValueChangeTextView.text = valueChange.value
-        activity?.getColorFromResource(ColorUtils.getColorInt(valueChange.color))
-            ?.let { colorInt ->
-                portfolio24HourValueChangeTextView.setTextColor(colorInt)
-            }
-
-        val percentChanged = portfolioState.percentChange24Hour
-        portfolio24HourChangeTextView.text = percentChanged.value
-        activity?.getColorFromResource(ColorUtils.getColorInt(percentChanged.color))
-            ?.let { colorInt ->
-                portfolio24HourChangeTextView.setTextColor(colorInt)
-            }
+    override fun onClickItem(listItem: PortfolioListItem) {
+        viewModel.inputs.onClickItem(listItem)
     }
-
-    private fun getAdapter(): PortfolioAdapter =
-        recyclerView.adapter as? PortfolioAdapter?
-            ?: (PortfolioAdapter { item ->
-                viewModel.inputs.onClickItem(item)
-            }.apply {
-                recyclerView.adapter = this
-                recyclerView.layoutManager = LinearLayoutManager(context)
-            })
 
 }

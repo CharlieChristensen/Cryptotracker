@@ -17,7 +17,6 @@ class SearchCoinsCell(
     override fun bind(listItem: SearchCoinsListItem) {
         if (listItem is SearchCoinsListItem.Coin) {
             binding.coin = listItem
-            binding.executePendingBindings()
         }
     }
 }

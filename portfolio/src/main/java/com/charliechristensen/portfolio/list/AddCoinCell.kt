@@ -1,23 +1,22 @@
 package com.charliechristensen.portfolio.list
 
-import android.view.View
 import android.view.ViewGroup
 import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
 import com.charliechristensen.portfolio.R
-import kotlinx.android.extensions.LayoutContainer
+import com.charliechristensen.portfolio.databinding.CellAddCoinBinding
 
 class AddCoinCell(
     parent: ViewGroup,
-    private val onClickItemCallback: (PortfolioListItem) -> Unit
+    callback: PortfolioAdapter.PortfolioAdapterCallback
 ) : BaseViewHolder<PortfolioListItem>(
     inflateView(R.layout.cell_add_coin, parent)
-), LayoutContainer {
+) {
 
-    override val containerView: View = itemView
+    private val binding = CellAddCoinBinding.bind(itemView).apply {
+        this.callback = callback
+    }
 
     override fun bind(listItem: PortfolioListItem) {
-        itemView.setOnClickListener {
-            onClickItemCallback(listItem)
-        }
+        binding.listItem = listItem
     }
 }

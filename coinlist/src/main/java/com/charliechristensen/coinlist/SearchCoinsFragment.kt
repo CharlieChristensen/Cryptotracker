@@ -55,6 +55,7 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
 
         viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
+
     }
 
     //endregion

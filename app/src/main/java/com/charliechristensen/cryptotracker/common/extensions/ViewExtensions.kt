@@ -58,7 +58,7 @@ inline fun <reified T : ViewModel> Fragment.savedStateViewModel(
     }
 }
 
-fun Activity.getColorFromResource(colorAttribute: Int): Int {
+fun Context.getColorFromResource(colorAttribute: Int): Int {
     val typedValue = TypedValue()
     val theme = theme
     theme.resolveAttribute(colorAttribute, typedValue, true)

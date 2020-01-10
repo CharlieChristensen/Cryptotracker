@@ -7,12 +7,15 @@ import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.common.call
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
+import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.portfolio.list.PortfolioListItem
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 interface PortfolioCoinListViewModel {
 
@@ -23,6 +26,10 @@ interface PortfolioCoinListViewModel {
     interface Outputs {
         val portfolioState: LiveData<PortfolioListData>
         val showNetworkError: LiveData<Unit>
+        val walletTotalValue: LiveData<String>
+        val percentChange24Hour: LiveData<ColorValueString>
+        val portfolioValueChange: LiveData<ColorValueString>
+        val coinList: LiveData<List<PortfolioListItem>>
     }
 
     @ExperimentalCoroutinesApi
@@ -36,19 +43,21 @@ interface PortfolioCoinListViewModel {
         val inputs: Inputs = this
         val outputs: Outputs = this
 
+        private val portfolioStates: Flow<PortfolioListData> =
+            portfolioInteractor.listData()
+                .flowOn(Dispatchers.IO)
+                .catch { showNetworkErrorChannel.call() }
+
+
         //region Inputs
 
         override fun onClickItem(item: PortfolioListItem) {
             when (item) {
                 is PortfolioListItem.Coin -> navigator.navigate(
-                    NavigationGraphDirections.actionToCoinDetail(
-                        item.symbol
-                    )
+                    NavigationGraphDirections.actionToCoinDetail(item.symbol)
                 )
                 PortfolioListItem.AddCoin -> navigator.navigate(
-                    NavigationGraphDirections.actionToCoinList(
-                        true
-                    )
+                    NavigationGraphDirections.actionToCoinList(true)
                 )
             }
         }
@@ -56,6 +65,22 @@ interface PortfolioCoinListViewModel {
         //endregion
 
         //region Outputs
+
+        override val walletTotalValue: LiveData<String> = portfolioStates
+            .map { it.formattedValue }
+            .asLiveData()
+
+        override val percentChange24Hour: LiveData<ColorValueString> = portfolioStates
+            .map { it.percentChange24Hour }
+            .asLiveData()
+
+        override val portfolioValueChange: LiveData<ColorValueString> = portfolioStates
+            .map { it.portfolioValueChange }
+            .asLiveData()
+
+        override val coinList: LiveData<List<PortfolioListItem>> = portfolioStates
+            .map { it.coinList }
+            .asLiveData()
 
         override val portfolioState: LiveData<PortfolioListData> =
             portfolioInteractor.listData()

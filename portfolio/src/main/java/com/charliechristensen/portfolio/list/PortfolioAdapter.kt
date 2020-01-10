@@ -5,7 +5,11 @@ import com.charliechristensen.cryptotracker.common.lists.BaseListAdapter
 import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
 import com.charliechristensen.portfolio.R
 
-class PortfolioAdapter(private val onClickItemCallback: (PortfolioListItem) -> Unit) : BaseListAdapter<PortfolioListItem>() {
+class PortfolioAdapter(private val onClickItemCallback: PortfolioAdapterCallback) : BaseListAdapter<PortfolioListItem>() {
+
+    interface PortfolioAdapterCallback {
+        fun onClickItem(listItem: PortfolioListItem)
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
