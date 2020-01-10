@@ -16,8 +16,7 @@ import com.charliechristensen.cryptotracker.common.extensions.skip
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseActivity
 import com.charliechristensen.cryptotracker.cryptotracker.R
-import kotlinx.android.synthetic.main.activity_navigation_drawer.*
-import kotlinx.android.synthetic.main.app_bar_navigation_drawer.*
+import com.charliechristensen.cryptotracker.cryptotracker.databinding.ActivityNavigationDrawerBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.launchIn
@@ -26,7 +25,7 @@ import ru.ldralighieri.corbind.navigation.destinationChanges
 
 @ExperimentalCoroutinesApi
 @FlowPreview
-class MainActivity : BaseActivity(R.layout.activity_navigation_drawer) {
+class MainActivity : BaseActivity() {
 
     private val viewModel: MainActivityViewModel.ViewModel by viewModel {
         injector.mainActivityViewModel
@@ -35,11 +34,17 @@ class MainActivity : BaseActivity(R.layout.activity_navigation_drawer) {
     private val navController: NavController
         get() = findNavController(R.id.navigationHost)
 
+    private val binding: ActivityNavigationDrawerBinding by lazy {
+        ActivityNavigationDrawerBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val theme = viewModel.outputs.getAppThemeSync()
         changeTheme(theme, false)
         super.onCreate(savedInstanceState)
-        setSupportActionBar(toolbar)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.mainView.toolbar)
         setupNavigationMenus()
 
         navController.destinationChanges()
@@ -54,11 +59,11 @@ class MainActivity : BaseActivity(R.layout.activity_navigation_drawer) {
             .bind(navController::navigateRight)
     }
 
-    override fun onSupportNavigateUp(): Boolean = navigateUp(navController, drawerLayout)
+    override fun onSupportNavigateUp(): Boolean = navigateUp(navController, binding.drawerLayout)
 
     override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -72,8 +77,8 @@ class MainActivity : BaseActivity(R.layout.activity_navigation_drawer) {
     }
 
     private fun setupNavigationMenus() {
-        navigationView.setupWithNavController(navController)
-        val navigationMenu = navigationView.menu.apply {
+        binding.navigationView.setupWithNavController(navController)
+        val navigationMenu = binding.navigationView.menu.apply {
             add(R.id.navigationGroup, R.id.portfolioRoot, 0, R.string.my_portfolio).apply {
                 setIcon(R.drawable.ic_chart_24dp)
             }
@@ -85,8 +90,8 @@ class MainActivity : BaseActivity(R.layout.activity_navigation_drawer) {
             }
         }
         val appBarConfiguration = AppBarConfiguration.Builder(navigationMenu)
-            .setDrawerLayout(drawerLayout)
+            .setDrawerLayout(binding.drawerLayout)
             .build()
-        toolbar.setupWithNavController(navController, appBarConfiguration)
+        binding.mainView.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 }

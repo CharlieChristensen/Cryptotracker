@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id(BuildPlugins.dynamicFeature)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.kotlinAndroidExtensions)
     id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.safeArgs)
 }
@@ -47,6 +46,7 @@ dependencies {
 
     implementation(Libraries.lifecycleExtensions)
     implementation(Libraries.lifecycleCommon)
+    implementation(Libraries.viewModel)
     implementation(Libraries.liveData)
 
     implementation(Libraries.navigation)

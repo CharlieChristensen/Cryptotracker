@@ -9,24 +9,19 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.charliechristensen.coindetail.data.CoinDetailGraphState
+import com.charliechristensen.coindetail.databinding.DialogTextInputLayoutBinding
+import com.charliechristensen.coindetail.databinding.ViewCoinDetailBinding
 import com.charliechristensen.coindetail.di.DaggerCoinDetailComponent
-import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.common.GlideApp
-import com.charliechristensen.cryptotracker.common.extensions.getColorFromResource
 import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.dialog_text_input_layout.view.*
-import kotlinx.android.synthetic.main.view_coin_detail.*
-import kotlinx.android.synthetic.main.view_line_graph.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import ru.ldralighieri.corbind.material.selections
-import ru.ldralighieri.corbind.view.clicks
 
 @ExperimentalCoroutinesApi
 class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.view_coin_detail) {
@@ -40,14 +35,18 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
             .create(fragmentArgs.coinSymbol)
     }
 
+    private val binding: ViewCoinDetailBinding by lazy {
+        ViewCoinDetailBinding.bind(requireView())
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(KEY_TOGGLE_GROUP_SELECTED, dateTabLayout.selectedTabPosition)
+        outState.putInt(KEY_TOGGLE_GROUP_SELECTED, binding.lineGraphController.dateTabLayout.selectedTabPosition)
         super.onSaveInstanceState(outState)
     }
 
     private fun restoreViewState(savedViewState: Bundle?) {
         val checkedId = savedViewState?.getInt(KEY_TOGGLE_GROUP_SELECTED) ?: 0
-        dateTabLayout.getTabAt(checkedId)?.select()
+        binding.lineGraphController.dateTabLayout.getTabAt(checkedId)?.select()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,48 +54,20 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
 
         restoreViewState(savedInstanceState)
 
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+
         viewModel.outputs.isCoinInPortfolio
-            .bind { setButtonLayout(it) }
+            .bind { inPortfolio ->
+                if (inPortfolio) {
+                    binding.constraintLayout.transitionToState(R.id.editCoin)
+                } else {
+                    binding.constraintLayout.transitionToState(R.id.addCoin)
+                }
+            }
 
         viewModel.outputs.toolbarImageData
             .bind { setToolbarImage(it.coinName, it.imageUrl) }
-
-        viewModel.outputs.currentCoinPrice
-            .bind { currentPriceTextView.text = it }
-
-        viewModel.outputs.low24Hour
-            .bind { low24HourTextView.text = it }
-
-        viewModel.outputs.high24Hour
-            .bind { high24HourTextView.text = it }
-
-        viewModel.outputs.walletUnitsOwned
-            .bind { walletAmountOwnedTextView.text = it }
-
-        viewModel.outputs.walletTotalValue
-            .bind { walletTotalValueTextView.text = it }
-
-        viewModel.outputs.walletPriceChange24Hour
-            .bind {
-                walletPriceChange24Hour.text = it.value
-                activity?.getColorFromResource(ColorUtils.getColorInt(it.color))?.let { color ->
-                    walletPriceChange24Hour.setTextColor(color)
-                }
-            }
-
-        viewModel.outputs.valueChange24Hour
-            .bind {
-                percentChangeTextView.text = it.value
-                activity?.getColorFromResource(ColorUtils.getColorInt(it.color))?.let { colorInt ->
-                    percentChangeTextView.setTextColor(colorInt)
-                }
-            }
-
-        viewModel.outputs.percentChangeTimePeriod
-            .bind { title24HourPercentChange.setText(it) }
-
-        viewModel.outputs.graphState
-            .bind { setGraphState(it) }
 
         viewModel.outputs.showAddCoinDialog
             .bind { showAddCoinDialog(activity, it) }
@@ -110,44 +81,13 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
 
-        dateTabLayout.selections()
+        binding.lineGraphController.dateTabLayout.selections()
             .distinctUntilChanged()
             .map { it.position }
             .bind { viewModel.inputs.graphDateSelectionChanged(it) }
-
-        addToPortfolioButton.clicks()
-            .bind { viewModel.inputs.addCoinButtonClicked() }
-
-        editQuantityButton.clicks()
-            .bind { viewModel.inputs.editQuantityButtonClicked() }
-
-        removeFromPortfolioButton.clicks()
-            .bind { viewModel.inputs.removeFromPortfolioButtonClicked() }
     }
 
     //region View Helpers
-
-    private fun setGraphState(graphState: CoinDetailGraphState) {
-        val activity = activity ?: return
-        when (graphState) {
-            is CoinDetailGraphState.Success -> {
-                val color = activity.getColorFromResource(ColorUtils.getColorInt(graphState.color))
-                val title =
-                    activity.getString(com.charliechristensen.cryptotracker.cryptotracker.R.string.history)
-                lineGraphView?.setDataSet(graphState.coinHistoryList, title, color)
-            }
-            CoinDetailGraphState.Loading -> {
-                lineGraphView?.showLoading()
-                lineGraphView?.clear()
-            }
-            CoinDetailGraphState.NoData -> {
-                lineGraphView?.showNoData()
-            }
-            CoinDetailGraphState.Error -> {
-                lineGraphView?.showError()
-            }
-        }
-    }
 
     private fun setToolbarImage(coinName: String, imageUrl: String?) {
         val activity = activity ?: return
@@ -185,13 +125,13 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
             })
     }
 
-    private fun setButtonLayout(inPortfolio: Boolean) {
-        if (inPortfolio) {
-            constraintLayout.transitionToState(R.id.editCoin)
-        } else {
-            constraintLayout.transitionToState(R.id.addCoin)
-        }
-    }
+//    private fun setButtonLayout(inPortfolio: Boolean) {
+//        if (inPortfolio) {
+//            constraintLayout.transitionToState(R.id.editCoin)
+//        } else {
+//            constraintLayout.transitionToState(R.id.addCoin)
+//        }
+//    }
 
     //endregion
 
@@ -202,13 +142,13 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         coinSymbol: String
     ) {
         if (activity == null) return
-        val editTextView = activity.layoutInflater.inflate(R.layout.dialog_text_input_layout, null)
-        val textInputLayout = editTextView.textInputLayout
+        val binding = DialogTextInputLayoutBinding.inflate(activity.layoutInflater)
+        val textInputLayout = binding.textInputLayout
         textInputLayout.hint = "Coin Amount"
         MaterialAlertDialogBuilder(activity)
             .setTitle(coinSymbol)
             .setMessage("How many coins do you own? (optional)")
-            .setView(editTextView)
+            .setView(binding.root)
             .setPositiveButton("ADD") { _, _ ->
                 val inputText = textInputLayout.editText?.text ?: ""
                 val amount = inputText.toString().toDoubleOrNull() ?: 0.0
@@ -223,13 +163,13 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         coinSymbol: String
     ) {
         if (activity == null) return
-        val editTextView = activity.layoutInflater.inflate(R.layout.dialog_text_input_layout, null)
-        val textInputLayout = editTextView.textInputLayout
+        val binding = DialogTextInputLayoutBinding.inflate(activity.layoutInflater)
+        val textInputLayout = binding.textInputLayout
         textInputLayout.hint = "Coin Amount"
         MaterialAlertDialogBuilder(activity)
             .setTitle("Edit Amount")
             .setMessage("Set total amount of $coinSymbol owned")
-            .setView(editTextView)
+            .setView(binding.root)
             .setPositiveButton("OK") { _, _ ->
                 val inputText = textInputLayout.editText?.text ?: ""
                 val amount = inputText.toString().toDoubleOrNull() ?: 0.0

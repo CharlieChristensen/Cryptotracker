@@ -4,13 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import com.charliechristensen.coindetail.R
+import com.charliechristensen.coindetail.databinding.ViewPriceDateMarkerBinding
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import kotlinx.android.synthetic.main.view_price_date_marker.view.*
 
 @SuppressLint("SimpleDateFormat")
 class PriceDateMarkerView @JvmOverloads constructor(
@@ -19,10 +19,12 @@ class PriceDateMarkerView @JvmOverloads constructor(
     private val dateFormatter: SimpleDateFormat = SimpleDateFormat()
 ) : MarkerView(context, R.layout.view_price_date_marker) {
 
+    private val binding = ViewPriceDateMarkerBinding.bind(this.getChildAt(0))
+
     override fun refreshContent(entry: Entry?, highlight: Highlight?) {
         if (entry == null) return
-        priceTextView.text = priceFormatter.format(entry.y)
-        dateTextView.text = dateFormatter.format(entry.x.toLong() * 1000L)
+        binding.priceTextView.text = priceFormatter.format(entry.y)
+        binding.dateTextView.text = dateFormatter.format(entry.x.toLong() * 1000L)
         super.refreshContent(entry, highlight)
     }
 

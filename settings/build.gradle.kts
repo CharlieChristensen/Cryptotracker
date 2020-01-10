@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.android.dynamic-feature")
-    id("kotlin-android")
-    id("kotlin-kapt")
+    id(BuildPlugins.dynamicFeature)
+    id(BuildPlugins.kotlinAndroid)
+    id(BuildPlugins.kotlinKapt)
 }
 
 android {

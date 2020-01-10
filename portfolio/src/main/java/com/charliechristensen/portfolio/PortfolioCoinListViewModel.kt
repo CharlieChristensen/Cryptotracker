@@ -24,7 +24,6 @@ interface PortfolioCoinListViewModel {
     }
 
     interface Outputs {
-        val portfolioState: LiveData<PortfolioListData>
         val showNetworkError: LiveData<Unit>
         val walletTotalValue: LiveData<String>
         val percentChange24Hour: LiveData<ColorValueString>
@@ -47,7 +46,6 @@ interface PortfolioCoinListViewModel {
             portfolioInteractor.listData()
                 .flowOn(Dispatchers.IO)
                 .catch { showNetworkErrorChannel.call() }
-
 
         //region Inputs
 
@@ -81,12 +79,6 @@ interface PortfolioCoinListViewModel {
         override val coinList: LiveData<List<PortfolioListItem>> = portfolioStates
             .map { it.coinList }
             .asLiveData()
-
-        override val portfolioState: LiveData<PortfolioListData> =
-            portfolioInteractor.listData()
-                .flowOn(Dispatchers.IO)
-                .catch { showNetworkErrorChannel.call() }
-                .asLiveData()
 
         override val showNetworkError: LiveData<Unit> = showNetworkErrorChannel
 

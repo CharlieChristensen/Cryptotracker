@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id(BuildPlugins.androidApplication)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.kotlinAndroidExtensions)
     id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.safeArgs)
 }
@@ -61,7 +60,6 @@ dependencies {
     implementation(Libraries.cardView)
     implementation(Libraries.activity)
     implementation(Libraries.fragment)
-    implementation(Libraries.playCore)
     implementation(Libraries.workManager)
 
     implementation(Libraries.lifecycleExtensions)
