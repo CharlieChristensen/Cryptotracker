@@ -6,9 +6,10 @@ The app allows you to look at live prices of many types of cryptocoins as well a
 Some of the tech in use:
 * MVVM
 * Repository pattern
-* Room for local persistence where screens observe database changes as the source of truth
-* Websockets for live updating coin prices
-* RxJava
+* Room
+* Databinding
+* Websockets
+* Coroutines
 * Navigation arch component
 * Modern dagger setup with ability to use AssistedInject for constructor injection of dynamic parameters
 * Dynamic theming
