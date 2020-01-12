@@ -1,14 +1,15 @@
 package com.charliechristensen.cryptotracker.di
 
 import android.app.Application
-import com.charliechristensen.cryptotracker.cryptotracker.coinDetail.CoinDetailViewModel
-import com.charliechristensen.cryptotracker.cryptotracker.coinList.SearchCoinsViewModel
+import com.charliechristensen.cryptotracker.common.FormatterFactory
+import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer.MainActivityViewModel
-import com.charliechristensen.cryptotracker.cryptotracker.portfolio.PortfolioCoinListViewModel
-import com.charliechristensen.cryptotracker.cryptotracker.settings.SettingsViewModel
+import com.charliechristensen.cryptotracker.data.Repository
+import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Singleton
 @Component(modules = [(AppModule::class)])
@@ -18,9 +19,11 @@ interface AppComponent {
         fun create(@BindsInstance application: Application): AppComponent
     }
 
+    fun repository(): Repository
+    fun navigator(): Navigator
+    fun appPreferences(): AppPreferences
+    fun formatterFactory(): FormatterFactory
+
+    @ExperimentalCoroutinesApi
     val mainActivityViewModel: MainActivityViewModel.ViewModel
-    val coinDetailViewModelFactory: CoinDetailViewModel.ViewModel.Factory
-    val portfolioCoinListViewModel: PortfolioCoinListViewModel.ViewModel
-    val searchCoinsViewModelFactory: SearchCoinsViewModel.ViewModel.Factory
-    val settingsViewModel: SettingsViewModel.ViewModel
 }

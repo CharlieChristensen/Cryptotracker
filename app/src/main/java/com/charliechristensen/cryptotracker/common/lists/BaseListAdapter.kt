@@ -15,5 +15,4 @@ abstract class BaseListAdapter<T : ListItem> :
     override fun onBindViewHolder(holder: BaseViewHolder<T>, position: Int) = holder.bind(getItem(position))
 
     override fun getItemViewType(position: Int): Int = getItem(position).viewType
-
 }

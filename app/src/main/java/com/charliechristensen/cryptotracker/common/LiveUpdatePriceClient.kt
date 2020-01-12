@@ -3,56 +3,53 @@ package com.charliechristensen.cryptotracker.common
 import android.util.Log
 import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
-import com.charliechristensen.cryptotracker.data.websocket.WebSocketService
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 
+@ExperimentalCoroutinesApi
 @Singleton
 class LiveUpdatePriceClient @Inject constructor(
     private val appPreferences: AppPreferences,
-    private val repository: Repository,
-    private val webSocketService: WebSocketService
+    private val repository: Repository
 ) {
 
-    private val disposables = CompositeDisposable()
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
     fun start() {
         appPreferences.liveUpdatePrices()
-            .switchMap {
-                if (it) {
+            .flatMapLatest { isSet ->
+                if (isSet) {
                     repository.getPortfolioCoinSymbols()
                 } else {
-                    webSocketService.disconnect()
-                    Observable.empty<List<String>>()
+                    flow {
+                        repository.disconnectFromLivePrices()
+                    }
                 }
             }
-            .doFinally { webSocketService.disconnect() }
-            .subscribeOn(Schedulers.io())
-            .subscribeBy(
-                onNext = { symbolsList ->
-                    webSocketService.connect { socket ->
-                        socket.setPortfolioSubscriptions(symbolsList, Constants.MyCurrency)
-                    }
-                },
-                onError = {
-                    Log.d("SOCKET IO ERROR", it.localizedMessage)
-                }
-            )
-            .addTo(disposables)
+            .onEach { symbolsList ->
+                repository.connectToLivePrices(symbolsList, Constants.MyCurrency)
+            }
+            .onCompletion { repository.disconnectFromLivePrices() }
+            .catch { Log.d("SOCKET IO ERROR", it.localizedMessage ?: "UNKNOWN ERROR") }
+            .launchIn(scope)
 
-        webSocketService.priceUpdateReceived()
-            .observeOn(Schedulers.io())
-            .subscribe { repository.updatePriceForCoin(it.symbol, it.price) }
-            .addTo(disposables)
+        repository.priceUpdateReceived()
+            .onEach { repository.updatePriceForCoin(it.symbol, it.price) }
+            .launchIn(scope)
     }
 
     fun stop() {
-        disposables.clear()
+        scope.coroutineContext.cancelChildren()
     }
-
 }

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
@@ -17,11 +18,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
-
-inline fun <reified T : Fragment> fragment(block: Bundle.() -> Unit): T =
-    T::class.java.newInstance().apply {
-        arguments = Bundle().apply(block)
-    }
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(
@@ -57,7 +53,7 @@ inline fun <reified T : ViewModel> Fragment.savedStateViewModel(
     }
 }
 
-fun Activity.getColorFromResource(colorAttribute: Int): Int{
+fun Context.getColorFromResource(colorAttribute: Int): Int {
     val typedValue = TypedValue()
     val theme = theme
     theme.resolveAttribute(colorAttribute, typedValue, true)
@@ -75,10 +71,15 @@ fun Fragment.showToast(@StringRes resId: Int) =
 
 fun Context.getColorAttribute(color: ValueChangeColor, success: (Int) -> Unit) {
     val typedValue = TypedValue()
-    if (theme.resolveAttribute(
-            ColorUtils.getColorInt(
-                color
-            ), typedValue, true)) {
+    if (theme.resolveAttribute(ColorUtils.getColorInt(color), typedValue, true)) {
         success(typedValue.data)
+    }
+}
+
+fun Activity.hideKeyboard() {
+    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?
+    val currentFocus = currentFocus
+    if (currentFocus != null && imm != null) {
+        imm.hideSoftInputFromWindow(currentFocus.windowToken, 0)
     }
 }

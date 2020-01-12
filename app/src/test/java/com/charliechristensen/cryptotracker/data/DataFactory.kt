@@ -1,6 +1,6 @@
 package com.charliechristensen.cryptotracker.data
 
-import java.util.*
+import java.util.Random
 import java.util.concurrent.ThreadLocalRandom
 
 /**
@@ -37,5 +37,4 @@ object DataFactory {
             .map(source::get)
             .joinToString("")
     }
-
 }

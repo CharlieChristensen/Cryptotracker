@@ -1,48 +1,37 @@
 package com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer
 
-import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import androidx.navigation.NavDirections
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.LiveUpdatePriceClient
-import com.charliechristensen.cryptotracker.data.Repository
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
+import com.charliechristensen.cryptotracker.common.navigator.Navigator
+import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 interface MainActivityViewModel {
 
-    interface Inputs {
-    }
+    interface Inputs
 
     interface Outputs {
-        fun theme(): Observable<AppTheme>
+        val theme: LiveData<AppTheme>
+        val navigationEvents: LiveData<NavDirections>
         fun getAppThemeSync(): AppTheme
     }
 
+    @ExperimentalCoroutinesApi
     class ViewModel @Inject constructor(
         private val liveUpdatePriceClient: LiveUpdatePriceClient,
         private val appPreferences: AppPreferences,
-        repository: Repository
+        navigator: Navigator
     ) : BaseViewModel(), Inputs, Outputs {
-
-        private val themeRelay = PublishRelay.create<AppTheme>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
 
         init {
-            appPreferences.theme()
-                .subscribeOn(Schedulers.io())
-                .subscribe(themeRelay)
-                .addTo(disposables)
-
-            repository.refreshCoinListIfNeeded()
-                .subscribeOn(Schedulers.io())
-                .subscribe()
-                .addTo(disposables)
-
             liveUpdatePriceClient.start()
         }
 
@@ -57,12 +46,14 @@ interface MainActivityViewModel {
 
         //region Outputs
 
-        override fun getAppThemeSync() = appPreferences.getTheme()
+        override val theme: LiveData<AppTheme> = appPreferences.theme()
+            .asLiveData()
 
-        override fun theme(): Observable<AppTheme> = themeRelay
+        override val navigationEvents: LiveData<NavDirections> = navigator.navigationEvents
+
+        override fun getAppThemeSync(): AppTheme =
+            appPreferences.getTheme()
 
         //endregion
-
     }
-
 }

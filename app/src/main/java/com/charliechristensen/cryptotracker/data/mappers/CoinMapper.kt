@@ -1,22 +1,30 @@
 package com.charliechristensen.cryptotracker.data.mappers
 
-import com.charliechristensen.cryptotracker.data.mappers.CoinMapper.map
-import com.charliechristensen.cryptotracker.data.models.database.DbCoin
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
+import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
+import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
+import com.charliechristensen.database.models.DbCoin
+import com.charliechristensen.database.models.DbCoinPriceData
+import com.charliechristensen.database.models.DbCoinWithPriceAndAmount
 
-/**
- * Created by Chuck on 1/19/2018.
- */
-object CoinMapper {
+fun DbCoin.toUi(): Coin = Coin(
+    imageUrl,
+    symbol,
+    coinName
+)
 
-    fun map(dbCoin: DbCoin): Coin {
-        return Coin(
-            dbCoin.imageUrl,
-            dbCoin.symbol,
-            dbCoin.coinName
-        )
-    }
+fun DbCoinPriceData.toUi() = CoinPriceData(
+    symbol,
+    price,
+    open24Hour,
+    high24Hour,
+    low24Hour
+)
 
-}
-
-fun DbCoin.toUi(): Coin = map(this)
+fun DbCoinWithPriceAndAmount.toUi() = CoinWithPriceAndAmount(
+    symbol,
+    imageUrl,
+    price,
+    open24Hour,
+    amountOwned
+)

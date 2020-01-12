@@ -1,8 +1,7 @@
 package com.charliechristensen.cryptotracker.data.database.testUtils
 
-import java.util.*
+import java.util.Random
 import java.util.concurrent.ThreadLocalRandom
-
 
 /**
  * Generates random values
@@ -38,5 +37,4 @@ object DataFactory {
                 .map(source::get)
                 .joinToString("")
     }
-
 }

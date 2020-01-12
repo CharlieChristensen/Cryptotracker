@@ -1,42 +1,52 @@
 package com.charliechristensen.cryptotracker.common
 
-import io.reactivex.Observable
-import io.reactivex.Single
+import com.charliechristensen.cryptotracker.common.extensions.mapItems
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 
 /**
- * Exposes observable while deciding when to call network and cache
+ * Exposes Flow while deciding when to call network and cache
  */
-abstract class RxNetworkBoundResource<DbType, RemoteType> {
+abstract class RxNetworkBoundResource<DbType, RemoteType, UiType> {
 
     private var isFirstElement: Boolean = true
 
-    val observable: Observable<List<DbType>> by lazy {
+    @ExperimentalCoroutinesApi
+    val flow: Flow<List<UiType>> by lazy {
         loadFromDb()
-            .switchMap {
-                if (isFirstElement && shouldFetch(it)) {
+            .flatMapLatest { dbList ->
+                if (isFirstElement && shouldFetch(dbList)) {
                     isFirstElement = false
-                    Observable.concat(Observable.just(it), loadFromNetworkAndMap())
-                }else {
-                    Observable.just(it)
+                    flow {
+                        emit(dbList)
+                        emit(loadFromNetworkAndMap())
+                    }
+                } else {
+                    flowOf(dbList)
                 }
             }
-            .distinctUntilChanged()
+            .mapItems { mapToUiType(it) }
     }
 
-    protected abstract fun saveToDb(data: List<DbType>)
+    protected abstract suspend fun saveToDb(data: List<DbType>)
 
     protected abstract fun shouldFetch(data: List<DbType>): Boolean
 
-    protected abstract fun loadFromDb(): Observable<List<DbType>>
+    protected abstract fun loadFromDb(): Flow<List<DbType>>
 
-    protected abstract fun loadFromNetwork(): Single<RemoteType>
+    protected abstract suspend fun loadFromNetwork(): RemoteType
 
-    private fun loadFromNetworkAndMap(): Observable<List<DbType>> =
-        loadFromNetwork()
-            .map { mapToDbType(it) }
-            .doOnSuccess { saveToDb(it) }
-            .toObservable()
+    private suspend fun loadFromNetworkAndMap(): List<DbType> {
+        val networkResponse = loadFromNetwork()
+        val mappedResponse = mapToDbType(networkResponse)
+        saveToDb(mappedResponse)
+        return mappedResponse
+    }
 
     protected abstract fun mapToDbType(value: RemoteType): List<DbType>
 
+    protected abstract fun mapToUiType(value: DbType): UiType
 }

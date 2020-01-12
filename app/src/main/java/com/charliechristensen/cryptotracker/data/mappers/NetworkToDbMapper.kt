@@ -1,16 +1,16 @@
 package com.charliechristensen.cryptotracker.data.mappers
 
-import com.charliechristensen.cryptotracker.data.models.database.DbCoin
-import com.charliechristensen.cryptotracker.data.models.database.DbCoinPriceData
-import com.charliechristensen.cryptotracker.data.models.network.ServerCoinData
-import com.charliechristensen.cryptotracker.data.models.network.ServerCoinPriceRawData
+import com.charliechristensen.database.models.DbCoin
+import com.charliechristensen.database.models.DbCoinPriceData
+import com.charliechristensen.remote.models.RemoteCoinData
+import com.charliechristensen.remote.models.RemoteCoinPriceRawData
 
 /**
  * Created by Chuck on 1/20/2018.
  */
 object NetworkToDbMapper {
 
-    fun mapCoin(coinData: ServerCoinData, baseImageUrl: String): DbCoin {
+    fun mapCoin(coinData: RemoteCoinData, baseImageUrl: String): DbCoin {
         return DbCoin(
             coinData.symbol,
             baseImageUrl + coinData.imageUrl,
@@ -19,7 +19,7 @@ object NetworkToDbMapper {
         )
     }
 
-    fun mapCoinPriceData(networkCoin: ServerCoinPriceRawData): DbCoinPriceData {
+    fun mapCoinPriceData(networkCoin: RemoteCoinPriceRawData): DbCoinPriceData {
         return DbCoinPriceData(
             networkCoin.fromSymbol,
             networkCoin.price,
@@ -28,5 +28,4 @@ object NetworkToDbMapper {
             networkCoin.low24Hour
         )
     }
-
 }
