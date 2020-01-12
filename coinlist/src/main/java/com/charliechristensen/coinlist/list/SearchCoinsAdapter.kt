@@ -1,6 +1,5 @@
 package com.charliechristensen.coinlist.list
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.charliechristensen.coinlist.R
 import com.charliechristensen.cryptotracker.common.lists.BaseListAdapter

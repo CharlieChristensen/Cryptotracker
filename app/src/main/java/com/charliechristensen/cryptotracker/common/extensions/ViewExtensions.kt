@@ -19,11 +19,6 @@ import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
 
-inline fun <reified T : Fragment> fragment(block: Bundle.() -> Unit): T =
-    T::class.java.newInstance().apply {
-        arguments = Bundle().apply(block)
-    }
-
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(
     crossinline factory: () -> T

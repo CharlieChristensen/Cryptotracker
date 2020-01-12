@@ -3,7 +3,6 @@ package com.charliechristensen.portfolio
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.bumptech.glide.request.RequestOptions
 import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.common.GlideApp
 import com.charliechristensen.cryptotracker.common.extensions.getColorAttribute

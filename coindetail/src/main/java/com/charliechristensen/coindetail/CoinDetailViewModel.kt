@@ -2,6 +2,7 @@ package com.charliechristensen.coindetail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
@@ -59,13 +60,15 @@ interface CoinDetailViewModel {
         val showEditCoinAmountDialog: LiveData<String>
         val showConfirmRemoveDialog: LiveData<String>
         val showNetworkError: LiveData<Unit>
+        val selectedDateTab: LiveData<Int>
     }
 
     @ExperimentalCoroutinesApi
     class ViewModel @AssistedInject constructor(
         private val formatterFactory: FormatterFactory,
         private val interactor: CoinDetailInteractor,
-        @Assisted private val coinSymbol: String
+        @Assisted private val coinSymbol: String,
+        @Assisted private val savedState: SavedStateHandle
     ) : BaseViewModel(), Inputs, Outputs {
 
         private val coinIsInPortfolioChannel = MutableLiveData<Boolean>()
@@ -80,7 +83,11 @@ interface CoinDetailViewModel {
         private val toolbarImageDataChannel = MutableLiveData(ImageAndNamePair())
         private val currentStartPricePerUnitChannel = MutableLiveData(0.0)
         private val currentTimePeriodChannel: MutableLiveData<CoinHistoryTimePeriod> =
-            MutableLiveData(CoinHistoryTimePeriod.OneDay)
+            MutableLiveData(
+                CoinHistoryTimePeriod.getTimePeriodWithIndex(
+                    savedState.get<Int>(KEY_GRAPH_DATE_SELECTION) ?: 0
+                )
+            )
         private val graphStateChannel: MutableLiveData<CoinDetailGraphState> =
             MutableLiveData(CoinDetailGraphState.Loading)
 
@@ -128,6 +135,7 @@ interface CoinDetailViewModel {
         //region Inputs
 
         override fun graphDateSelectionChanged(index: Int) {
+            savedState.set(KEY_GRAPH_DATE_SELECTION, index)
             currentTimePeriodChannel.value = CoinHistoryTimePeriod.getTimePeriodWithIndex(index)
         }
 
@@ -159,58 +167,64 @@ interface CoinDetailViewModel {
 
         //region Outputs
 
-        override val toolbarImageData: LiveData<ImageAndNamePair> = toolbarImageDataChannel.distinctUntilChanged()
+        override val toolbarImageData: LiveData<ImageAndNamePair> =
+            toolbarImageDataChannel.distinctUntilChanged()
 
         override val currentCoinPrice: LiveData<String> = currentPricePerUnitChannel
-                .distinctUntilChanged()
-                .map { formatterFactory.currencyFormatter().format(it) }
+            .distinctUntilChanged()
+            .map { formatterFactory.currencyFormatter().format(it) }
 
         override val low24Hour: LiveData<String> = pricePerUnit24HourLowChannel
-                .distinctUntilChanged()
-                .map { formatterFactory.currencyFormatter().format(it) }
+            .distinctUntilChanged()
+            .map { formatterFactory.currencyFormatter().format(it) }
 
         override val high24Hour: LiveData<String> = pricePerUnit24HourHighChannel
-                .distinctUntilChanged()
-                .map { formatterFactory.currencyFormatter().format(it) }
+            .distinctUntilChanged()
+            .map { formatterFactory.currencyFormatter().format(it) }
 
         override val isCoinInPortfolio: LiveData<Boolean> = coinIsInPortfolioChannel
-                .distinctUntilChanged()
+            .distinctUntilChanged()
 
         override val percentChangeTimePeriod: LiveData<Int> = currentTimePeriodChannel
-                .distinctUntilChanged()
-                .map { it.displayString }
+            .distinctUntilChanged()
+            .map { it.displayString }
+
+        override val selectedDateTab: LiveData<Int> = currentTimePeriodChannel
+            .map { CoinHistoryTimePeriod.getIndexWithTimePeriod(it) }
 
         override val valueChange24Hour: LiveData<ColorValueString> = combineLatest(
-                currentPricePerUnitChannel,
-                currentStartPricePerUnitChannel
-            ) { price: Double, startPrice: Double ->
-                val valueChangeDouble = price - startPrice
-                ColorValueString.create(valueChangeDouble, formatterFactory.currencyFormatter())
-            }.distinctUntilChanged()
+            currentPricePerUnitChannel,
+            currentStartPricePerUnitChannel
+        ) { price: Double, startPrice: Double ->
+            val valueChangeDouble = price - startPrice
+            ColorValueString.create(valueChangeDouble, formatterFactory.currencyFormatter())
+        }.distinctUntilChanged()
 
         override val percentChange24Hour: LiveData<ColorValueString> = combineLatest(
-                currentPricePerUnitChannel,
-                currentStartPricePerUnitChannel
-            ) { price, startPrice ->
-                val percentChange = if (startPrice > 0.0) {
-                    ((price - startPrice) / startPrice)
-                } else {
-                    0.0
-                }
-                ColorValueString.create(percentChange, formatterFactory.percentFormatter())
-            }.distinctUntilChanged()
+            currentPricePerUnitChannel,
+            currentStartPricePerUnitChannel
+        ) { price, startPrice ->
+            val percentChange = if (startPrice > 0.0) {
+                ((price - startPrice) / startPrice)
+            } else {
+                0.0
+            }
+            ColorValueString.create(percentChange, formatterFactory.percentFormatter())
+        }.distinctUntilChanged()
 
         override val walletUnitsOwned: LiveData<String> = walletUnitsOwnedChannel
-                .distinctUntilChanged()
-                .map { formatterFactory.decimalFormatter().format(it) }
+            .distinctUntilChanged()
+            .map { formatterFactory.decimalFormatter().format(it) }
 
         override val walletTotalValue: LiveData<String> = walletTotalValueChannel
-                .distinctUntilChanged()
-                .map { formatterFactory.currencyFormatter().format(it) }
+            .distinctUntilChanged()
+            .map { formatterFactory.currencyFormatter().format(it) }
 
-        override val walletPriceChange24Hour: LiveData<ColorValueString> = walletPriceChange24HourChannel.distinctUntilChanged()
+        override val walletPriceChange24Hour: LiveData<ColorValueString> =
+            walletPriceChange24HourChannel.distinctUntilChanged()
 
-        override val graphState: LiveData<CoinDetailGraphState> = graphStateChannel.distinctUntilChanged()
+        override val graphState: LiveData<CoinDetailGraphState> =
+            graphStateChannel.distinctUntilChanged()
 
         override val showAddCoinDialog: LiveData<String> = showAddCoinDialogChannel
 
@@ -240,7 +254,12 @@ interface CoinDetailViewModel {
 
         @AssistedInject.Factory
         interface Factory {
-            fun create(coinSymbol: String): ViewModel
+            fun create(coinSymbol: String, savedState: SavedStateHandle): ViewModel
         }
+
+        companion object {
+            const val KEY_GRAPH_DATE_SELECTION = "KeyGraphDateSelection"
+        }
+
     }
 }

@@ -22,26 +22,38 @@ sealed class CoinHistoryTimePeriod(
     companion object {
         fun getTimePeriodWithIndex(index: Int): CoinHistoryTimePeriod {
             return when (index) {
-                0 -> {
-                    OneDay
+                0 -> OneDay
+                1 -> OneWeek
+                2 -> OneMonth
+                3 -> ThreeMonth
+                4 -> SixMonth
+                5 -> OneYear
+                else -> All
+            }
+        }
+
+        fun getIndexWithTimePeriod(index: CoinHistoryTimePeriod): Int {
+            return when (index) {
+                OneDay -> {
+                    0
                 }
-                1 -> {
-                    OneWeek
+                OneWeek -> {
+                    1
                 }
-                2 -> {
-                    OneMonth
+                OneMonth -> {
+                    2
                 }
-                3 -> {
-                    ThreeMonth
+                ThreeMonth -> {
+                    3
                 }
-                4 -> {
-                    SixMonth
+                SixMonth -> {
+                    4
                 }
-                5 -> {
-                    OneYear
+                OneYear -> {
+                    5
                 }
                 else -> {
-                    All
+                    6
                 }
             }
         }

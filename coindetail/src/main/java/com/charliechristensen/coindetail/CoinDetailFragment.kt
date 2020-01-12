@@ -1,6 +1,5 @@
 package com.charliechristensen.coindetail
 
-import android.app.Activity
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -14,46 +13,28 @@ import com.charliechristensen.coindetail.databinding.ViewCoinDetailBinding
 import com.charliechristensen.coindetail.di.DaggerCoinDetailComponent
 import com.charliechristensen.cryptotracker.common.GlideApp
 import com.charliechristensen.cryptotracker.common.extensions.injector
+import com.charliechristensen.cryptotracker.common.extensions.savedStateViewModel
 import com.charliechristensen.cryptotracker.common.extensions.showToast
-import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import ru.ldralighieri.corbind.material.selections
 
 @ExperimentalCoroutinesApi
 class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.view_coin_detail) {
 
-    override val viewModel: CoinDetailViewModel.ViewModel by viewModel {
+    override val viewModel: CoinDetailViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
         val fragmentArgs = CoinDetailFragmentArgs.fromBundle(requireArguments())
         DaggerCoinDetailComponent.builder()
             .appComponent(injector)
             .build()
             .coinDetailViewModelFactory
-            .create(fragmentArgs.coinSymbol)
-    }
-
-    private val binding: ViewCoinDetailBinding by lazy {
-        ViewCoinDetailBinding.bind(requireView())
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(KEY_TOGGLE_GROUP_SELECTED, binding.lineGraphController.dateTabLayout.selectedTabPosition)
-        super.onSaveInstanceState(outState)
-    }
-
-    private fun restoreViewState(savedViewState: Bundle?) {
-        val checkedId = savedViewState?.getInt(KEY_TOGGLE_GROUP_SELECTED) ?: 0
-        binding.lineGraphController.dateTabLayout.getTabAt(checkedId)?.select()
+            .create(fragmentArgs.coinSymbol, savedStateHandle)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        restoreViewState(savedInstanceState)
-
+        val binding: ViewCoinDetailBinding = ViewCoinDetailBinding.bind(view)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
@@ -70,21 +51,16 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
             .bind { setToolbarImage(it.coinName, it.imageUrl) }
 
         viewModel.outputs.showAddCoinDialog
-            .bind { showAddCoinDialog(activity, it) }
+            .bind(this::showAddCoinDialog)
 
         viewModel.outputs.showEditCoinAmountDialog
-            .bind { showEditCoinAmountDialog(activity, it) }
+            .bind(this::showEditCoinAmountDialog)
 
         viewModel.outputs.showConfirmRemoveDialog
-            .bind { showConfirmRemoveDialog(activity, it) }
+            .bind(this::showConfirmRemoveDialog)
 
         viewModel.outputs.showNetworkError
-            .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
-
-        binding.lineGraphController.dateTabLayout.selections()
-            .distinctUntilChanged()
-            .map { it.position }
-            .bind { viewModel.inputs.graphDateSelectionChanged(it) }
+            .bind { this.showToast(R.string.error_network_error) }
     }
 
     //region View Helpers
@@ -125,23 +101,12 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
             })
     }
 
-//    private fun setButtonLayout(inPortfolio: Boolean) {
-//        if (inPortfolio) {
-//            constraintLayout.transitionToState(R.id.editCoin)
-//        } else {
-//            constraintLayout.transitionToState(R.id.addCoin)
-//        }
-//    }
-
     //endregion
 
     //region Dialogs
 
-    private fun showAddCoinDialog(
-        activity: Activity?,
-        coinSymbol: String
-    ) {
-        if (activity == null) return
+    private fun showAddCoinDialog(coinSymbol: String) {
+        val activity = (activity ?: return) ?: return
         val binding = DialogTextInputLayoutBinding.inflate(activity.layoutInflater)
         val textInputLayout = binding.textInputLayout
         textInputLayout.hint = "Coin Amount"
@@ -158,11 +123,8 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
             .show()
     }
 
-    private fun showEditCoinAmountDialog(
-        activity: Activity?,
-        coinSymbol: String
-    ) {
-        if (activity == null) return
+    private fun showEditCoinAmountDialog(coinSymbol: String) {
+        val activity = (activity ?: return) ?: return
         val binding = DialogTextInputLayoutBinding.inflate(activity.layoutInflater)
         val textInputLayout = binding.textInputLayout
         textInputLayout.hint = "Coin Amount"
@@ -179,11 +141,8 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
             .show()
     }
 
-    private fun showConfirmRemoveDialog(
-        activity: Activity?,
-        coinSymbol: String
-    ) {
-        if (activity == null) return
+    private fun showConfirmRemoveDialog(coinSymbol: String) {
+        val activity = (activity ?: return) ?: return
         MaterialAlertDialogBuilder(activity)
             .setTitle("Remove")
             .setMessage("Are you sure you want to remove $coinSymbol from your portfolio?")
@@ -196,7 +155,4 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
 
     //endregion
 
-    companion object {
-        private const val KEY_TOGGLE_GROUP_SELECTED = "toggle_group_selected"
-    }
 }

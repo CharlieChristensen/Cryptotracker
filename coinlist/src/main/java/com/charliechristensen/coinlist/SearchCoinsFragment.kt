@@ -35,6 +35,7 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
         setActionBarTitle(com.charliechristensen.cryptotracker.cryptotracker.R.string.coins)
 
         val binding = ViewSearchCoinsBinding.bind(view)
+        binding.lifecycleOwner = this
 
         val adapter = SearchCoinsAdapter(this)
         binding.coinsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
