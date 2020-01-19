@@ -5,6 +5,7 @@ object BuildPlugins {
     object Versions {
         const val gradlePlugin = "4.0.0-alpha08"
         const val safeArgs = "2.2.0-rc04"
+        const val sqlDelight = "1.2.1"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradlePlugin}"
@@ -16,8 +17,10 @@ object BuildPlugins {
     const val kotlin = "kotlin"
     const val kotlinAndroid = "kotlin-android"
     const val kotlinKapt = "kotlin-kapt"
+    const val sqlDelight = "com.squareup.sqldelight"
     const val safeArgs = "androidx.navigation.safeargs.kotlin"
-    const val safeArgsPlugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.safeArgs}"
+    const val sqlDelightClasspath = "com.squareup.sqldelight:gradle-plugin:${Versions.sqlDelight}"
+    const val safeArgsClasspath = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.safeArgs}"
 }
 
 object AndroidSdk {
@@ -37,15 +40,16 @@ object Libraries {
         const val androidxCore      =  "1.2.0-rc01"
         const val appCompat         =  "1.2.0-alpha01"
         const val activity          =  "1.1.0-rc03"
-        const val fragment          =  "1.2.0-rc04"
+        const val fragment          =  "1.2.0-rc05"
         const val cardView          =  "1.0.0"
         const val material          =  "1.2.0-alpha03"
         const val savedState        =  "1.0.0-rc03"
         const val lifecycle         =  "2.2.0-rc03"
         const val room              =  "2.2.3"
+        const val sqlDelight        =  "1.2.1"
         const val navigation        =  "2.2.0-rc04"
         const val dynamicNavigation =  "2.3.0-SNAPSHOT"
-        const val workManager       =  "2.3.0-beta02"
+        const val workManager       =  "2.3.0-rc01"
         const val corbind           =  "1.3.0"
         const val flowPrefs         =  "1.0.0"
         const val moshi             =  "1.9.1"
@@ -67,6 +71,8 @@ object Libraries {
     const val roomRuntime            = "androidx.room:room-runtime:${Versions.room}"
     const val roomKtx                = "androidx.room:room-ktx:${Versions.room}"
     const val roomCompiler           = "androidx.room:room-compiler:${Versions.room}"
+    const val sqlDelight             = "com.squareup.sqldelight:android-driver:${Versions.sqlDelight}"
+    const val sqlDelightCoroutines   = "com.squareup.sqldelight:coroutines-extensions:${Versions.sqlDelight}"
     const val workManager            = "androidx.work:work-runtime-ktx:${Versions.workManager}"
     const val dagger                 = "com.google.dagger:dagger:${Versions.dagger}"
     const val daggerCompiler         = "com.google.dagger:dagger-compiler:${Versions.dagger}"

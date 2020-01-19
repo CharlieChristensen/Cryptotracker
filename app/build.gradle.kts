@@ -5,6 +5,7 @@ plugins {
     id(BuildPlugins.kotlinAndroid)
     id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.safeArgs)
+    id(BuildPlugins.sqlDelight)
 }
 
 android {
@@ -32,16 +33,17 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    viewBinding {
-        isEnabled = true
-    }
-    dataBinding {
-        isEnabled = true
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
     }
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {
             jvmTarget = "1.8"
         }
+    }
+    packagingOptions {
+        pickFirst("META-INF/kotlinx-coroutines-core.kotlin_module")
     }
 
     dynamicFeatures = mutableSetOf(":coindetail", ":settings", ":coinlist", ":portfolio", ":themeplayground")
@@ -85,6 +87,9 @@ dependencies {
 
     implementation(Libraries.glide)
     kapt(Libraries.glideCompiler)
+
+    implementation(Libraries.sqlDelight)
+    implementation(Libraries.sqlDelightCoroutines)
 
     debugImplementation(Libraries.leakCanary)
 

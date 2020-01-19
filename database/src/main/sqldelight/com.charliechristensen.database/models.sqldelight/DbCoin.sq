@@ -1,0 +1,34 @@
+
+CREATE TABLE dbCoin (
+    symbol TEXT NOT NULL UNIQUE PRIMARY KEY,
+    imageUrl TEXT,
+    coinName TEXT NOT NULL,
+    sortOrder INTEGER NOT NULL
+);
+
+CREATE INDEX dbCoin_symbol ON dbCoin(sortOrder);
+
+insert:
+INSERT OR REPLACE INTO dbCoin(
+    symbol,
+    imageUrl,
+    coinName,
+    sortOrder
+)
+VALUES (?, ?, ?, ?);
+
+selectBySymbol:
+SELECT *
+FROM dbCoin
+WHERE symbol = ?;
+
+selectAll:
+SELECT *
+FROM dbCoin
+ORDER BY sortOrder;
+
+searchCoinsByName:
+SELECT *
+FROM dbCoin
+WHERE coinName LIKE ('%' || ? || '%')
+ORDER BY sortOrder;

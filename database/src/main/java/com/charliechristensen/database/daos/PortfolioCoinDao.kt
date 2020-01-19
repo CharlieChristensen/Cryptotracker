@@ -16,17 +16,11 @@ interface PortfolioCoinDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addCoinToPortfolio(myCoin: DbPortfolioCoin)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addCoinToPortfolios(myCoin: DbPortfolioCoin)
-
-    @Query("SELECT * FROM portfolio_coin WHERE symbol = :symbol")
-    fun getCoinFromPortfolio(symbol: String): Flow<List<DbPortfolioCoin>>
-
     @Query("DELETE FROM portfolio_coin WHERE symbol = :symbol")
     suspend fun removeCoinFromPortfolio(symbol: String)
 
-    @Query("DELETE FROM portfolio_coin WHERE symbol = :symbol")
-    suspend fun removeCoinFromPortfolios(symbol: String)
+    @Query("SELECT * FROM portfolio_coin WHERE symbol = :symbol")
+    fun getCoinFromPortfolio(symbol: String): Flow<List<DbPortfolioCoin>>
 
     @Query("SELECT symbol FROM portfolio_coin")
     fun getPortfolioCoinSymbols(): Flow<List<String>>

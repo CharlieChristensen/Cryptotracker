@@ -28,4 +28,14 @@ object NetworkToDbMapper {
             networkCoin.low24Hour
         )
     }
+
+    fun mapSqlDelightCoinPriceData(networkCoin: RemoteCoinPriceRawData): com.charliechristensen.database.models.sqldelight.DbCoinPriceData {
+        return com.charliechristensen.database.models.sqldelight.DbCoinPriceData.Impl(
+            networkCoin.fromSymbol,
+            networkCoin.price,
+            networkCoin.open24Hour,
+            networkCoin.high24Hour,
+            networkCoin.low24Hour
+        )
+    }
 }

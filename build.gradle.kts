@@ -8,7 +8,8 @@ buildscript {
     dependencies {
         classpath(BuildPlugins.androidGradlePlugin)
         classpath(BuildPlugins.kotlinGradlePlugin)
-        classpath(BuildPlugins.safeArgsPlugin)
+        classpath(BuildPlugins.safeArgsClasspath)
+        classpath(BuildPlugins.sqlDelightClasspath)
     }
 }
 

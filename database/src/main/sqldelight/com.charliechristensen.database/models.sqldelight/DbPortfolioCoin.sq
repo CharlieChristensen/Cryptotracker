@@ -1,0 +1,32 @@
+
+CREATE TABLE dbPortfolioCoin (
+    symbol TEXT NOT NULL PRIMARY KEY,
+    amountOwned REAL NOT NULL,
+    FOREIGN KEY(symbol) REFERENCES dbCoin(symbol)
+);
+
+insert:
+INSERT OR REPLACE INTO dbPortfolioCoin (
+    symbol,
+    amountOwned
+)
+VALUES (?, ?);
+
+deleteBySymbol:
+DELETE
+FROM dbPortfolioCoin
+WHERE symbol = ?;
+
+selectBySymbol:
+SELECT *
+FROM dbPortfolioCoin
+WHERE symbol = ?;
+
+selectAllSymbols:
+SELECT symbol
+FROM dbPortfolioCoin;
+
+selectUnitsOwnedForSymbol:
+SELECT amountOwned
+FROM dbPortfolioCoin
+WHERE symbol = ?;

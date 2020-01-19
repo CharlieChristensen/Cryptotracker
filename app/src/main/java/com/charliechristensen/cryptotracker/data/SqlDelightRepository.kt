@@ -2,57 +2,64 @@ package com.charliechristensen.cryptotracker.data
 
 import com.charliechristensen.cryptotracker.common.Constants
 import com.charliechristensen.cryptotracker.common.RxNetworkBoundResource
-import com.charliechristensen.cryptotracker.common.extensions.mapItems
+import com.charliechristensen.cryptotracker.data.mappers.CoinMappers
 import com.charliechristensen.cryptotracker.data.mappers.NetworkToDbMapper
 import com.charliechristensen.cryptotracker.data.mappers.toUi
 import com.charliechristensen.cryptotracker.data.models.graph.CoinHistory
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
-import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits.DAY
-import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits.HOUR
-import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits.MINUTE
+import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
-import com.charliechristensen.database.DatabaseApi
-import com.charliechristensen.database.models.DbCoinPriceData
-import com.charliechristensen.database.models.DbPortfolioCoin
+import com.charliechristensen.database.Database
+import com.charliechristensen.database.models.sqldelight.DbCoinPriceData
 import com.charliechristensen.remote.models.RemoteCoinPriceData
 import com.charliechristensen.remote.models.SymbolPricePair
 import com.charliechristensen.remote.webservice.CryptoService
 import com.charliechristensen.remote.websocket.WebSocketService
-import javax.inject.Inject
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import javax.inject.Named
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-/**
- * Repository
- */
-class RepositoryImpl @Inject constructor(
+class SqlDelightRepository @Inject constructor(
     private val service: CryptoService,
-    @Named("RoomDatabase") private val database: DatabaseApi,
-    private val webSocket: WebSocketService
+    private val webSocket: WebSocketService,
+    private val database: Database
 ) : Repository {
 
+    private val coinQueries = database.dbCoinQueries
+    private val coinPriceQueries = database.dbCoinPriceDataQueries
+    private val portfolioQueries = database.dbPortfolioCoinQueries
+    private val combinedTableQueries = database.dbCombinedTableQueries
+
     override fun searchCoinsWithQuery(query: CharSequence): Flow<List<Coin>> =
-        database.searchCoinsByName(query.toString())
-            .mapItems { coin -> coin.toUi() }
+        coinQueries.searchCoinsByName(query.toString(), CoinMappers.dbCoinMapper)
+            .asFlow()
+            .mapToList()
 
     override fun searchUnownedCoinWithQuery(query: CharSequence): Flow<List<Coin>> =
-        database.searchUnownedCoinsByName(query.toString())
-            .mapItems { coin -> coin.toUi() }
+        combinedTableQueries.searchUnownedCoinsByName(query.toString(), CoinMappers.dbCoinMapper)
+            .asFlow()
+            .mapToList()
 
     override fun getCoinDetails(symbol: String): Flow<List<Coin>> =
-        database.getCoin(symbol)
-            .mapItems { coin -> coin.toUi() }
+        coinQueries.searchCoinsByName(symbol, CoinMappers.dbCoinMapper)
+            .asFlow()
+            .mapToList()
 
     override fun getUnitsOwnedForSymbol(symbol: String): Flow<List<Double>> =
-        database.getUnitsOwnedForSymbol(symbol)
+        portfolioQueries.selectUnitsOwnedForSymbol(symbol)
+            .asFlow()
+            .mapToList()
 
     override fun getPortfolioData(): Flow<List<CoinWithPriceAndAmount>> =
-        database.getPortfolioData()
-            .mapItems { it.toUi() }
+        combinedTableQueries.getPortfolioData(CoinMappers.dbCoinWithPriceAndAmountMapper)
+            .asFlow()
+            .mapToList()
 
     @ExperimentalCoroutinesApi
     override fun getCoinPriceData(
@@ -62,9 +69,16 @@ class RepositoryImpl @Inject constructor(
         object : RxNetworkBoundResource<DbCoinPriceData, RemoteCoinPriceData, CoinPriceData>() {
             override suspend fun saveToDb(data: List<DbCoinPriceData>) {
                 if (data.isNotEmpty()) {
-                    database.setPrice(data[0])
+                    val dbCoinPriceData = data[0]
+                    coinPriceQueries.insert(
+                        dbCoinPriceData.symbol,
+                        dbCoinPriceData.price,
+                        dbCoinPriceData.open24Hour,
+                        dbCoinPriceData.high24Hour,
+                        dbCoinPriceData.low24Hour
+                    )
                 } else {
-                    database.setPrice(DbCoinPriceData(symbol))
+                    coinPriceQueries.insertSymbol(symbol)
                 }
             }
 
@@ -76,7 +90,7 @@ class RepositoryImpl @Inject constructor(
                     val rawData = value.rawData!![symbol] ?: return emptyList()
                     if (rawData.containsKey(Constants.MyCurrency)) {
                         val coinPriceRawData = rawData[Constants.MyCurrency] ?: return emptyList()
-                        val coinPriceData = NetworkToDbMapper.mapCoinPriceData(coinPriceRawData)
+                        val coinPriceData = NetworkToDbMapper.mapSqlDelightCoinPriceData(coinPriceRawData)
                         return listOf(coinPriceData)
                     }
                 }
@@ -84,7 +98,9 @@ class RepositoryImpl @Inject constructor(
             }
 
             override fun loadFromDb(): Flow<List<DbCoinPriceData>> =
-                database.getPrice(symbol)
+                coinPriceQueries.selectBySymbol(symbol)
+                    .asFlow()
+                    .mapToList()
 
             override suspend fun loadFromNetwork(): RemoteCoinPriceData =
                 service.getFullCoinPrice(symbol, Constants.MyCurrency)
@@ -92,22 +108,10 @@ class RepositoryImpl @Inject constructor(
             override fun mapToUiType(value: DbCoinPriceData): CoinPriceData = value.toUi()
         }.flow
 
-    override suspend fun forceRefreshCoinListAndSaveToDb() {
-        val serverCoinList = service.getCoinList()
-        val coinList = serverCoinList.data
-            .map { NetworkToDbMapper.mapCoin(it.value, serverCoinList.baseImageUrl) }
-        database.insertCoins(coinList)
-    }
-
-    override suspend fun refreshCoinListIfNeeded() {
-        val coinList = database.getAllCoins().first()
-        if (coinList.isEmpty()) {
-            forceRefreshCoinListAndSaveToDb()
-        }
-    }
-
     override fun getPortfolioCoinSymbols(): Flow<List<String>> =
-        database.getPortfolioCoinSymbols()
+        portfolioQueries.selectAllSymbols()
+            .asFlow()
+            .mapToList()
 
     override fun addTemporarySubscription(symbol: String, currency: String) {
         webSocket.addTemporarySubscription(symbol, currency)
@@ -128,11 +132,39 @@ class RepositoryImpl @Inject constructor(
     override fun priceUpdateReceived(): Flow<SymbolPricePair> =
         webSocket.priceUpdateReceived()
 
-    override suspend fun addPortfolioCoin(symbol: String, amountOwned: Double) =
-        database.addCoinToPortfolio(DbPortfolioCoin(symbol, amountOwned))
+    override suspend fun forceRefreshCoinListAndSaveToDb() = withContext(Dispatchers.IO) {
+        val serverCoinList = service.getCoinList()
+        val baseImageUrl = serverCoinList.baseImageUrl
+        serverCoinList.data.values.forEach { coinData ->
+            coinQueries.insert(
+                coinData.symbol,
+                baseImageUrl + coinData.imageUrl,
+                coinData.coinName,
+                coinData.sortOrder.toLong()
+            )
+        }
+    }
 
-    override suspend fun removeCoinFromPortfolio(symbol: String) =
-        database.removeCoinFromPortfolio(symbol)
+    override suspend fun refreshCoinListIfNeeded() = withContext(Dispatchers.IO) {
+        val coinList = coinQueries.selectAll().executeAsList()
+        if(coinList.isEmpty()) {
+            forceRefreshCoinListAndSaveToDb()
+        }
+    }
+
+    override suspend fun addPortfolioCoin(symbol: String, amountOwned: Double) =
+        withContext(Dispatchers.IO) {
+            portfolioQueries.insert(symbol, amountOwned)
+        }
+
+    override suspend fun removeCoinFromPortfolio(symbol: String) = withContext(Dispatchers.IO) {
+        portfolioQueries.deleteBySymbol(symbol)
+    }
+
+    override suspend fun updatePriceForCoin(coinSymbol: String, price: Double) =
+        withContext(Dispatchers.IO) {
+            coinPriceQueries.updatePrice(price, coinSymbol)
+        }
 
     override suspend fun getHistoricalDataForCoin(
         symbol: String,
@@ -141,17 +173,17 @@ class RepositoryImpl @Inject constructor(
     ): CoinHistory {
         val historicalData =
             when (timePeriod.timeUnit) {
-                MINUTE -> service.getHistoricalDataByMinute(
+                CoinHistoryUnits.MINUTE -> service.getHistoricalDataByMinute(
                     symbol,
                     Constants.MyCurrency,
                     timePeriod.limit
                 )
-                HOUR -> service.getHistoricalDataByHour(
+                CoinHistoryUnits.HOUR -> service.getHistoricalDataByHour(
                     symbol,
                     Constants.MyCurrency,
                     timePeriod.limit
                 )
-                DAY -> service.getHistoricalDataByDay(
+                CoinHistoryUnits.DAY -> service.getHistoricalDataByDay(
                     symbol,
                     Constants.MyCurrency,
                     timePeriod.limit
@@ -159,7 +191,4 @@ class RepositoryImpl @Inject constructor(
             }
         return CoinHistory(historicalData)
     }
-
-    override suspend fun updatePriceForCoin(coinSymbol: String, price: Double) =
-        database.updatePrice(coinSymbol, price)
 }

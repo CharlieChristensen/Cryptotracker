@@ -8,7 +8,7 @@ import com.charliechristensen.cryptotracker.common.navigator.NavigatorImpl
 import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.charliechristensen.cryptotracker.data.Repository
-import com.charliechristensen.cryptotracker.data.RepositoryImpl
+import com.charliechristensen.cryptotracker.data.SqlDelightRepository
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferencesImpl
 import com.charliechristensen.database.di.DatabaseModule
@@ -45,7 +45,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRepository(
-        repositoryImpl: RepositoryImpl
+        repositoryImpl: SqlDelightRepository
     ): Repository = repositoryImpl
 
     @Provides

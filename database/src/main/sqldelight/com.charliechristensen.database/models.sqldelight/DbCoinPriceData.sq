@@ -1,0 +1,39 @@
+
+CREATE TABLE dbCoinPriceData (
+    symbol TEXT NOT NULL PRIMARY KEY,
+    price REAL NOT NULL DEFAULT 0.0,
+    open24Hour REAL NOT NULL DEFAULT 0.0,
+    high24Hour REAL NOT NULL DEFAULT 0.0,
+    low24Hour REAL NOT NULL DEFAULT 0.0,
+    FOREIGN KEY(symbol) REFERENCES dbCoin(symbol)
+);
+
+insert:
+INSERT OR REPLACE INTO dbCoinPriceData(
+    symbol,
+    price,
+    open24Hour,
+    high24Hour,
+    low24Hour
+)
+VALUES (?, ?, ?, ?, ?);
+
+insertSymbol:
+INSERT OR REPLACE INTO dbCoinPriceData(
+    symbol,
+    price,
+    open24Hour,
+    high24Hour,
+    low24Hour
+)
+VALUES (?, 0.0, 0.0, 0.0, 0.0);
+
+selectBySymbol:
+SELECT *
+FROM dbCoinPriceData
+WHERE symbol = ?;
+
+updatePrice:
+UPDATE dbCoinPriceData
+SET price = ?
+WHERE symbol = ?;

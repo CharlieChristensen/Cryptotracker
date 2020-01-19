@@ -1,0 +1,15 @@
+
+searchUnownedCoinsByName:
+SELECT *
+FROM dbCoin
+WHERE NOT EXISTS
+(SELECT NULL FROM dbPortfolioCoin WHERE dbCoin.symbol == dbPortfolioCoin.symbol)
+AND
+dbCoin.coinName LIKE ('%' || ? || '%')
+ORDER BY sortOrder;
+
+getPortfolioData:
+SELECT dbCoin.symbol, dbCoin.imageUrl, dbCoinPriceData.price, dbCoinPriceData.open24Hour, dbPortfolioCoin.amountOwned
+FROM dbPortfolioCoin
+INNER JOIN dbCoin ON dbCoin.symbol = dbPortfolioCoin.symbol
+INNER JOIN dbCoinPriceData ON dbCoinPriceData.symbol = dbPortfolioCoin.symbol;

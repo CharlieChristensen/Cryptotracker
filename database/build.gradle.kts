@@ -4,6 +4,7 @@ plugins {
     id(BuildPlugins.androidLibrary)
     id(BuildPlugins.kotlinAndroid)
     id(BuildPlugins.kotlinKapt)
+    id(BuildPlugins.sqlDelight)
 }
 
 android {
@@ -35,6 +36,7 @@ dependencies {
     implementation(Libraries.roomRuntime)
     implementation(Libraries.roomKtx)
     kapt(Libraries.roomCompiler)
+    implementation(Libraries.sqlDelight)
 
     implementation(Libraries.dagger)
     kapt(Libraries.daggerCompiler)
