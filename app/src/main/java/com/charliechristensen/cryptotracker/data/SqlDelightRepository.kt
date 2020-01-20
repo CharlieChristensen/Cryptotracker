@@ -78,11 +78,11 @@ class SqlDelightRepository @Inject constructor(
     }
 
     private suspend fun fetchCoinPricesAndSaveToDb(symbol: String) {
-        val remoteCoinPriceData = remoteGateway.getFullCoinPrice(symbol, Constants.MyCurrency)
+        val remoteCoinPriceData = remoteGateway.getFullCoinPrice(symbol, Constants.DefaultCurrency)
         if (remoteCoinPriceData.rawData?.containsKey(symbol) == true) {
             val rawData = remoteCoinPriceData.rawData!![symbol] ?: return
-            if (rawData.containsKey(Constants.MyCurrency)) {
-                val coinPriceRawData = rawData[Constants.MyCurrency] ?: return
+            if (rawData.containsKey(Constants.DefaultCurrency)) {
+                val coinPriceRawData = rawData[Constants.DefaultCurrency] ?: return
                 coinPriceQueries.insert(
                     coinPriceRawData.fromSymbol,
                     coinPriceRawData.price,
@@ -156,17 +156,17 @@ class SqlDelightRepository @Inject constructor(
             when (timePeriod.timeUnit) {
                 CoinHistoryUnits.MINUTE -> remoteGateway.getHistoricalDataByMinute(
                     symbol,
-                    Constants.MyCurrency,
+                    Constants.DefaultCurrency,
                     timePeriod.limit
                 )
                 CoinHistoryUnits.HOUR -> remoteGateway.getHistoricalDataByHour(
                     symbol,
-                    Constants.MyCurrency,
+                    Constants.DefaultCurrency,
                     timePeriod.limit
                 )
                 CoinHistoryUnits.DAY -> remoteGateway.getHistoricalDataByDay(
                     symbol,
-                    Constants.MyCurrency,
+                    Constants.DefaultCurrency,
                     timePeriod.limit
                 )
             }

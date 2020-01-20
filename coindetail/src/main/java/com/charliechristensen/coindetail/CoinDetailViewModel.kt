@@ -124,12 +124,12 @@ interface CoinDetailViewModel {
                 .catch { graphStateChannel.setValue(CoinDetailGraphState.Error) }
                 .launchIn(viewModelScope)
 
-            interactor.addTemporarySubscription(coinSymbol, Constants.MyCurrency)
+            interactor.addTemporarySubscription(coinSymbol, Constants.DefaultCurrency)
         }
 
         override fun onCleared() {
             super.onCleared()
-            interactor.clearTemporarySubscriptions(Constants.MyCurrency)
+            interactor.clearTemporarySubscriptions(Constants.DefaultCurrency)
         }
 
         //region Inputs

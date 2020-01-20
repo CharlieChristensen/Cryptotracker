@@ -38,7 +38,7 @@ class LiveUpdatePriceClient @Inject constructor(
                 }
             }
             .onEach { symbolsList ->
-                repository.connectToLivePrices(symbolsList, Constants.MyCurrency)
+                repository.connectToLivePrices(symbolsList, Constants.DefaultCurrency)
             }
             .onCompletion { repository.disconnectFromLivePrices() }
             .catch { Log.d("SOCKET IO ERROR", it.localizedMessage ?: "UNKNOWN ERROR") }

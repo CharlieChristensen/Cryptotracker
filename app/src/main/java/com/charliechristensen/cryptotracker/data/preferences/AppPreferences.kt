@@ -16,4 +16,7 @@ interface AppPreferences {
     fun getLiveUpdatePrices(): Boolean
     fun getTheme(): AppTheme
     fun liveUpdatePrices(): Flow<Boolean>
+    fun setCurrency(symbol: String)
+    fun getCurrency(): String
+    fun currency(): Flow<String>
 }

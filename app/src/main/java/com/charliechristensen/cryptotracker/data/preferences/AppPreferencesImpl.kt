@@ -2,6 +2,7 @@ package com.charliechristensen.cryptotracker.data.preferences
 
 import android.content.SharedPreferences
 import com.charliechristensen.cryptotracker.common.AppTheme
+import com.charliechristensen.cryptotracker.common.Constants
 import com.tfcporciuncula.flow.FlowSharedPreferences
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,8 +16,11 @@ class AppPreferencesImpl @Inject constructor(sharedPreferences: SharedPreference
 
     private val flowSharedPreferences = FlowSharedPreferences(sharedPreferences)
 
-    private val liveUpdatePricesPref = flowSharedPreferences.getBoolean(KEY_LIVE_UPDATE_PRICES, true)
+    private val liveUpdatePricesPref =
+        flowSharedPreferences.getBoolean(KEY_LIVE_UPDATE_PRICES, true)
     private val themePref = flowSharedPreferences.getInt(KEY_APP_THEME, 0)
+    private val selectedCurrencyPref =
+        flowSharedPreferences.getString(KEY_DISPLAY_CURRENCY, Constants.DefaultCurrency)
 
     override fun setLiveUpdatePrices(shouldUpdatePrices: Boolean) {
         liveUpdatePricesPref.set(shouldUpdatePrices)
@@ -41,8 +45,19 @@ class AppPreferencesImpl @Inject constructor(sharedPreferences: SharedPreference
         liveUpdatePricesPref.asFlow()
             .distinctUntilChanged()
 
+    override fun setCurrency(symbol: String) {
+        selectedCurrencyPref.set(symbol)
+    }
+
+    override fun getCurrency(): String =
+        selectedCurrencyPref.get()
+
+    override fun currency(): Flow<String> =
+        selectedCurrencyPref.asFlow()
+
     companion object {
         const val KEY_LIVE_UPDATE_PRICES = "live_update_prices"
         const val KEY_APP_THEME = "cryptotracker_app_theme"
+        const val KEY_DISPLAY_CURRENCY = "key_display_currency"
     }
 }

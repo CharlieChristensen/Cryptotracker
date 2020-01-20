@@ -2,10 +2,10 @@ package com.charliechristensen.settings
 
 import android.os.Bundle
 import android.view.View
+import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
-import com.charliechristensen.settings.databinding.DialogChooseThemeBinding
 import com.charliechristensen.settings.databinding.ViewSettingsBinding
 import com.charliechristensen.settings.di.DaggerSettingsComponent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -29,23 +29,30 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view
 
         viewModel.outputs.showChooseThemeDialog
             .bind(this::showSelectThemeDialog)
+
+        viewModel.outputs.showCurrencyDialog
+            .bind(this::showCurrencyDialog)
+
     }
 
-    private fun showSelectThemeDialog(
-        selectedRadioButtonId: Int
-    ) {
-        val activity = activity ?: return
-        val binding = DialogChooseThemeBinding.inflate(activity.layoutInflater).apply {
-            radioGroup.check(selectedRadioButtonId)
-        }
+    private fun showSelectThemeDialog(themes: List<AppTheme>) {
+        val themeDisplayStrings = themes
+            .map { resources.getString(it.displayId, "") }
+            .toTypedArray()
         MaterialAlertDialogBuilder(activity)
-            .setTitle("Choose Theme")
-            .setView(binding.root)
-            .setPositiveButton("OK") { dialog, _ ->
-                viewModel.inputs.themeChosen(binding.radioGroup.checkedRadioButtonId)
-                dialog.dismiss()
+            .setTitle("Theme")
+            .setItems(themeDisplayStrings) { _, which ->
+                viewModel.inputs.themeChosen(themes[which])
             }
-            .setNegativeButton("CANCEL", null)
+            .show()
+    }
+
+    private fun showCurrencyDialog(availableCurrencies: Array<String>) {
+        MaterialAlertDialogBuilder(activity)
+            .setTitle("Currency")
+            .setItems(availableCurrencies) { _, which ->
+                viewModel.inputs.setCurrency(availableCurrencies[which])
+            }
             .show()
     }
 }

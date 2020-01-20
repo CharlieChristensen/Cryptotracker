@@ -4,12 +4,17 @@ package com.charliechristensen.cryptotracker.common
  * Created by Chuck on 1/2/2018.
  */
 object Constants {
-    const val MyCurrency = "USD"
+    const val DefaultCurrency = "USD"
     const val Euro = "EUR"
 
-    val availableCurrencies = listOf(
+    val availableCurrencies = arrayOf(
         "USD",
         "EUR"
+    )
+
+    val availableThemes = listOf(
+        AppTheme.Dark,
+        AppTheme.Teal
     )
 
 }
