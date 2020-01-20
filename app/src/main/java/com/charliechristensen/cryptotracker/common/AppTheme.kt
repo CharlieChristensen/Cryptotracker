@@ -16,7 +16,7 @@ sealed class AppTheme constructor(
     companion object {
 
         fun themeFromRestoreId(restoreId: Int): AppTheme = when (restoreId) {
-            2 -> Teal
+            Teal.displayId -> Teal
             else -> Dark
         }
 
