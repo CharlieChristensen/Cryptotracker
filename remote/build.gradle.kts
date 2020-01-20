@@ -13,11 +13,10 @@ dependencies {
 
     implementation(Libraries.retrofit)
     implementation(Libraries.retrofitMoshi)
-    implementation(Libraries.moshi)
-    kapt(Libraries.moshiCompiler)
-
     implementation(Libraries.okhttp)
     implementation(Libraries.okhttpLogging)
+    implementation(Libraries.moshi)
+    kapt(Libraries.moshiCompiler)
 
     implementation(Libraries.dagger)
     kapt(Libraries.daggerCompiler)

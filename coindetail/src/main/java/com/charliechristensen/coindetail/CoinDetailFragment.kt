@@ -60,9 +60,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
             .bind(this::showConfirmRemoveDialog)
 
         viewModel.outputs.showNetworkError
-            .bind {
-//                this.showToast(R.string.error_network_error)
-            }
+            .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
     }
 
     //region View Helpers

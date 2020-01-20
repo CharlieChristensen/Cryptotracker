@@ -5,6 +5,5 @@ include(
     ":coinlist",
     ":portfolio",
     ":remote",
-    ":database",
     ":themeplayground"
 )

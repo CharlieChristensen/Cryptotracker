@@ -26,7 +26,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            app:imageUri="@{coin.imageUri}"
+            imageUri="@{coin.imageUri}"
             android:contentDescription="@string/coin_logo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="h,1:1"

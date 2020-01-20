@@ -10,21 +10,21 @@ import com.charliechristensen.cryptotracker.common.extensions.getColorFromResour
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
 
-@BindingAdapter("app:imageUri")
+@BindingAdapter("imageUri")
 fun loadImage(view: ImageView, imageUri: String) {
     GlideApp.with(view)
         .load(imageUri)
         .into(view)
 }
 
-@BindingAdapter("app:colorAttribute")
+@BindingAdapter("colorAttribute")
 fun setColorAttribute(textView: TextView, valueChangeColor: ValueChangeColor) {
     textView.context.getColorAttribute(valueChangeColor) { color ->
         textView.setTextColor(color)
     }
 }
 
-@BindingAdapter("app:colorValueString")
+@BindingAdapter("colorValueString")
 fun setColorValueString(textView: TextView, colorValueString: ColorValueString?) {
     if(colorValueString == null) return
     textView.text = colorValueString.value

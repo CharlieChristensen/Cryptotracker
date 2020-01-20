@@ -4,8 +4,7 @@ CREATE TABLE dbCoinPriceData (
     price REAL NOT NULL DEFAULT 0.0,
     open24Hour REAL NOT NULL DEFAULT 0.0,
     high24Hour REAL NOT NULL DEFAULT 0.0,
-    low24Hour REAL NOT NULL DEFAULT 0.0,
-    FOREIGN KEY(symbol) REFERENCES dbCoin(symbol)
+    low24Hour REAL NOT NULL DEFAULT 0.0
 );
 
 insert:

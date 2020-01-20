@@ -37,11 +37,6 @@ android {
         dataBinding = true
         viewBinding = true
     }
-    tasks.withType<KotlinCompile>().all {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
-    }
     packagingOptions {
         pickFirst("META-INF/kotlinx-coroutines-core.kotlin_module")
     }
@@ -52,14 +47,12 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(project(":remote"))
-    implementation(project(":database"))
 
     implementation(Libraries.kotlinStdLib)
     implementation(Libraries.ktxCore)
     implementation(Libraries.appCompat)
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
-    implementation(Libraries.cardView)
     implementation(Libraries.activity)
     implementation(Libraries.fragment)
     implementation(Libraries.workManager)
@@ -84,6 +77,12 @@ dependencies {
     compileOnly(Libraries.assistInjectAnnot)
     kapt(Libraries.assistInjectCompiler)
     kapt(Libraries.daggerCompiler)
+
+    implementation(Libraries.retrofit)
+    implementation(Libraries.retrofitMoshi)
+    implementation(Libraries.okhttp)
+    implementation(Libraries.okhttpLogging)
+    implementation(Libraries.moshi)
 
     implementation(Libraries.glide)
     kapt(Libraries.glideCompiler)

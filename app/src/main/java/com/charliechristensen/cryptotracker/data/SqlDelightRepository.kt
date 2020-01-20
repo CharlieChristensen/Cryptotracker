@@ -1,34 +1,27 @@
 package com.charliechristensen.cryptotracker.data
 
 import com.charliechristensen.cryptotracker.common.Constants
-import com.charliechristensen.cryptotracker.common.RxNetworkBoundResource
+import com.charliechristensen.cryptotracker.common.extensions.flowAsList
+import com.charliechristensen.cryptotracker.cryptotracker.Database
 import com.charliechristensen.cryptotracker.data.mappers.CoinMappers
-import com.charliechristensen.cryptotracker.data.mappers.NetworkToDbMapper
-import com.charliechristensen.cryptotracker.data.mappers.toUi
 import com.charliechristensen.cryptotracker.data.models.graph.CoinHistory
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
-import com.charliechristensen.database.Database
-import com.charliechristensen.database.models.sqldelight.DbCoinPriceData
-import com.charliechristensen.remote.models.RemoteCoinPriceData
+import com.charliechristensen.remote.RemoteGateway
 import com.charliechristensen.remote.models.SymbolPricePair
-import com.charliechristensen.remote.webservice.CryptoService
-import com.charliechristensen.remote.websocket.WebSocketService
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 class SqlDelightRepository @Inject constructor(
-    private val service: CryptoService,
-    private val webSocket: WebSocketService,
-    private val database: Database
+    private val remoteGateway: RemoteGateway,
+    database: Database
 ) : Repository {
 
     private val coinQueries = database.dbCoinQueries
@@ -38,133 +31,121 @@ class SqlDelightRepository @Inject constructor(
 
     override fun searchCoinsWithQuery(query: CharSequence): Flow<List<Coin>> =
         coinQueries.searchCoinsByName(query.toString(), CoinMappers.dbCoinMapper)
-            .asFlow()
-            .mapToList()
+            .flowAsList()
+
+    override fun getCoinDetails(symbol: String): Flow<List<Coin>> =
+        coinQueries.selectBySymbol(symbol, CoinMappers.dbCoinMapper)
+            .flowAsList()
 
     override fun searchUnownedCoinWithQuery(query: CharSequence): Flow<List<Coin>> =
         combinedTableQueries.searchUnownedCoinsByName(query.toString(), CoinMappers.dbCoinMapper)
-            .asFlow()
-            .mapToList()
-
-    override fun getCoinDetails(symbol: String): Flow<List<Coin>> =
-        coinQueries.searchCoinsByName(symbol, CoinMappers.dbCoinMapper)
-            .asFlow()
-            .mapToList()
+            .flowAsList()
 
     override fun getUnitsOwnedForSymbol(symbol: String): Flow<List<Double>> =
         portfolioQueries.selectUnitsOwnedForSymbol(symbol)
-            .asFlow()
-            .mapToList()
+            .flowAsList()
 
     override fun getPortfolioData(): Flow<List<CoinWithPriceAndAmount>> =
         combinedTableQueries.getPortfolioData(CoinMappers.dbCoinWithPriceAndAmountMapper)
-            .asFlow()
-            .mapToList()
+            .flowAsList()
+
+    private fun loadCoinPrices(symbol: String): Flow<List<CoinPriceData>> =
+        coinPriceQueries.selectBySymbol(symbol, CoinMappers.dbCoinPriceDataMapper)
+            .flowAsList()
+
+    override fun getPortfolioCoinSymbols(): Flow<List<String>> =
+        portfolioQueries.selectAllSymbols()
+            .flowAsList()
 
     @ExperimentalCoroutinesApi
     override fun getCoinPriceData(
         symbol: String,
         forceRefresh: Boolean
-    ): Flow<List<CoinPriceData>> =
-        object : RxNetworkBoundResource<DbCoinPriceData, RemoteCoinPriceData, CoinPriceData>() {
-            override suspend fun saveToDb(data: List<DbCoinPriceData>) {
-                if (data.isNotEmpty()) {
-                    val dbCoinPriceData = data[0]
-                    coinPriceQueries.insert(
-                        dbCoinPriceData.symbol,
-                        dbCoinPriceData.price,
-                        dbCoinPriceData.open24Hour,
-                        dbCoinPriceData.high24Hour,
-                        dbCoinPriceData.low24Hour
-                    )
-                } else {
-                    coinPriceQueries.insertSymbol(symbol)
-                }
-            }
-
-            override fun shouldFetch(data: List<DbCoinPriceData>): Boolean =
-                data.isEmpty() || forceRefresh
-
-            override fun mapToDbType(value: RemoteCoinPriceData): List<DbCoinPriceData> {
-                if (value.rawData?.containsKey(symbol) == true) {
-                    val rawData = value.rawData!![symbol] ?: return emptyList()
-                    if (rawData.containsKey(Constants.MyCurrency)) {
-                        val coinPriceRawData = rawData[Constants.MyCurrency] ?: return emptyList()
-                        val coinPriceData = NetworkToDbMapper.mapSqlDelightCoinPriceData(coinPriceRawData)
-                        return listOf(coinPriceData)
+    ): Flow<List<CoinPriceData>> {
+        var shouldForceRefresh = forceRefresh
+        return loadCoinPrices(symbol)
+            .flatMapLatest { dbList ->
+                if ((dbList.isEmpty() || shouldForceRefresh)) {
+                    shouldForceRefresh = false
+                    flow {
+                        emit(dbList)
+                        fetchCoinPricesAndSaveToDb(symbol)
                     }
+                } else {
+                    flowOf(dbList)
                 }
-                return emptyList()
             }
-
-            override fun loadFromDb(): Flow<List<DbCoinPriceData>> =
-                coinPriceQueries.selectBySymbol(symbol)
-                    .asFlow()
-                    .mapToList()
-
-            override suspend fun loadFromNetwork(): RemoteCoinPriceData =
-                service.getFullCoinPrice(symbol, Constants.MyCurrency)
-
-            override fun mapToUiType(value: DbCoinPriceData): CoinPriceData = value.toUi()
-        }.flow
-
-    override fun getPortfolioCoinSymbols(): Flow<List<String>> =
-        portfolioQueries.selectAllSymbols()
-            .asFlow()
-            .mapToList()
-
-    override fun addTemporarySubscription(symbol: String, currency: String) {
-        webSocket.addTemporarySubscription(symbol, currency)
     }
 
-    override fun clearTemporarySubscriptions(currency: String) {
-        webSocket.clearTemporarySubscriptions(currency)
-    }
-
-    override fun connectToLivePrices(symbols: Collection<String>, currency: String) {
-        webSocket.connect { socket -> socket.setPortfolioSubscriptions(symbols, currency) }
-    }
-
-    override fun disconnectFromLivePrices() {
-        webSocket.disconnect()
-    }
-
-    override fun priceUpdateReceived(): Flow<SymbolPricePair> =
-        webSocket.priceUpdateReceived()
-
-    override suspend fun forceRefreshCoinListAndSaveToDb() = withContext(Dispatchers.IO) {
-        val serverCoinList = service.getCoinList()
-        val baseImageUrl = serverCoinList.baseImageUrl
-        serverCoinList.data.values.forEach { coinData ->
-            coinQueries.insert(
-                coinData.symbol,
-                baseImageUrl + coinData.imageUrl,
-                coinData.coinName,
-                coinData.sortOrder.toLong()
-            )
+    private suspend fun fetchCoinPricesAndSaveToDb(symbol: String) {
+        val remoteCoinPriceData = remoteGateway.getFullCoinPrice(symbol, Constants.MyCurrency)
+        if (remoteCoinPriceData.rawData?.containsKey(symbol) == true) {
+            val rawData = remoteCoinPriceData.rawData!![symbol] ?: return
+            if (rawData.containsKey(Constants.MyCurrency)) {
+                val coinPriceRawData = rawData[Constants.MyCurrency] ?: return
+                coinPriceQueries.insert(
+                    coinPriceRawData.fromSymbol,
+                    coinPriceRawData.price,
+                    coinPriceRawData.open24Hour,
+                    coinPriceRawData.high24Hour,
+                    coinPriceRawData.low24Hour
+                )
+            }
         }
     }
 
-    override suspend fun refreshCoinListIfNeeded() = withContext(Dispatchers.IO) {
+    override fun addTemporarySubscription(symbol: String, currency: String) {
+        remoteGateway.addTemporarySubscription(symbol, currency)
+    }
+
+    override fun clearTemporarySubscriptions(currency: String) {
+        remoteGateway.clearTemporarySubscriptions(currency)
+    }
+
+    override fun connectToLivePrices(symbols: Collection<String>, currency: String) {
+        remoteGateway.connect { socket -> socket.setPortfolioSubscriptions(symbols, currency) }
+    }
+
+    override fun disconnectFromLivePrices() {
+        remoteGateway.disconnect()
+    }
+
+    override fun priceUpdateReceived(): Flow<SymbolPricePair> =
+        remoteGateway.priceUpdateReceived()
+
+    override suspend fun forceRefreshCoinListAndSaveToDb() {
+        val serverCoinList = remoteGateway.getCoinList()
+        val baseImageUrl = serverCoinList.baseImageUrl
+        coinQueries.transaction {
+            serverCoinList.data.values.forEach { coinData ->
+                coinQueries.insert(
+                    coinData.symbol,
+                    baseImageUrl + coinData.imageUrl,
+                    coinData.coinName,
+                    coinData.sortOrder.toLong()
+                )
+            }
+        }
+    }
+
+    override suspend fun refreshCoinListIfNeeded() {
         val coinList = coinQueries.selectAll().executeAsList()
-        if(coinList.isEmpty()) {
+        if (coinList.isEmpty()) {
             forceRefreshCoinListAndSaveToDb()
         }
     }
 
-    override suspend fun addPortfolioCoin(symbol: String, amountOwned: Double) =
-        withContext(Dispatchers.IO) {
-            portfolioQueries.insert(symbol, amountOwned)
-        }
+    override suspend fun addPortfolioCoin(symbol: String, amountOwned: Double) {
+        portfolioQueries.insert(symbol, amountOwned)
+    }
 
-    override suspend fun removeCoinFromPortfolio(symbol: String) = withContext(Dispatchers.IO) {
+    override suspend fun removeCoinFromPortfolio(symbol: String) {
         portfolioQueries.deleteBySymbol(symbol)
     }
 
-    override suspend fun updatePriceForCoin(coinSymbol: String, price: Double) =
-        withContext(Dispatchers.IO) {
-            coinPriceQueries.updatePrice(price, coinSymbol)
-        }
+    override suspend fun updatePriceForCoin(coinSymbol: String, price: Double) {
+        coinPriceQueries.updatePrice(price, coinSymbol)
+    }
 
     override suspend fun getHistoricalDataForCoin(
         symbol: String,
@@ -173,17 +154,17 @@ class SqlDelightRepository @Inject constructor(
     ): CoinHistory {
         val historicalData =
             when (timePeriod.timeUnit) {
-                CoinHistoryUnits.MINUTE -> service.getHistoricalDataByMinute(
+                CoinHistoryUnits.MINUTE -> remoteGateway.getHistoricalDataByMinute(
                     symbol,
                     Constants.MyCurrency,
                     timePeriod.limit
                 )
-                CoinHistoryUnits.HOUR -> service.getHistoricalDataByHour(
+                CoinHistoryUnits.HOUR -> remoteGateway.getHistoricalDataByHour(
                     symbol,
                     Constants.MyCurrency,
                     timePeriod.limit
                 )
-                CoinHistoryUnits.DAY -> service.getHistoricalDataByDay(
+                CoinHistoryUnits.DAY -> remoteGateway.getHistoricalDataByDay(
                     symbol,
                     Constants.MyCurrency,
                     timePeriod.limit
@@ -192,3 +173,56 @@ class SqlDelightRepository @Inject constructor(
         return CoinHistory(historicalData)
     }
 }
+
+//@ExperimentalCoroutinesApi
+//override fun getCoinPriceData(
+//    symbol: String,
+//    forceRefresh: Boolean
+//): Flow<List<CoinPriceData>> =
+//    object : RxNetworkBoundResource<DbCoinPriceData, RemoteCoinPriceData, CoinPriceData>() {
+//        override suspend fun saveToDb(data: List<DbCoinPriceData>) {
+//            if (data.isNotEmpty()) {
+//                val dbCoinPriceData = data[0]
+//                coinPriceQueries.insert(
+//                    dbCoinPriceData.symbol,
+//                    dbCoinPriceData.price,
+//                    dbCoinPriceData.open24Hour,
+//                    dbCoinPriceData.high24Hour,
+//                    dbCoinPriceData.low24Hour
+//                )
+//            } else {
+//                coinPriceQueries.insertSymbol(symbol)
+//            }
+//        }
+//
+//        override fun shouldFetch(data: List<DbCoinPriceData>): Boolean =
+//            data.isEmpty() || forceRefresh
+//
+//        override fun mapToDbType(value: RemoteCoinPriceData): List<DbCoinPriceData> {
+//            if (value.rawData?.containsKey(symbol) == true) {
+//                val rawData = value.rawData!![symbol] ?: return emptyList()
+//                if (rawData.containsKey(Constants.MyCurrency)) {
+//                    val coinPriceRawData = rawData[Constants.MyCurrency] ?: return emptyList()
+//                    val coinPriceData =
+//                        NetworkToDbMapper.mapSqlDelightCoinPriceData(coinPriceRawData)
+//                    return listOf(coinPriceData)
+//                }
+//            }
+//            return emptyList()
+//        }
+//
+//        override fun loadFromDb(): Flow<List<DbCoinPriceData>> =
+//            coinPriceQueries.selectBySymbol(symbol)
+//                .flowAsList()
+//
+//        override suspend fun loadFromNetwork(): RemoteCoinPriceData =
+//            service.getFullCoinPrice(symbol, Constants.MyCurrency)
+//
+//        override fun mapToUiType(value: DbCoinPriceData): CoinPriceData = CoinPriceData(
+//            value.symbol,
+//            value.price,
+//            value.open24Hour,
+//            value.high24Hour,
+//            value.low24Hour
+//        )
+//    }.flow

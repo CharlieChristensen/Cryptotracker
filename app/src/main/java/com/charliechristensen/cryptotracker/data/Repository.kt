@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 interface Repository {
 
     fun searchCoinsWithQuery(query: CharSequence): Flow<List<Coin>>
-    fun searchUnownedCoinWithQuery(query: CharSequence): Flow<List<Coin>>
     fun getCoinDetails(symbol: String): Flow<List<Coin>>
+    fun searchUnownedCoinWithQuery(query: CharSequence): Flow<List<Coin>>
     fun getUnitsOwnedForSymbol(symbol: String): Flow<List<Double>>
     fun getPortfolioData(): Flow<List<CoinWithPriceAndAmount>>
     fun getCoinPriceData(

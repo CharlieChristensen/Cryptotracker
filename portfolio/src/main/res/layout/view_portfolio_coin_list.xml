@@ -51,7 +51,7 @@
             android:layout_height="25dp"
             android:textColor="?attr/positivePriceGreen"
             android:textSize="14sp"
-            app:colorValueString="@{viewModel.outputs.percentChange24Hour}"
+            colorValueString="@{viewModel.outputs.percentChange24Hour}"
             app:layout_constraintEnd_toEndOf="@+id/changeTitle"
             app:layout_constraintStart_toStartOf="@+id/changeTitle"
             app:layout_constraintTop_toBottomOf="@+id/changeTitle" />
@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="?attr/positivePriceGreen"
-            app:colorValueString="@{viewModel.outputs.portfolioValueChange}"
+            colorValueString="@{viewModel.outputs.portfolioValueChange}"
             app:layout_constraintEnd_toEndOf="@+id/title24HourHigh"
             app:layout_constraintStart_toStartOf="@+id/title24HourHigh"
             app:layout_constraintTop_toBottomOf="@+id/title24HourHigh" />

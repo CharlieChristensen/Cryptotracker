@@ -3,52 +3,25 @@ package com.charliechristensen.cryptotracker.data.mappers
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
-import com.charliechristensen.database.models.DbCoin
-import com.charliechristensen.database.models.DbCoinPriceData
-import com.charliechristensen.database.models.DbCoinWithPriceAndAmount
-
-fun DbCoin.toUi(): Coin = Coin(
-    imageUrl,
-    symbol,
-    coinName
-)
-
-fun DbCoinPriceData.toUi() = CoinPriceData(
-    symbol,
-    price,
-    open24Hour,
-    high24Hour,
-    low24Hour
-)
-
-fun com.charliechristensen.database.models.sqldelight.DbCoinPriceData.toUi() = CoinPriceData(
-    symbol,
-    price,
-    open24Hour,
-    high24Hour,
-    low24Hour
-)
-
-fun DbCoinWithPriceAndAmount.toUi() = CoinWithPriceAndAmount(
-    symbol,
-    imageUrl,
-    price,
-    open24Hour,
-    amountOwned
-)
 
 object CoinMappers {
 
     @JvmStatic
-    val dbCoinMapper: (String, String?, String, Long) -> Coin
-        get() = { sym, imageUrl, coinName, _ ->
+    val dbCoinMapper: (String, String?, String) -> Coin =
+        { sym, imageUrl, coinName ->
             Coin(imageUrl, sym, coinName)
         }
 
     @JvmStatic
-    val dbCoinWithPriceAndAmountMapper: (String, String?, Double, Double, Double) -> CoinWithPriceAndAmount
-        get() = { symbol, imageUrl, price, open24Hour, amountOwned ->
+    val dbCoinWithPriceAndAmountMapper: (String, String?, Double, Double, Double) -> CoinWithPriceAndAmount =
+        { symbol, imageUrl, price, open24Hour, amountOwned ->
             CoinWithPriceAndAmount(symbol, imageUrl ?: "", price, open24Hour, amountOwned)
+        }
+
+    @JvmStatic
+    val dbCoinPriceDataMapper: (String, Double, Double, Double, Double) -> CoinPriceData =
+        { symbol, price, open24Hour, high24Hour, low24Hour ->
+            CoinPriceData(symbol, price, open24Hour, high24Hour, low24Hour)
         }
 
 }

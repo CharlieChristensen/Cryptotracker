@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id(BuildPlugins.dynamicFeature)
     id(BuildPlugins.kotlinAndroid)
@@ -25,11 +23,6 @@ android {
     }
     dataBinding {
         isEnabled = true
-    }
-    tasks.withType<KotlinCompile>().all {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
     }
 }
 

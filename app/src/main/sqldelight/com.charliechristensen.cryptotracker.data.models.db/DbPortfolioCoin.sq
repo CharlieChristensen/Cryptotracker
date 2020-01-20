@@ -1,8 +1,7 @@
 
 CREATE TABLE dbPortfolioCoin (
     symbol TEXT NOT NULL PRIMARY KEY,
-    amountOwned REAL NOT NULL,
-    FOREIGN KEY(symbol) REFERENCES dbCoin(symbol)
+    amountOwned REAL NOT NULL
 );
 
 insert:

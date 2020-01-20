@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id(BuildPlugins.dynamicFeature)
     id(BuildPlugins.kotlinAndroid)
@@ -26,11 +24,6 @@ android {
     dataBinding {
         isEnabled = true
     }
-    tasks.withType<KotlinCompile>().all {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
-    }
 }
 
 dependencies {
@@ -42,7 +35,6 @@ dependencies {
     implementation(Libraries.appCompat)
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
-    implementation(Libraries.cardView)
 
     implementation(Libraries.lifecycleExtensions)
     implementation(Libraries.lifecycleCommon)

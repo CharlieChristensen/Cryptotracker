@@ -1,6 +1,6 @@
 
 searchUnownedCoinsByName:
-SELECT *
+SELECT symbol, imageUrl, coinName
 FROM dbCoin
 WHERE NOT EXISTS
 (SELECT NULL FROM dbPortfolioCoin WHERE dbCoin.symbol == dbPortfolioCoin.symbol)

@@ -17,6 +17,7 @@
     <fragment
         android:id="@+id/portfolioRoot"
         android:name="com.charliechristensen.portfolio.PortfolioFragment"
+        android:label="Portfolio"
         app:moduleName="portfolio">
         <deepLink
             android:id="@+id/portfolioDeepLink"
@@ -36,7 +37,7 @@
     <fragment
         android:id="@+id/coinsRoot"
         android:name="com.charliechristensen.coinlist.SearchCoinsFragment"
-        android:label="SearchCoinsFragment"
+        android:label="Search"
         app:moduleName="coinlist">
         <argument
             android:name="filterOwnedCoins"
@@ -50,7 +51,7 @@
     <fragment
         android:id="@+id/coins"
         android:name="com.charliechristensen.coinlist.SearchCoinsFragment"
-        android:label="SearchCoinsFragment"
+        android:label="Search"
         app:moduleName="coinlist">
         <deepLink
             android:id="@+id/coinsDeepLink"
@@ -64,7 +65,6 @@
     <fragment
         android:id="@+id/coinDetailFragment"
         android:name="com.charliechristensen.coindetail.CoinDetailFragment"
-        android:label="CoinDetailFragment"
         app:moduleName="coindetail">
         <deepLink
             android:id="@+id/deepLink"

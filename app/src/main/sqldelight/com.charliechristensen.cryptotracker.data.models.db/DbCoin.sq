@@ -18,7 +18,7 @@ INSERT OR REPLACE INTO dbCoin(
 VALUES (?, ?, ?, ?);
 
 selectBySymbol:
-SELECT *
+SELECT symbol, imageUrl, coinName
 FROM dbCoin
 WHERE symbol = ?;
 
@@ -28,7 +28,7 @@ FROM dbCoin
 ORDER BY sortOrder;
 
 searchCoinsByName:
-SELECT *
+SELECT symbol, imageUrl, coinName
 FROM dbCoin
 WHERE coinName LIKE ('%' || ? || '%')
 ORDER BY sortOrder;

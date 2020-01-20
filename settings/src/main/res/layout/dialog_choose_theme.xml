@@ -37,16 +37,6 @@
             android:paddingStart="8dp"
             android:text="@string/teal" />
 
-<!--        <RadioButton-->
-<!--            android:id="@+id/lightRadioButton"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:paddingStart="8dp"-->
-<!--            android:paddingEnd="8dp"-->
-<!--            android:text="@string/theme_light" />-->
-
     </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
