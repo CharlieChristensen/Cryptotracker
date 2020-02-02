@@ -61,7 +61,6 @@ dependencies {
     implementation(Libraries.lifecycleCommon)
     implementation(Libraries.viewModel)
     implementation(Libraries.liveData)
-    implementation(Libraries.lifecycleSavedState)
 
     implementation(Libraries.navigation)
     implementation(Libraries.navigationUI)
