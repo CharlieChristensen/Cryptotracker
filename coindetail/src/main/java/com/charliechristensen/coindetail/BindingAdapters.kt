@@ -19,7 +19,7 @@ fun setColorValueString(textView: TextView, colorValueString: ColorValueString?)
 }
 
 @BindingAdapter("graphState")
-fun setGraphState(styledLineGraphView: StyledLineGraphView, graphState: CoinDetailGraphState) {
+fun setGraphState(styledLineGraphView: StyledLineGraphView, graphState: CoinDetailGraphState?) {
     val context = styledLineGraphView.context
     when (graphState) {
         is CoinDetailGraphState.Success -> {

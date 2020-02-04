@@ -54,5 +54,7 @@ dependencies {
 
     implementation(Libraries.glide)
 
+    implementation(Libraries.timber)
+
     implementation(Libraries.mpAndroidChart)
 }

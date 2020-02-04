@@ -53,6 +53,7 @@ object Libraries {
         const val socketIO          =  "1.0.0"
         const val leakCanary        =  "2.0"
         const val mpAndroidChart    =  "v3.1.0"
+        const val timber            =  "4.7.1"
     }
 
     const val kotlinStdLib           = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -94,6 +95,7 @@ object Libraries {
     const val corbindMaterial        = "ru.ldralighieri.corbind:corbind-material:${Versions.corbind}"
     const val corbindAppCompat       = "ru.ldralighieri.corbind:corbind-appcompat:${Versions.corbind}"
     const val corbindNavigation      = "ru.ldralighieri.corbind:corbind-navigation:${Versions.corbind}"
+    const val timber                 = "com.jakewharton.timber:timber:${Versions.timber}"
 }
 
 object TestLibraries {

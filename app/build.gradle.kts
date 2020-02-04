@@ -89,6 +89,8 @@ dependencies {
     implementation(Libraries.sqlDelight)
     implementation(Libraries.sqlDelightCoroutines)
 
+    implementation(Libraries.timber)
+
     debugImplementation(Libraries.leakCanary)
 
     testImplementation(TestLibraries.junit)

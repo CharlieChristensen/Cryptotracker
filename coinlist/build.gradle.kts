@@ -53,6 +53,8 @@ dependencies {
     kapt(Libraries.assistInjectCompiler)
     kapt(Libraries.daggerCompiler)
 
+    implementation(Libraries.timber)
+
     implementation(Libraries.glide)
 
 }

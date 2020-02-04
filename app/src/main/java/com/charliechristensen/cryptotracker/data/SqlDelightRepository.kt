@@ -85,11 +85,11 @@ class SqlDelightRepository @Inject constructor(
             if (rawData.containsKey(Constants.DefaultCurrency)) {
                 val coinPriceRawData = rawData[Constants.DefaultCurrency] ?: return
                 coinPriceQueries.insert(
-                    coinPriceRawData.fromSymbol,
-                    coinPriceRawData.price,
-                    coinPriceRawData.open24Hour,
-                    coinPriceRawData.high24Hour,
-                    coinPriceRawData.low24Hour
+                    coinPriceRawData.fromSymbol ?: symbol,
+                    coinPriceRawData.price ?: 0.0,
+                    coinPriceRawData.open24Hour ?: 0.0,
+                    coinPriceRawData.high24Hour ?: 0.0,
+                    coinPriceRawData.low24Hour ?: 0.0
                 )
             }
         }
@@ -118,14 +118,17 @@ class SqlDelightRepository @Inject constructor(
         val serverCoinList = remoteGateway.getCoinList()
         val baseImageUrl = serverCoinList.baseImageUrl
         coinQueries.transaction {
-            serverCoinList.data.values.forEach { coinData ->
-                coinQueries.insert(
-                    coinData.symbol,
-                    baseImageUrl + coinData.imageUrl,
-                    coinData.coinName,
-                    coinData.sortOrder.toLong()
-                )
-            }
+            serverCoinList.data?.values
+                ?.filterNotNull()
+                ?.forEach { coinData ->
+                    if (coinData.symbol == null || coinData.coinName == null || coinData.sortOrder == null) return@forEach
+                    coinQueries.insert(
+                        coinData.symbol!!,
+                        baseImageUrl + coinData.imageUrl,
+                        coinData.coinName!!,
+                        coinData.sortOrder!!.toLong()
+                    )
+                }
         }
     }
 
@@ -160,7 +163,9 @@ class SqlDelightRepository @Inject constructor(
                 if (dbList.isEmpty() || shouldRefresh) {
                     shouldRefresh = false
                     flow {
-                        emit(dbList)
+                        if (dbList.isNotEmpty()) {
+                            emit(dbList)
+                        }
                         fetchCoinHistoryAndSaveToDb(symbol, timePeriod)
                     }
                 } else {
@@ -205,20 +210,23 @@ class SqlDelightRepository @Inject constructor(
             }
 
         coinHistoryQueries.transaction {
-            historicalData.data.forEach { remoteElement ->
-                coinHistoryQueries.insertByTimePeriod(
-                    symbol,
-                    Constants.DefaultCurrency,
-                    timePeriod,
-                    remoteElement.time,
-                    remoteElement.close,
-                    remoteElement.high,
-                    remoteElement.low,
-                    remoteElement.open,
-                    remoteElement.volumeFrom,
-                    remoteElement.volumeTo
-                )
-            }
+            historicalData.data
+                ?.filterNotNull()
+                ?.forEach { remoteElement ->
+                    if (remoteElement.time == null) return@forEach
+                    coinHistoryQueries.insertByTimePeriod(
+                        symbol,
+                        Constants.DefaultCurrency,
+                        timePeriod,
+                        remoteElement.time!!,
+                        remoteElement.close ?: 0.0,
+                        remoteElement.high ?: 0.0,
+                        remoteElement.low ?: 0.0,
+                        remoteElement.open ?: 0.0,
+                        remoteElement.volumeFrom ?: 0.0,
+                        remoteElement.volumeTo ?: 0.0
+                    )
+                }
         }
     }
 

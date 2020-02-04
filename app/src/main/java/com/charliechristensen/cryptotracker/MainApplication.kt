@@ -3,10 +3,12 @@ package com.charliechristensen.cryptotracker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
 import com.charliechristensen.cryptotracker.data.workers.FetchCoinListWorker
 import com.charliechristensen.cryptotracker.di.AppComponent
 import com.charliechristensen.cryptotracker.di.DaggerAppComponent
 import com.google.android.play.core.splitcompat.SplitCompatApplication
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class MainApplication : SplitCompatApplication() {
@@ -20,6 +22,9 @@ class MainApplication : SplitCompatApplication() {
     override fun onCreate() {
         super.onCreate()
         setupWorkers()
+        if(BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
     }
 
     private fun setupWorkers() {

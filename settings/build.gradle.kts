@@ -43,6 +43,8 @@ dependencies {
     implementation(Libraries.coroutines)
     implementation(Libraries.coroutinesAndroid)
 
+    implementation(Libraries.timber)
+
     implementation(Libraries.dagger)
     kapt(Libraries.daggerCompiler)
 

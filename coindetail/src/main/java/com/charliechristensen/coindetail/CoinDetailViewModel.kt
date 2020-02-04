@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
@@ -21,12 +22,12 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
  * ViewModel for coin details
@@ -88,9 +89,6 @@ interface CoinDetailViewModel {
                     savedState.get<Int>(KEY_GRAPH_DATE_SELECTION) ?: 0
                 )
             )
-        private val graphStateChannel: MutableLiveData<CoinDetailGraphState> =
-            MutableLiveData(CoinDetailGraphState.Loading)
-
         private val showAddCoinDialogChannel = SingleLiveEvent<String>()
         private val showEditQuantityDialogChannel = SingleLiveEvent<String>()
         private val showConfirmRemoveCoinDialogChannel = SingleLiveEvent<String>()
@@ -111,16 +109,10 @@ interface CoinDetailViewModel {
                     walletPriceChange24HourChannel.value = priceData.walletPriceChange24Hour
                     toolbarImageDataChannel.value = priceData.toolbarImageData
                 }
-                .catch { showNetworkErrorChannel.setValue(Unit) }
-                .launchIn(viewModelScope)
-
-            currentTimePeriodChannel.asFlow()
-                .onEach { graphStateChannel.setValue(CoinDetailGraphState.Loading) }
-                .flatMapLatest { interactor.getCoinHistory(coinSymbol, it) }
-                .onEach { graphStateChannel.setValue(it) }
-                .catch { emit(CoinDetailGraphState.Error) }
-                .filterIsInstance<CoinDetailGraphState.Success>()
-                .onEach { currentStartPricePerUnitChannel.setValue(it.startingPrice) }
+                .catch {
+                    Timber.e(it, "Get Coin Data")
+                    showNetworkErrorChannel.setValue(Unit)
+                }
                 .launchIn(viewModelScope)
 
             interactor.addTemporarySubscription(coinSymbol, Constants.DefaultCurrency)
@@ -222,8 +214,19 @@ interface CoinDetailViewModel {
         override val walletPriceChange24Hour: LiveData<ColorValueString> =
             walletPriceChange24HourChannel.distinctUntilChanged()
 
-        override val graphState: LiveData<CoinDetailGraphState> =
-            graphStateChannel.distinctUntilChanged()
+        override val graphState: LiveData<CoinDetailGraphState> = currentTimePeriodChannel.asFlow()
+            .flatMapLatest { timePeriod -> interactor.getCoinHistory(coinSymbol, timePeriod) }
+            .onEach { graphState ->
+                if (graphState is CoinDetailGraphState.Success) {
+                    currentStartPricePerUnitChannel.postValue(graphState.startingPrice)
+                }
+            }
+            .onStart { emit(CoinDetailGraphState.Loading) }
+            .catch {
+                Timber.e(it, "Get Coin History")
+                emit(CoinDetailGraphState.Error)
+            }
+            .asLiveData()
 
         override val showAddCoinDialog: LiveData<String> = showAddCoinDialogChannel
 

@@ -21,6 +21,8 @@ dependencies {
     implementation(Libraries.dagger)
     kapt(Libraries.daggerCompiler)
 
+    implementation(Libraries.timber)
+
     implementation(Libraries.socketIO)
 
 }
