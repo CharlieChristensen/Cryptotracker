@@ -78,7 +78,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
         if (imageSize <= 0) {
             return
         }
-        GlideApp.with(activity)
+        GlideApp.with(this)
             .asDrawable()
             .load(imageUrl)
             .into(object : CustomTarget<Drawable>() {

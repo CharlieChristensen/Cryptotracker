@@ -1,0 +1,53 @@
+import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod;
+
+CREATE TABLE dbCoinHistory (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    symbol TEXT NOT NULL,
+    currency TEXT NOT NULL,
+    timePeriod INTEGER AS CoinHistoryTimePeriod NOT NULL,
+    time INTEGER NOT NULL,
+    close REAL NOT NULL DEFAULT 0.0,
+    high REAL NOT NULL DEFAULT 0.0,
+    low REAL NOT NULL DEFAULT 0.0,
+    open REAL NOT NULL DEFAULT 0.0,
+    volumeFrom REAL NOT NULL DEFAULT 0.0,
+    volumeTo REAL NOT NULL DEFAULT 0.0
+);
+
+CREATE INDEX idx_history ON dbCoinHistory(symbol, currency, timePeriod, time);
+
+selectByTimePeriod:
+SELECT *
+FROM dbCoinHistory
+WHERE symbol = :symbol AND currency = :currency AND timePeriod = :timePeriod;
+
+insertByTimePeriod:
+INSERT OR REPLACE INTO dbCoinHistory(
+    symbol,
+    currency,
+    timePeriod,
+    time,
+    close,
+    high,
+    low,
+    open,
+    volumeFrom,
+    volumeTo
+)
+VALUES(
+    :symbol,
+    :currency,
+    :timePeriod,
+    :time,
+    :close,
+    :high,
+    :low,
+    :open,
+    :volumeFrom,
+    :volumeTo
+);
+
+deleteByTimePeriod:
+DELETE
+FROM dbCoinHistory
+WHERE symbol = :symbol AND currency = :currency AND timePeriod = :timePeriod;

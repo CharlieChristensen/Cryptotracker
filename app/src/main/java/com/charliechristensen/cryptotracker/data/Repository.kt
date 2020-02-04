@@ -1,6 +1,6 @@
 package com.charliechristensen.cryptotracker.data
 
-import com.charliechristensen.cryptotracker.data.models.graph.CoinHistory
+import com.charliechristensen.cryptotracker.data.models.graph.CoinHistoryElement
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
@@ -19,6 +19,7 @@ interface Repository {
         symbol: String,
         forceRefresh: Boolean = true
     ): Flow<List<CoinPriceData>>
+
     fun getPortfolioCoinSymbols(): Flow<List<String>>
     fun addTemporarySubscription(symbol: String, currency: String)
     fun clearTemporarySubscriptions(currency: String)
@@ -32,9 +33,9 @@ interface Repository {
     suspend fun addPortfolioCoin(symbol: String, amountOwned: Double)
     suspend fun removeCoinFromPortfolio(symbol: String)
     suspend fun updatePriceForCoin(coinSymbol: String, price: Double)
-    suspend fun getHistoricalDataForCoin(
+    fun getCoinHistory(
         symbol: String,
         timePeriod: CoinHistoryTimePeriod,
         forceRefresh: Boolean = true
-    ): CoinHistory
+    ): Flow<List<CoinHistoryElement>>
 }

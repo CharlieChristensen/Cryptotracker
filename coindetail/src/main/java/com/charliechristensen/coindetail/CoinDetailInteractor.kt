@@ -15,7 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.map
 
 @ExperimentalCoroutinesApi
 class CoinDetailInteractor @Inject constructor(
@@ -60,37 +60,38 @@ class CoinDetailInteractor @Inject constructor(
             )
         }.flowOn(Dispatchers.IO)
 
-    suspend fun getCoinGraphData(
+    fun getCoinHistory(
         coinSymbol: String,
         timePeriod: CoinHistoryTimePeriod
-    ): CoinDetailGraphState = withContext(Dispatchers.IO) {
-        val coinHistory = repository.getHistoricalDataForCoin(coinSymbol, timePeriod)
-        var color = ValueChangeColor.GREEN
-        var validStartPrice = false
-        var startPrice = 0.0
-        val endPrice = coinHistory.historyElements.lastOrNull()?.close ?: 0.0
-        val list = coinHistory.historyElements.map { coinHistoryElement: CoinHistoryElement ->
-            val closingPrice = coinHistoryElement.close
-            if (!validStartPrice) {
-                if (closingPrice > 0.0) {
-                    validStartPrice = true
-                    if (closingPrice > endPrice) {
-                        color = ValueChangeColor.RED
+    ): Flow<CoinDetailGraphState> = repository.getCoinHistory(coinSymbol, timePeriod, false) //TODO
+        .map { coinHistoryElements ->
+            var color = ValueChangeColor.GREEN
+            var validStartPrice = false
+            var startPrice = 0.0
+            val endPrice = coinHistoryElements.lastOrNull()?.close ?: 0.0
+            val list = coinHistoryElements.map { coinHistoryElement: CoinHistoryElement ->
+                val closingPrice = coinHistoryElement.close
+                if (!validStartPrice) {
+                    if (closingPrice > 0.0) {
+                        validStartPrice = true
+                        if (closingPrice > endPrice) {
+                            color = ValueChangeColor.RED
+                        }
+                        startPrice = closingPrice
                     }
-                    startPrice = closingPrice
                 }
+                CoinHistoryGraphEntry(
+                    coinHistoryElement.time.toFloat(),
+                    closingPrice.toFloat()
+                )
             }
-            CoinHistoryGraphEntry(
-                coinHistoryElement.time.toFloat(),
-                closingPrice.toFloat()
-            )
+            if (list.isEmpty()) {
+                CoinDetailGraphState.NoData
+            } else {
+                CoinDetailGraphState.Success(list, color, startPrice)
+            }
         }
-        return@withContext if (list.isEmpty()) {
-            CoinDetailGraphState.NoData
-        } else {
-            CoinDetailGraphState.Success(list, color, startPrice)
-        }
-    }
+        .flowOn(Dispatchers.IO)
 
     suspend fun saveCoinToPortfolio(symbol: String, amount: Double) {
         repository.addPortfolioCoin(symbol, amount)

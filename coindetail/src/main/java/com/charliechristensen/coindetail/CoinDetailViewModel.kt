@@ -22,9 +22,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -116,12 +116,11 @@ interface CoinDetailViewModel {
 
             currentTimePeriodChannel.asFlow()
                 .onEach { graphStateChannel.setValue(CoinDetailGraphState.Loading) }
-                .mapLatest { interactor.getCoinGraphData(coinSymbol, it) }
+                .flatMapLatest { interactor.getCoinHistory(coinSymbol, it) }
                 .onEach { graphStateChannel.setValue(it) }
+                .catch { emit(CoinDetailGraphState.Error) }
                 .filterIsInstance<CoinDetailGraphState.Success>()
-                .map { it.startingPrice }
-                .onEach { currentStartPricePerUnitChannel.setValue(it) }
-                .catch { graphStateChannel.setValue(CoinDetailGraphState.Error) }
+                .onEach { currentStartPricePerUnitChannel.setValue(it.startingPrice) }
                 .launchIn(viewModelScope)
 
             interactor.addTemporarySubscription(coinSymbol, Constants.DefaultCurrency)
