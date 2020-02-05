@@ -56,6 +56,7 @@ dependencies {
     implementation(Libraries.activity)
     implementation(Libraries.fragment)
     implementation(Libraries.workManager)
+    implementation(Libraries.recyclerView)
 
     implementation(Libraries.lifecycleExtensions)
     implementation(Libraries.lifecycleCommon)

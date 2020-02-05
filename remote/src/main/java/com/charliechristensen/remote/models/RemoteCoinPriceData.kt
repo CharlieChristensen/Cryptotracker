@@ -23,7 +23,7 @@ data class RemoteCoinPriceRawData(
     @Json(name = "LASTUPDATE") val lastUpdate: Long?,
     @Json(name = "LASTVOLUME") val lastVolume: Double?,
     @Json(name = "LASTVOLUMETO") val lastVolumeTo: Double?,
-    @Json(name = "LASTTRADEID") val lastTradeId: Double?,
+    @Json(name = "LASTTRADEID") val lastTradeId: String?,
     @Json(name = "VOLUMEDAY") val volumeDay: Double?,
     @Json(name = "VOLUMEDAYTO") val volumeDayTo: Double?,
     @Json(name = "VOLUME24HOUR") val volume24Hour: Double?,

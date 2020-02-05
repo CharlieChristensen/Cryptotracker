@@ -12,6 +12,7 @@ import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
 import com.charliechristensen.remote.RemoteGateway
 import com.charliechristensen.remote.models.SymbolPricePair
+import com.squareup.sqldelight.Query
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -33,6 +34,11 @@ class SqlDelightRepository @Inject constructor(
     override fun searchCoinsWithQuery(query: CharSequence): Flow<List<Coin>> =
         coinQueries.searchCoinsByName(query.toString(), CoinMappers.dbCoinMapper)
             .flowAsList()
+
+    override fun searchCoinsPaged(query: CharSequence, limit: Long, offset: Long): Query<Coin> =
+        coinQueries.searchCoinsByNamePaged(query.toString(), limit, offset, CoinMappers.dbCoinMapper)
+
+    override fun getCoinCount(searchQuery: CharSequence): Query<Long> = coinQueries.countCoins(searchQuery.toString())
 
     override fun getCoinDetails(symbol: String): Flow<List<Coin>> =
         coinQueries.selectBySymbol(symbol, CoinMappers.dbCoinMapper)

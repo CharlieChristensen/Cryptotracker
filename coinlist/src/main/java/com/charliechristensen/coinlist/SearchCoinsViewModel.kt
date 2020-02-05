@@ -1,12 +1,12 @@
 package com.charliechristensen.coinlist
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagedList
+import androidx.paging.toLiveData
 import com.charliechristensen.coinlist.list.SearchCoinsListItem
+import com.charliechristensen.coinlist.list.SearchDataSourceFactory
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.common.call
@@ -17,14 +17,6 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flattenMerge
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -37,7 +29,7 @@ interface SearchCoinsViewModel {
     }
 
     interface Outputs {
-        val coinList: LiveData<List<SearchCoinsListItem>>
+        val coinList: LiveData<PagedList<SearchCoinsListItem>>
         val showNetworkError: LiveData<Unit>
     }
 
@@ -45,17 +37,19 @@ interface SearchCoinsViewModel {
     class ViewModel @AssistedInject constructor(
         private val interactor: SearchCoinsInteractor,
         private val navigator: Navigator,
+        private val searchDataSourceFactory: SearchDataSourceFactory,
         @Assisted private val filterOutOwnedCoins: Boolean,
         @Assisted private val savedState: SavedStateHandle
     ) : BaseViewModel(), Inputs, Outputs {
 
         private val showNetworkErrorChannel = SingleLiveEvent<Unit>()
-        private val searchQueryLiveData = MutableLiveData<CharSequence>(
-            savedState.get(KEY_SEARCH_QUERY_SAVED_STATE) ?: ""
-        )
 
         val inputs: Inputs = this
         val outputs: Outputs = this
+
+        init {
+            searchDataSourceFactory.setSearchTerm(savedState.get(KEY_SEARCH_QUERY_SAVED_STATE) ?: "")
+        }
 
         private fun refreshCoins() {
             viewModelScope.launch { forceRefreshCoinList() }
@@ -80,7 +74,8 @@ interface SearchCoinsViewModel {
         }
 
         override fun setSearchQuery(query: CharSequence) {
-            searchQueryLiveData.value = query
+            savedState.set(KEY_SEARCH_QUERY_SAVED_STATE, query)
+            searchDataSourceFactory.setSearchTerm(query.toString())
         }
 
         //endregion
@@ -88,17 +83,8 @@ interface SearchCoinsViewModel {
         //region Outputs
 
         @FlowPreview
-        override val coinList: LiveData<List<SearchCoinsListItem>> =
-            flowOf(
-                flowOf(searchQueryLiveData.value ?: ""),
-                searchQueryLiveData.asFlow().debounce(400)
-            ).flattenMerge()
-                .distinctUntilChanged()
-                .onEach { savedState.set(KEY_SEARCH_QUERY_SAVED_STATE, it) }
-                .flatMapLatest { interactor.searchCoinsWithQuery(it, filterOutOwnedCoins) }
-                .catch { emit(listOf(SearchCoinsListItem.RefreshFooter)) }
-                .flowOn(Dispatchers.IO)
-                .asLiveData()
+        override val coinList: LiveData<PagedList<SearchCoinsListItem>> =
+            searchDataSourceFactory.toLiveData(pageSize = 50)
 
         override val showNetworkError: LiveData<Unit> = showNetworkErrorChannel
 

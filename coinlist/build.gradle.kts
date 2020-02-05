@@ -35,6 +35,7 @@ dependencies {
     implementation(Libraries.appCompat)
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
+    implementation(Libraries.recyclerView)
 
     implementation(Libraries.lifecycleExtensions)
     implementation(Libraries.lifecycleCommon)
@@ -42,6 +43,8 @@ dependencies {
     implementation(Libraries.liveData)
 
     implementation(Libraries.navigation)
+
+    implementation(Libraries.paging)
 
     implementation(Libraries.coroutines)
     implementation(Libraries.coroutinesAndroid)

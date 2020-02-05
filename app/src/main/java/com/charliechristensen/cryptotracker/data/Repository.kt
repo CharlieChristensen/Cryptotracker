@@ -6,11 +6,14 @@ import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
 import com.charliechristensen.remote.models.SymbolPricePair
+import com.squareup.sqldelight.Query
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
 
     fun searchCoinsWithQuery(query: CharSequence): Flow<List<Coin>>
+    fun searchCoinsPaged(query: CharSequence, limit: Long, offset: Long): Query<Coin>
+    fun getCoinCount(searchQuery: CharSequence): Query<Long>
     fun getCoinDetails(symbol: String): Flow<List<Coin>>
     fun searchUnownedCoinWithQuery(query: CharSequence): Flow<List<Coin>>
     fun getUnitsOwnedForSymbol(symbol: String): Flow<List<Double>>

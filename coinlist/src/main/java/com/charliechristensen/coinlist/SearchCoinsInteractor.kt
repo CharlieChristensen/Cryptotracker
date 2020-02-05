@@ -2,10 +2,14 @@ package com.charliechristensen.coinlist
 
 import com.charliechristensen.coinlist.list.SearchCoinsListItem
 import com.charliechristensen.cryptotracker.data.Repository
-import javax.inject.Inject
+import com.charliechristensen.cryptotracker.data.models.ui.Coin
+import com.squareup.sqldelight.Query
+import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
+@Reusable
 class SearchCoinsInteractor @Inject constructor(
     private val repository: Repository
 ) {
@@ -33,4 +37,10 @@ class SearchCoinsInteractor @Inject constructor(
     suspend fun forceRefreshCoinListAndSaveToDb() {
         repository.forceRefreshCoinListAndSaveToDb()
     }
+
+    fun getCoinCount(searchQuery: CharSequence): Query<Long> = repository.getCoinCount(searchQuery)
+
+    fun searchCoinsPaged(query: CharSequence, limit: Long, offset: Long): Query<Coin> =
+        repository.searchCoinsPaged(query, limit, offset)
+
 }

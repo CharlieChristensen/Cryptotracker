@@ -17,10 +17,15 @@ INSERT OR REPLACE INTO dbCoin(
 )
 VALUES (?, ?, ?, ?);
 
+countCoins:
+SELECT count(*)
+FROM dbCoin
+WHERE coinName LIKE ('%' || :searchQuery || '%');
+
 selectBySymbol:
 SELECT symbol, imageUrl, coinName
 FROM dbCoin
-WHERE symbol = ?;
+WHERE symbol = :symbol;
 
 selectAll:
 SELECT *
@@ -30,5 +35,12 @@ ORDER BY sortOrder;
 searchCoinsByName:
 SELECT symbol, imageUrl, coinName
 FROM dbCoin
-WHERE coinName LIKE ('%' || ? || '%')
+WHERE coinName LIKE ('%' || :query || '%')
 ORDER BY sortOrder;
+
+searchCoinsByNamePaged:
+SELECT symbol, imageUrl, coinName
+FROM dbCoin
+WHERE coinName LIKE ('%' || :searchTerm || '%')
+ORDER BY sortOrder
+LIMIT :limit OFFSET :offset;
