@@ -39,6 +39,7 @@
     <string name="theme_dark">Dark</string>
     <string name="theme_light">Light</string>
     <string name="theme">Theme</string>
+    <string name="currency">Currency</string>
     <string name="live_update_prices">Live update prices</string>
     <string name="_24h_change">24H Change</string>
     <string name="_1w_change">1W Change</string>
