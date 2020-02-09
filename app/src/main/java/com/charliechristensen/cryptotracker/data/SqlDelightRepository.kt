@@ -213,7 +213,7 @@ class SqlDelightRepository @Inject constructor(
     }
 
     override suspend fun updatePriceForCoin(coinSymbol: String, currency: String, price: Double) {
-        coinPriceQueries.updatePrice(price, currency, coinSymbol)
+        coinPriceQueries.updatePrice(price, coinSymbol, currency)
     }
 
     @ExperimentalCoroutinesApi
