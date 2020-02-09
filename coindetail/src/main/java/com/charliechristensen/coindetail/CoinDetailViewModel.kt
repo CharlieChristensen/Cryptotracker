@@ -10,7 +10,6 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.charliechristensen.coindetail.data.CoinDetailGraphState
 import com.charliechristensen.cryptotracker.common.BaseViewModel
-import com.charliechristensen.cryptotracker.common.Constants
 import com.charliechristensen.cryptotracker.common.FormatterFactory
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.common.extensions.LiveDataExtensions.combineLatest
@@ -116,12 +115,12 @@ interface CoinDetailViewModel {
                 }
                 .launchIn(viewModelScope)
 
-            interactor.addTemporarySubscription(coinSymbol, Constants.DefaultCurrency)
+            interactor.addTemporarySubscription(coinSymbol)
         }
 
         override fun onCleared() {
             super.onCleared()
-            interactor.clearTemporarySubscriptions(Constants.DefaultCurrency)
+            interactor.clearTemporarySubscriptions()
         }
 
         //region Inputs

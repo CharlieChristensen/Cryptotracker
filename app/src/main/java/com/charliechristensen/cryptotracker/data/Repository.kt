@@ -27,10 +27,10 @@ interface Repository: AppPreferences {
     ): Flow<List<CoinPriceData>>
 
     fun getPortfolioCoinSymbols(): Flow<List<String>>
-    fun addTemporarySubscription(symbol: String, currency: String)
-    fun clearTemporarySubscriptions(currency: String)
+    fun addTemporarySubscription(symbol: String)
+    fun clearTemporarySubscriptions()
 
-    fun connectToLivePrices(symbols: Collection<String>, currency: String)
+    fun connectToLivePrices(symbols: Collection<String>, newCurrency: String, oldCurrency: String)
     fun disconnectFromLivePrices()
     fun priceUpdateReceived(): Flow<SymbolPricePair>
 

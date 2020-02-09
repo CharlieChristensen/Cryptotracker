@@ -63,13 +63,13 @@ class WebSocketServiceImpl @Inject constructor(@Named("WebSocketUrl")url: String
     override fun priceUpdateReceived(): Flow<SymbolPricePair> =
         priceUpdateReceivedChannel.asFlow()
 
-    override fun setPortfolioSubscriptions(symbols: Collection<String>, currency: String) {
-        val symbolsToUnsubscribe = portfolioSubscriptions.minus(symbols).minus(temporarySubscriptions)
+    override fun setPortfolioSubscriptions(symbols: Collection<String>, newCurrency: String, oldCurrency: String) {
+        val symbolsToUnsubscribe = symbols.plus(temporarySubscriptions)// portfolioSubscriptions.minus(symbols).minus(temporarySubscriptions)
         val symbolsToSubscribe = symbols.minus(portfolioSubscriptions).minus(temporarySubscriptions)
         portfolioSubscriptions.clear()
         portfolioSubscriptions.addAll(symbols)
-        removeSubscriptions(symbolsToUnsubscribe, currency)
-        addSubscriptions(symbolsToSubscribe, currency)
+        removeSubscriptions(symbolsToUnsubscribe, oldCurrency)
+        addSubscriptions(symbols.toList(), newCurrency)
     }
 
     override fun addTemporarySubscription(symbol: String, currency: String) {

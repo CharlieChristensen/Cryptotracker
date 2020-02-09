@@ -104,11 +104,11 @@ class CoinDetailInteractor @Inject constructor(
         repository.removeCoinFromPortfolio(symbol)
     }
 
-    fun addTemporarySubscription(symbol: String, currency: String) {
-        repository.addTemporarySubscription(symbol, currency)
+    fun addTemporarySubscription(symbol: String) {
+        repository.addTemporarySubscription(symbol)
     }
 
-    fun clearTemporarySubscriptions(currency: String) {
-        repository.clearTemporarySubscriptions(currency)
+    fun clearTemporarySubscriptions() {
+        repository.clearTemporarySubscriptions()
     }
 }

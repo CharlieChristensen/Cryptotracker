@@ -160,16 +160,16 @@ class SqlDelightRepository @Inject constructor(
         }
     }
 
-    override fun addTemporarySubscription(symbol: String, currency: String) {
-        remoteGateway.addTemporarySubscription(symbol, currency)
+    override fun addTemporarySubscription(symbol: String) {
+        remoteGateway.addTemporarySubscription(symbol, getCurrency())
     }
 
-    override fun clearTemporarySubscriptions(currency: String) {
-        remoteGateway.clearTemporarySubscriptions(currency)
+    override fun clearTemporarySubscriptions() {
+        remoteGateway.clearTemporarySubscriptions(getCurrency())
     }
 
-    override fun connectToLivePrices(symbols: Collection<String>, currency: String) {
-        remoteGateway.connect { socket -> socket.setPortfolioSubscriptions(symbols, currency) }
+    override fun connectToLivePrices(symbols: Collection<String>, newCurrency: String, oldCurrency: String) {
+        remoteGateway.connect { socket -> socket.setPortfolioSubscriptions(symbols, newCurrency, oldCurrency) }
     }
 
     override fun disconnectFromLivePrices() {
@@ -291,6 +291,10 @@ class SqlDelightRepository @Inject constructor(
                     )
                 }
         }
+    }
+
+    override fun setCurrency(symbol: String) {
+        appPreferences.setCurrency(symbol)
     }
 
 }
