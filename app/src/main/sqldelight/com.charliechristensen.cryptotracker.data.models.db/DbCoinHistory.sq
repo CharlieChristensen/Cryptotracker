@@ -17,7 +17,7 @@ CREATE TABLE dbCoinHistory (
 CREATE INDEX idx_history ON dbCoinHistory(symbol, currency, timePeriod, time);
 
 selectByTimePeriod:
-SELECT *
+SELECT time, close, high, low, open, volumeFrom, volumeTo
 FROM dbCoinHistory
 WHERE symbol = :symbol AND currency = :currency AND timePeriod = :timePeriod;
 

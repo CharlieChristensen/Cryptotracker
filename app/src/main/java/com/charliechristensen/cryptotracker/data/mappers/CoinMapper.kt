@@ -1,6 +1,8 @@
 package com.charliechristensen.cryptotracker.data.mappers
 
+import com.charliechristensen.cryptotracker.data.models.graph.CoinHistoryElement
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
+import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
 
@@ -19,9 +21,15 @@ object CoinMappers {
         }
 
     @JvmStatic
-    val dbCoinPriceDataMapper: (String, Double, Double, Double, Double) -> CoinPriceData =
-        { symbol, price, open24Hour, high24Hour, low24Hour ->
-            CoinPriceData(symbol, price, open24Hour, high24Hour, low24Hour)
+    val dbCoinPriceDataMapper: (String, String, Double, Double, Double, Double) -> CoinPriceData =
+        { symbol, currency, price, open24Hour, high24Hour, low24Hour ->
+            CoinPriceData(symbol, currency, price, open24Hour, high24Hour, low24Hour)
+        }
+
+    @JvmStatic
+    val dbCoinHistoryMapper: (Long, Double, Double, Double, Double, Double, Double) -> CoinHistoryElement =
+        { time, close, high, low, open, volumeFrom, volumeTo ->
+            CoinHistoryElement(time, close, high, low, open, volumeFrom, volumeTo)
         }
 
 }

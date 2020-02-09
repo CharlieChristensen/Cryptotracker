@@ -8,6 +8,8 @@ CREATE TABLE dbCoin (
 
 CREATE INDEX dbCoin_symbol ON dbCoin(sortOrder);
 
+CREATE VIEW LIST_COIN AS SELECT symbol, imageUrl, coinName FROM dbCoin;
+
 insert:
 INSERT OR REPLACE INTO dbCoin(
     symbol,

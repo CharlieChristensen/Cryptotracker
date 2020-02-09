@@ -30,6 +30,7 @@ class WebSocketServiceImpl @Inject constructor(@Named("WebSocketUrl")url: String
                     priceUpdateReceivedChannel.offer(
                         SymbolPricePair(
                             socketResponse.fromCurrency,
+                            socketResponse.toCurrency,
                             socketResponse.price
                         )
                     )

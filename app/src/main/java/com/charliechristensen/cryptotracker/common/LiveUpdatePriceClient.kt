@@ -2,7 +2,6 @@ package com.charliechristensen.cryptotracker.common
 
 import android.util.Log
 import com.charliechristensen.cryptotracker.data.Repository
-import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
@@ -20,14 +19,13 @@ import kotlinx.coroutines.flow.onEach
 @ExperimentalCoroutinesApi
 @Singleton
 class LiveUpdatePriceClient @Inject constructor(
-    private val appPreferences: AppPreferences,
     private val repository: Repository
 ) {
 
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
     fun start() {
-        appPreferences.liveUpdatePrices()
+        repository.liveUpdatePrices()
             .flatMapLatest { isSet ->
                 if (isSet) {
                     repository.getPortfolioCoinSymbols()
@@ -38,14 +36,14 @@ class LiveUpdatePriceClient @Inject constructor(
                 }
             }
             .onEach { symbolsList ->
-                repository.connectToLivePrices(symbolsList, Constants.DefaultCurrency)
+                repository.connectToLivePrices(symbolsList, repository.getCurrency())
             }
             .onCompletion { repository.disconnectFromLivePrices() }
             .catch { Log.d("SOCKET IO ERROR", it.localizedMessage ?: "UNKNOWN ERROR") }
             .launchIn(scope)
 
         repository.priceUpdateReceived()
-            .onEach { repository.updatePriceForCoin(it.symbol, it.price) }
+            .onEach { repository.updatePriceForCoin(it.symbol, it.currency, it.price) }
             .launchIn(scope)
     }
 

@@ -16,11 +16,9 @@ class AppPreferencesImpl @Inject constructor(sharedPreferences: SharedPreference
 
     private val flowSharedPreferences = FlowSharedPreferences(sharedPreferences)
 
-    private val liveUpdatePricesPref =
-        flowSharedPreferences.getBoolean(KEY_LIVE_UPDATE_PRICES, true)
+    private val liveUpdatePricesPref = flowSharedPreferences.getBoolean(KEY_LIVE_UPDATE_PRICES, true)
     private val themePref = flowSharedPreferences.getInt(KEY_APP_THEME, 0)
-    private val selectedCurrencyPref =
-        flowSharedPreferences.getString(KEY_DISPLAY_CURRENCY, Constants.DefaultCurrency)
+    private val selectedCurrencyPref = flowSharedPreferences.getString(KEY_DISPLAY_CURRENCY, Constants.DefaultCurrency)
 
     override fun setLiveUpdatePrices(shouldUpdatePrices: Boolean) {
         liveUpdatePricesPref.set(shouldUpdatePrices)

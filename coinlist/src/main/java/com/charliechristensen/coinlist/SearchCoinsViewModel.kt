@@ -37,11 +37,11 @@ interface SearchCoinsViewModel {
     class ViewModel @AssistedInject constructor(
         private val interactor: SearchCoinsInteractor,
         private val navigator: Navigator,
-        private val searchDataSourceFactory: SearchDataSourceFactory,
-        @Assisted private val filterOutOwnedCoins: Boolean,
-        @Assisted private val savedState: SavedStateHandle
+        @Assisted private val savedState: SavedStateHandle,
+        @Assisted filterOutOwnedCoins: Boolean
     ) : BaseViewModel(), Inputs, Outputs {
 
+        private val searchDataSourceFactory = SearchDataSourceFactory(interactor, filterOutOwnedCoins)
         private val showNetworkErrorChannel = SingleLiveEvent<Unit>()
 
         val inputs: Inputs = this

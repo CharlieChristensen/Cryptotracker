@@ -7,7 +7,7 @@ import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.LiveUpdatePriceClient
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
-import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
+import com.charliechristensen.cryptotracker.data.Repository
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -24,7 +24,7 @@ interface MainActivityViewModel {
     @ExperimentalCoroutinesApi
     class ViewModel @Inject constructor(
         private val liveUpdatePriceClient: LiveUpdatePriceClient,
-        private val appPreferences: AppPreferences,
+        private val repository: Repository,
         navigator: Navigator
     ) : BaseViewModel(), Inputs, Outputs {
 
@@ -46,13 +46,13 @@ interface MainActivityViewModel {
 
         //region Outputs
 
-        override val theme: LiveData<AppTheme> = appPreferences.theme()
+        override val theme: LiveData<AppTheme> = repository.theme()
             .asLiveData()
 
         override val navigationEvents: LiveData<NavDirections> = navigator.navigationEvents
 
         override fun getAppThemeSync(): AppTheme =
-            appPreferences.getTheme()
+            repository.getTheme()
 
         //endregion
     }

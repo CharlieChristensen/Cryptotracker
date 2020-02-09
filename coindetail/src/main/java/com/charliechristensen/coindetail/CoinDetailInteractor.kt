@@ -20,45 +20,46 @@ import kotlinx.coroutines.flow.map
 @ExperimentalCoroutinesApi
 class CoinDetailInteractor @Inject constructor(
     private val repository: Repository,
-    private val formatterFactory: FormatterFactory
+    formatterFactory: FormatterFactory
 ) {
 
-    fun getCoinData(coinSymbol: String): Flow<CoinDetailData> =
-        combine(
-            repository.getCoinPriceData(coinSymbol),
-            repository.getUnitsOwnedForSymbol(coinSymbol),
-            repository.getCoinDetails(coinSymbol)
-        ) { priceList, unitsOwnedList, coinList ->
-            val coinName = coinList.getOrNull(0)?.coinName ?: ""
-            val imageUrl = coinList.getOrNull(0)?.imageUrl ?: ""
-            val unitsOwned = unitsOwnedList.getOrElse(0) { 0.0 }
-            val coinIsInPortfolio = unitsOwnedList.isNotEmpty()
-            val priceData = priceList.getOrElse(0) {
-                return@combine CoinDetailData(
-                    coinIsInPortfolio = coinIsInPortfolio,
-                    walletUnitsOwned = unitsOwned,
-                    toolbarImageData = ImageAndNamePair(coinName, imageUrl)
-                )
-            }
-            val walletTotalValueDouble = priceData.price * unitsOwned
-            val walletTotalValueOpenDouble = priceData.open24Hour * unitsOwned
-            val walletTotalValueChangeDouble = walletTotalValueDouble - walletTotalValueOpenDouble
-            val walletPriceChange24Hour = ColorValueString.create(
-                walletTotalValueChangeDouble,
-                formatterFactory.currencyFormatter()
-            )
-            val imageNamePair = ImageAndNamePair(coinName, imageUrl)
+    private val formatter = formatterFactory.currencyFormatter(repository.getCurrency())
+
+    fun getCoinData(coinSymbol: String): Flow<CoinDetailData> = combine(
+        repository.getCoinPriceData(coinSymbol),
+        repository.getUnitsOwnedForSymbol(coinSymbol),
+        repository.getCoinDetails(coinSymbol)
+    ) { priceList, unitsOwnedList, coinList ->
+        val coinName = coinList.getOrNull(0)?.coinName ?: ""
+        val imageUrl = coinList.getOrNull(0)?.imageUrl ?: ""
+        val unitsOwned = unitsOwnedList.getOrElse(0) { 0.0 }
+        val coinIsInPortfolio = unitsOwnedList.isNotEmpty()
+        val priceData = priceList.getOrElse(0) {
             return@combine CoinDetailData(
                 coinIsInPortfolio = coinIsInPortfolio,
                 walletUnitsOwned = unitsOwned,
-                pricePerUnit = priceData.price,
-                pricePerUnit24HourLow = priceData.low24Hour,
-                pricePerUnit24HourHigh = priceData.high24Hour,
-                walletTotalValue = walletTotalValueDouble,
-                walletPriceChange24Hour = walletPriceChange24Hour,
-                toolbarImageData = imageNamePair
+                toolbarImageData = ImageAndNamePair(coinName, imageUrl)
             )
-        }.flowOn(Dispatchers.IO)
+        }
+        val walletTotalValueDouble = priceData.price * unitsOwned
+        val walletTotalValueOpenDouble = priceData.open24Hour * unitsOwned
+        val walletTotalValueChangeDouble = walletTotalValueDouble - walletTotalValueOpenDouble
+        val walletPriceChange24Hour = ColorValueString.create(
+            walletTotalValueChangeDouble,
+            formatter
+        )
+        val imageNamePair = ImageAndNamePair(coinName, imageUrl)
+        return@combine CoinDetailData(
+            coinIsInPortfolio = coinIsInPortfolio,
+            walletUnitsOwned = unitsOwned,
+            pricePerUnit = priceData.price,
+            pricePerUnit24HourLow = priceData.low24Hour,
+            pricePerUnit24HourHigh = priceData.high24Hour,
+            walletTotalValue = walletTotalValueDouble,
+            walletPriceChange24Hour = walletPriceChange24Hour,
+            toolbarImageData = imageNamePair
+        )
+    }.flowOn(Dispatchers.IO)
 
     fun getCoinHistory(
         coinSymbol: String,
@@ -92,6 +93,8 @@ class CoinDetailInteractor @Inject constructor(
             }
         }
         .flowOn(Dispatchers.IO)
+
+    fun getCurrency(): String = repository.getCurrency()
 
     suspend fun saveCoinToPortfolio(symbol: String, amount: Double) {
         repository.addPortfolioCoin(symbol, amount)

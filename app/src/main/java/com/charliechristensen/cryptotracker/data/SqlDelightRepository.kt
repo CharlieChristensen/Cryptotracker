@@ -1,6 +1,5 @@
 package com.charliechristensen.cryptotracker.data
 
-import com.charliechristensen.cryptotracker.common.Constants
 import com.charliechristensen.cryptotracker.common.extensions.flowAsList
 import com.charliechristensen.cryptotracker.cryptotracker.Database
 import com.charliechristensen.cryptotracker.data.mappers.CoinMappers
@@ -10,11 +9,13 @@ import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
+import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.remote.RemoteGateway
 import com.charliechristensen.remote.models.SymbolPricePair
 import com.squareup.sqldelight.Query
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -22,8 +23,9 @@ import javax.inject.Inject
 
 class SqlDelightRepository @Inject constructor(
     private val remoteGateway: RemoteGateway,
+    private val appPreferences: AppPreferences,
     database: Database
-) : Repository {
+) : Repository, AppPreferences by appPreferences {
 
     private val coinQueries = database.dbCoinQueries
     private val coinPriceQueries = database.dbCoinPriceDataQueries
@@ -35,10 +37,35 @@ class SqlDelightRepository @Inject constructor(
         coinQueries.searchCoinsByName(query.toString(), CoinMappers.dbCoinMapper)
             .flowAsList()
 
-    override fun searchCoinsPaged(query: CharSequence, limit: Long, offset: Long): Query<Coin> =
-        coinQueries.searchCoinsByNamePaged(query.toString(), limit, offset, CoinMappers.dbCoinMapper)
+    override fun searchCoinsPaged(
+        query: CharSequence,
+        limit: Int,
+        offset: Int
+    ): Query<Coin> =
+        coinQueries.searchCoinsByNamePaged(
+            query.toString(),
+            limit.toLong(),
+            offset.toLong(),
+            CoinMappers.dbCoinMapper
+        )
 
-    override fun getCoinCount(searchQuery: CharSequence): Query<Long> = coinQueries.countCoins(searchQuery.toString())
+    override fun searchUnownedCoinsPaged(
+        query: CharSequence,
+        limit: Int,
+        offset: Int
+    ): Query<Coin> =
+        combinedTableQueries.searchUnownedCoinsByNamePaged(
+            query.toString(),
+            limit.toLong(),
+            offset.toLong(),
+            CoinMappers.dbCoinMapper
+        )
+
+    override fun getCoinCount(searchQuery: CharSequence): Query<Long> =
+        coinQueries.countCoins(searchQuery.toString())
+
+    override fun getUnownedCoinCount(searchQuery: CharSequence): Query<Long> =
+        combinedTableQueries.countUnownedCoins(searchQuery.toString())
 
     override fun getCoinDetails(symbol: String): Flow<List<Coin>> =
         coinQueries.selectBySymbol(symbol, CoinMappers.dbCoinMapper)
@@ -52,12 +79,25 @@ class SqlDelightRepository @Inject constructor(
         portfolioQueries.selectUnitsOwnedForSymbol(symbol)
             .flowAsList()
 
-    override fun getPortfolioData(): Flow<List<CoinWithPriceAndAmount>> =
-        combinedTableQueries.getPortfolioData(CoinMappers.dbCoinWithPriceAndAmountMapper)
-            .flowAsList()
+    @ExperimentalCoroutinesApi
+    override fun getPortfolioData(): Flow<List<CoinWithPriceAndAmount>> = combine(
+        getPortfolioCoinSymbols(),
+        getPortfolio()
+    ) { symbols, portfolio ->
+        if(symbols.isNotEmpty() && portfolio.isEmpty()) {
+            fetchCoinPriceAndSaveToDb(symbols, getCurrency())
+        }
+        portfolio
+    }
 
-    private fun loadCoinPrices(symbol: String): Flow<List<CoinPriceData>> =
-        coinPriceQueries.selectBySymbol(symbol, CoinMappers.dbCoinPriceDataMapper)
+    private fun getPortfolio(): Flow<List<CoinWithPriceAndAmount>> =
+        combinedTableQueries.getPortfolioData(
+            getCurrency(),
+            CoinMappers.dbCoinWithPriceAndAmountMapper
+        ).flowAsList()
+
+    private fun loadCoinPrices(symbol: String, currency: String): Flow<List<CoinPriceData>> =
+        coinPriceQueries.selectBySymbol(symbol, currency, CoinMappers.dbCoinPriceDataMapper)
             .flowAsList()
 
     override fun getPortfolioCoinSymbols(): Flow<List<String>> =
@@ -70,13 +110,13 @@ class SqlDelightRepository @Inject constructor(
         forceRefresh: Boolean
     ): Flow<List<CoinPriceData>> {
         var shouldForceRefresh = forceRefresh
-        return loadCoinPrices(symbol)
+        return loadCoinPrices(symbol, getCurrency())
             .flatMapLatest { dbList ->
                 if (dbList.isEmpty() || shouldForceRefresh) {
                     shouldForceRefresh = false
                     flow {
                         emit(dbList)
-                        fetchCoinPriceAndSaveToDb(symbol)
+                        fetchCoinPriceAndSaveToDb(symbol, getCurrency())
                     }
                 } else {
                     flowOf(dbList)
@@ -84,14 +124,33 @@ class SqlDelightRepository @Inject constructor(
             }
     }
 
-    private suspend fun fetchCoinPriceAndSaveToDb(symbol: String) {
-        val remoteCoinPriceData = remoteGateway.getFullCoinPrice(symbol, Constants.DefaultCurrency)
+    private suspend fun fetchCoinPriceAndSaveToDb(symbol: String, currency: String) {
+        val remoteCoinPriceData = remoteGateway.getFullCoinPrice(symbol, currency)
         if (remoteCoinPriceData.rawData?.containsKey(symbol) == true) {
             val rawData = remoteCoinPriceData.rawData!![symbol] ?: return
-            if (rawData.containsKey(Constants.DefaultCurrency)) {
-                val coinPriceRawData = rawData[Constants.DefaultCurrency] ?: return
+            if (rawData.containsKey(currency)) {
+                val coinPriceRawData = rawData[currency] ?: return
                 coinPriceQueries.insert(
                     coinPriceRawData.fromSymbol ?: symbol,
+                    coinPriceRawData.toSymbol ?: currency,
+                    coinPriceRawData.price ?: 0.0,
+                    coinPriceRawData.open24Hour ?: 0.0,
+                    coinPriceRawData.high24Hour ?: 0.0,
+                    coinPriceRawData.low24Hour ?: 0.0
+                )
+            }
+        }
+    }
+
+    private suspend fun fetchCoinPriceAndSaveToDb(symbols: List<String>, currency: String) {
+        val remoteCoinPriceData =
+            remoteGateway.getFullCoinPrice(symbols.joinToString(","), currency)
+        remoteCoinPriceData.rawData?.forEach { (symbol, rawData) ->
+            if (rawData.containsKey(currency)) {
+                val coinPriceRawData = rawData[currency] ?: return
+                coinPriceQueries.insert(
+                    coinPriceRawData.fromSymbol ?: symbol ?: return@forEach,
+                    coinPriceRawData.toSymbol ?: currency,
                     coinPriceRawData.price ?: 0.0,
                     coinPriceRawData.open24Hour ?: 0.0,
                     coinPriceRawData.high24Hour ?: 0.0,
@@ -126,8 +185,8 @@ class SqlDelightRepository @Inject constructor(
         coinQueries.transaction {
             serverCoinList.data?.values
                 ?.filterNotNull()
+                ?.filter { coinData -> coinData.symbol != null && coinData.coinName != null && coinData.sortOrder != null }
                 ?.forEach { coinData ->
-                    if (coinData.symbol == null || coinData.coinName == null || coinData.sortOrder == null) return@forEach
                     coinQueries.insert(
                         coinData.symbol!!,
                         baseImageUrl + coinData.imageUrl,
@@ -153,8 +212,8 @@ class SqlDelightRepository @Inject constructor(
         portfolioQueries.deleteBySymbol(symbol)
     }
 
-    override suspend fun updatePriceForCoin(coinSymbol: String, price: Double) {
-        coinPriceQueries.updatePrice(price, coinSymbol)
+    override suspend fun updatePriceForCoin(coinSymbol: String, currency: String, price: Double) {
+        coinPriceQueries.updatePrice(price, currency, coinSymbol)
     }
 
     @ExperimentalCoroutinesApi
@@ -183,14 +242,12 @@ class SqlDelightRepository @Inject constructor(
     private fun getCoinHistoryFromDb(
         symbol: String,
         timePeriod: CoinHistoryTimePeriod
-    ): Flow<List<CoinHistoryElement>> =
-        coinHistoryQueries.selectByTimePeriod(
-            symbol,
-            Constants.DefaultCurrency,
-            timePeriod
-        ) { _, _, _, _, time, close, high, low, open, volumeFrom, volumeTo ->
-            CoinHistoryElement(time, close, high, low, open, volumeFrom, volumeTo)
-        }.flowAsList()
+    ): Flow<List<CoinHistoryElement>> = coinHistoryQueries.selectByTimePeriod(
+        symbol,
+        getCurrency(),
+        timePeriod,
+        CoinMappers.dbCoinHistoryMapper
+    ).flowAsList()
 
     private suspend fun fetchCoinHistoryAndSaveToDb(
         symbol: String,
@@ -200,17 +257,17 @@ class SqlDelightRepository @Inject constructor(
             when (timePeriod.timeUnit) {
                 CoinHistoryUnits.MINUTE -> remoteGateway.getHistoricalDataByMinute(
                     symbol,
-                    Constants.DefaultCurrency,
+                    getCurrency(),
                     timePeriod.limit
                 )
                 CoinHistoryUnits.HOUR -> remoteGateway.getHistoricalDataByHour(
                     symbol,
-                    Constants.DefaultCurrency,
+                    getCurrency(),
                     timePeriod.limit
                 )
                 CoinHistoryUnits.DAY -> remoteGateway.getHistoricalDataByDay(
                     symbol,
-                    Constants.DefaultCurrency,
+                    getCurrency(),
                     timePeriod.limit
                 )
             }
@@ -218,11 +275,11 @@ class SqlDelightRepository @Inject constructor(
         coinHistoryQueries.transaction {
             historicalData.data
                 ?.filterNotNull()
+                ?.filter { it.time != null }
                 ?.forEach { remoteElement ->
-                    if (remoteElement.time == null) return@forEach
                     coinHistoryQueries.insertByTimePeriod(
                         symbol,
-                        Constants.DefaultCurrency,
+                        getCurrency(),
                         timePeriod,
                         remoteElement.time!!,
                         remoteElement.close ?: 0.0,

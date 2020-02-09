@@ -16,6 +16,8 @@ class PortfolioInteractor @Inject constructor(
     private val formatterFactory: FormatterFactory
 ) {
 
+    private val currencyFormatter = formatterFactory.currencyFormatter(repository.getCurrency())
+
     fun listData(): Flow<PortfolioListData> =
         repository.getPortfolioData()
             .map { dbList -> mapPortfolioListData(dbList, formatterFactory) }
@@ -34,7 +36,7 @@ class PortfolioInteractor @Inject constructor(
                 val walletTotalValueChangeDouble =
                     walletTotalValueDouble - walletTotalValueOpenDouble
 
-                val dollarFormat = formatterFactory.currencyFormatter()
+                val dollarFormat = currencyFormatter
                 val walletTotalValueChange =
                     ColorValueString.create(walletTotalValueChangeDouble, dollarFormat)
                 val priceChangePerUnit =
@@ -66,8 +68,8 @@ class PortfolioInteractor @Inject constructor(
         return PortfolioListData(
             coinList,
             percentChange24Hour,
-            ColorValueString.create(portfolioValueChange, formatterFactory.currencyFormatter()),
-            formatterFactory.currencyFormatter().format(portfolioValueDouble)
+            ColorValueString.create(portfolioValueChange, currencyFormatter),
+            currencyFormatter.format(portfolioValueDouble)
         )
     }
 }

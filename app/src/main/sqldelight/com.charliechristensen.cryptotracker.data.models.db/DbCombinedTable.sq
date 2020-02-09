@@ -5,11 +5,29 @@ FROM dbCoin
 WHERE NOT EXISTS
 (SELECT NULL FROM dbPortfolioCoin WHERE dbCoin.symbol == dbPortfolioCoin.symbol)
 AND
-dbCoin.coinName LIKE ('%' || ? || '%')
+dbCoin.coinName LIKE ('%' || :searchQuery || '%')
 ORDER BY sortOrder;
+
+searchUnownedCoinsByNamePaged:
+SELECT symbol, imageUrl, coinName
+FROM dbCoin
+WHERE NOT EXISTS
+(SELECT NULL FROM dbPortfolioCoin WHERE dbCoin.symbol == dbPortfolioCoin.symbol)
+AND
+dbCoin.coinName LIKE ('%' || :searchQuery || '%')
+ORDER BY sortOrder
+LIMIT :limit OFFSET :offset;
+
+countUnownedCoins:
+SELECT count(*)
+FROM dbCoin
+WHERE NOT EXISTS
+(SELECT NULL FROM dbPortfolioCoin WHERE dbCoin.symbol == dbPortfolioCoin.symbol)
+AND
+dbCoin.coinName LIKE ('%' || :searchQuery || '%');
 
 getPortfolioData:
 SELECT dbCoin.symbol, dbCoin.imageUrl, dbCoinPriceData.price, dbCoinPriceData.open24Hour, dbPortfolioCoin.amountOwned
 FROM dbPortfolioCoin
 INNER JOIN dbCoin ON dbCoin.symbol = dbPortfolioCoin.symbol
-INNER JOIN dbCoinPriceData ON dbCoinPriceData.symbol = dbPortfolioCoin.symbol;
+INNER JOIN dbCoinPriceData ON dbCoinPriceData.symbol = dbPortfolioCoin.symbol AND dbCoinPriceData.currency = :currency;

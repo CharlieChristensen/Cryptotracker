@@ -72,6 +72,7 @@ interface CoinDetailViewModel {
         @Assisted private val savedState: SavedStateHandle
     ) : BaseViewModel(), Inputs, Outputs {
 
+        private val currencyFormatter = formatterFactory.currencyFormatter(interactor.getCurrency())
         private val coinIsInPortfolioChannel = MutableLiveData<Boolean>()
         private val currentPricePerUnitChannel = MutableLiveData(0.0)
         private val pricePerUnit24HourLowChannel = MutableLiveData(0.0)
@@ -79,7 +80,7 @@ interface CoinDetailViewModel {
         private val walletUnitsOwnedChannel = MutableLiveData(0.0)
         private val walletTotalValueChannel = MutableLiveData(0.0)
         private val walletPriceChange24HourChannel = MutableLiveData(
-            ColorValueString.create(0.0, formatterFactory.currencyFormatter())
+            ColorValueString.create(0.0, currencyFormatter)
         )
         private val toolbarImageDataChannel = MutableLiveData(ImageAndNamePair())
         private val currentStartPricePerUnitChannel = MutableLiveData(0.0)
@@ -163,15 +164,15 @@ interface CoinDetailViewModel {
 
         override val currentCoinPrice: LiveData<String> = currentPricePerUnitChannel
             .distinctUntilChanged()
-            .map { formatterFactory.currencyFormatter().format(it) }
+            .map { currencyFormatter.format(it) }
 
         override val low24Hour: LiveData<String> = pricePerUnit24HourLowChannel
             .distinctUntilChanged()
-            .map { formatterFactory.currencyFormatter().format(it) }
+            .map { currencyFormatter.format(it) }
 
         override val high24Hour: LiveData<String> = pricePerUnit24HourHighChannel
             .distinctUntilChanged()
-            .map { formatterFactory.currencyFormatter().format(it) }
+            .map { currencyFormatter.format(it) }
 
         override val isCoinInPortfolio: LiveData<Boolean> = coinIsInPortfolioChannel
             .distinctUntilChanged()
@@ -188,7 +189,7 @@ interface CoinDetailViewModel {
             currentStartPricePerUnitChannel
         ) { price: Double, startPrice: Double ->
             val valueChangeDouble = price - startPrice
-            ColorValueString.create(valueChangeDouble, formatterFactory.currencyFormatter())
+            ColorValueString.create(valueChangeDouble, currencyFormatter)
         }.distinctUntilChanged()
 
         override val percentChange24Hour: LiveData<ColorValueString> = combineLatest(
@@ -209,7 +210,7 @@ interface CoinDetailViewModel {
 
         override val walletTotalValue: LiveData<String> = walletTotalValueChannel
             .distinctUntilChanged()
-            .map { formatterFactory.currencyFormatter().format(it) }
+            .map { currencyFormatter.format(it) }
 
         override val walletPriceChange24Hour: LiveData<ColorValueString> =
             walletPriceChange24HourChannel.distinctUntilChanged()

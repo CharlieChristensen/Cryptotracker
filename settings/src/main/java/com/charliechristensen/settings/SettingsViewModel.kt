@@ -6,7 +6,7 @@ import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.Constants
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
-import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
+import com.charliechristensen.cryptotracker.data.Repository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
@@ -31,7 +31,7 @@ interface SettingsViewModel {
         val showCurrencyDialog: LiveData<Array<String>>
     }
 
-    class ViewModel @Inject constructor(private val appPreferences: AppPreferences) :
+    class ViewModel @Inject constructor(private val repository: Repository) :
         BaseViewModel(), Inputs, Outputs {
 
         private val showChooseThemeEvent = SingleLiveEvent<List<AppTheme>>()
@@ -51,30 +51,30 @@ interface SettingsViewModel {
         }
 
         override fun liveUpdatePricesToggled(isChecked: Boolean) {
-            appPreferences.setLiveUpdatePrices(isChecked)
+            repository.setLiveUpdatePrices(isChecked)
         }
 
         override fun themeChosen(theme: AppTheme) {
-            appPreferences.setTheme(theme)
+            repository.setTheme(theme)
         }
 
         override fun setCurrency(symbol: String) {
-            appPreferences.setCurrency(symbol)
+            repository.setCurrency(symbol)
         }
 
         //endregion
 
         //region Outputs
 
-        override val themeDisplay: LiveData<Int> = appPreferences.theme()
+        override val themeDisplay: LiveData<Int> = repository.theme()
             .map { it.displayId }
             .asLiveData()
 
-        override val liveUpdatePrices: LiveData<Boolean> = appPreferences
+        override val liveUpdatePrices: LiveData<Boolean> = repository
             .liveUpdatePrices()
             .asLiveData()
 
-        override val displayCurrency: LiveData<String> = appPreferences
+        override val displayCurrency: LiveData<String> = repository
             .currency()
             .asLiveData()
 

@@ -38,9 +38,23 @@ class SearchCoinsInteractor @Inject constructor(
         repository.forceRefreshCoinListAndSaveToDb()
     }
 
-    fun getCoinCount(searchQuery: CharSequence): Query<Long> = repository.getCoinCount(searchQuery)
+    fun getCoinCount(searchQuery: CharSequence, filterOutOwnedCoins: Boolean): Query<Long> =
+        if (filterOutOwnedCoins) {
+            repository.getUnownedCoinCount(searchQuery)
+        } else {
+            repository.getCoinCount(searchQuery)
+        }
 
-    fun searchCoinsPaged(query: CharSequence, limit: Long, offset: Long): Query<Coin> =
-        repository.searchCoinsPaged(query, limit, offset)
+    fun searchCoinsPaged(
+        query: CharSequence,
+        limit: Int,
+        offset: Int,
+        filterOutOwnedCoins: Boolean
+    ): Query<Coin> =
+        if (filterOutOwnedCoins) {
+            repository.searchUnownedCoinsPaged(query, limit, offset)
+        } else {
+            repository.searchCoinsPaged(query, limit, offset)
+        }
 
 }

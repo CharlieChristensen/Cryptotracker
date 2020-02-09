@@ -1,38 +1,47 @@
 
 CREATE TABLE dbCoinPriceData (
-    symbol TEXT NOT NULL PRIMARY KEY,
+    symbol TEXT NOT NULL,
+    currency TEXT NOT NULL,
     price REAL NOT NULL DEFAULT 0.0,
     open24Hour REAL NOT NULL DEFAULT 0.0,
     high24Hour REAL NOT NULL DEFAULT 0.0,
-    low24Hour REAL NOT NULL DEFAULT 0.0
+    low24Hour REAL NOT NULL DEFAULT 0.0,
+    PRIMARY KEY (symbol, currency)
 );
 
 insert:
 INSERT OR REPLACE INTO dbCoinPriceData(
     symbol,
+    currency,
     price,
     open24Hour,
     high24Hour,
     low24Hour
 )
-VALUES (?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?);
 
 insertSymbol:
 INSERT OR REPLACE INTO dbCoinPriceData(
     symbol,
+    currency,
     price,
     open24Hour,
     high24Hour,
     low24Hour
 )
-VALUES (?, 0.0, 0.0, 0.0, 0.0);
+VALUES (?, ?, 0.0, 0.0, 0.0, 0.0);
 
 selectBySymbol:
 SELECT *
 FROM dbCoinPriceData
-WHERE symbol = ?;
+WHERE symbol = :symbol AND currency = :currency;
+
+selectSymbols:
+SELECT *
+FROM dbCoinPriceData
+WHERE symbol IN :symbols AND currency = :currency;
 
 updatePrice:
 UPDATE dbCoinPriceData
-SET price = ?
-WHERE symbol = ?;
+SET price = :price
+WHERE symbol = :symbol AND currency = :currency;

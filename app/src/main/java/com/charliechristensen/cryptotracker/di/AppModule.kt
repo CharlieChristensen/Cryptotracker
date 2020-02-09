@@ -16,7 +16,6 @@ import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferencesImpl
 import com.charliechristensen.remote.di.RemoteModule
 import com.squareup.inject.assisted.dagger2.AssistedModule
-import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import dagger.Module

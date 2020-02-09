@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.lifecycleScope
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

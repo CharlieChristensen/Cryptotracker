@@ -5,15 +5,16 @@ import androidx.paging.DataSource
 import com.charliechristensen.coinlist.SearchCoinsInteractor
 import javax.inject.Inject
 
-class SearchDataSourceFactory @Inject constructor(
-    private val interactor: SearchCoinsInteractor
+class SearchDataSourceFactory constructor(
+    private val interactor: SearchCoinsInteractor,
+    private val filterOutOwnedCoins: Boolean
 ): DataSource.Factory<Int, SearchCoinsListItem>() {
 
     private val dataSourceLiveData = MutableLiveData<SearchDataSource>()
     private var query = ""
 
     override fun create(): DataSource<Int, SearchCoinsListItem> {
-        val dataSource = SearchDataSource(interactor, query)
+        val dataSource = SearchDataSource(interactor, query, filterOutOwnedCoins)
         dataSourceLiveData.postValue(dataSource)
         return dataSource
     }
