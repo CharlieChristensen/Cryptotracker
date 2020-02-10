@@ -8,5 +8,9 @@ import dagger.Component
 @PerModuleScope
 @Component(dependencies = [AppComponent::class])
 interface ThemePlaygroundComponent {
+    @Component.Factory
+    interface Factory {
+        fun create(appComponent: AppComponent): ThemePlaygroundComponent
+    }
     val themePlaygroundViewModel: ThemePlaygroundViewModel
 }

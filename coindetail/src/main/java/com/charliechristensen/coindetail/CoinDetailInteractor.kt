@@ -64,7 +64,7 @@ class CoinDetailInteractor @Inject constructor(
     fun getCoinHistory(
         coinSymbol: String,
         timePeriod: CoinHistoryTimePeriod
-    ): Flow<CoinDetailGraphState> = repository.getCoinHistory(coinSymbol, timePeriod, false) //TODO
+    ): Flow<CoinDetailGraphState> = repository.getCoinHistory(coinSymbol, timePeriod, false) //TODO refresh logic
         .map { coinHistoryElements ->
             var color = ValueChangeColor.GREEN
             var validStartPrice = false

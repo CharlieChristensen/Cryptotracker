@@ -8,11 +8,9 @@ import dagger.Component
 @PerModuleScope
 @Component(dependencies = [AppComponent::class])
 interface SettingsComponent {
-
     @Component.Factory
     interface Factory {
         fun create(appComponent: AppComponent): SettingsComponent
     }
-
     val settingsViewModel: SettingsViewModel.ViewModel
 }

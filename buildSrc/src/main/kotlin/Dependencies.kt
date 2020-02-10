@@ -6,10 +6,12 @@ object BuildPlugins {
         const val gradlePlugin = "4.0.0-alpha08"
         const val safeArgs = "2.2.0-rc04"
         const val sqlDelight = "1.2.1"
+        const val delect = "0.2.0"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradlePlugin}"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    const val delectPlugin = "com.soundcloud.delect"
     const val androidApplication = "com.android.application"
     const val dynamicFeature = "com.android.dynamic-feature"
     const val javaLibrary = "java-library"
@@ -20,6 +22,7 @@ object BuildPlugins {
     const val safeArgs = "androidx.navigation.safeargs.kotlin"
     const val sqlDelightClasspath = "com.squareup.sqldelight:gradle-plugin:${Versions.sqlDelight}"
     const val safeArgsClasspath = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.safeArgs}"
+    const val delectClasspath = "com.soundcloud.delect:delect-plugin:${Versions.delect}"
 }
 
 object AndroidSdk {

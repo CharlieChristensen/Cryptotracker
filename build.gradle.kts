@@ -12,6 +12,7 @@ buildscript {
         classpath(BuildPlugins.kotlinGradlePlugin)
         classpath(BuildPlugins.safeArgsClasspath)
         classpath(BuildPlugins.sqlDelightClasspath)
+        classpath(BuildPlugins.delectClasspath)
     }
 }
 
@@ -33,3 +34,5 @@ allprojects {
 tasks.register("clean",Delete::class){
     delete(rootProject.buildDir)
 }
+
+apply(plugin = BuildPlugins.delectPlugin)

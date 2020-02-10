@@ -19,9 +19,8 @@ class PortfolioFragment :
     PortfolioAdapter.PortfolioAdapterCallback {
 
     override val viewModel: PortfolioCoinListViewModel.ViewModel by viewModel {
-        DaggerPortfolioComponent.builder()
-            .appComponent(injector)
-            .build()
+        DaggerPortfolioComponent.factory()
+            .create(injector)
             .portfolioCoinListViewModel
     }
 

@@ -24,9 +24,8 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
 
     override val viewModel: CoinDetailViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
         val fragmentArgs = CoinDetailFragmentArgs.fromBundle(requireArguments())
-        DaggerCoinDetailComponent.builder()
-            .appComponent(injector)
-            .build()
+        DaggerCoinDetailComponent.factory()
+            .create(injector)
             .coinDetailViewModelFactory
             .create(fragmentArgs.coinSymbol, savedStateHandle)
     }

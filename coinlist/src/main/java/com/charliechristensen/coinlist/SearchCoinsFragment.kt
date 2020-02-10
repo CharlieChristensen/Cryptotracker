@@ -25,9 +25,8 @@ class SearchCoinsFragment : BaseFragment<SearchCoinsViewModel.ViewModel>(R.layou
 
     override val viewModel: SearchCoinsViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
         val fragmentArgs = SearchCoinsFragmentArgs.fromBundle(requireArguments())
-        DaggerCoinListComponent.builder()
-            .appComponent(injector)
-            .build()
+        DaggerCoinListComponent.factory()
+            .create(injector)
             .searchCoinsViewModelFactory.create(fragmentArgs.filterOwnedCoins, savedStateHandle)
     }
 

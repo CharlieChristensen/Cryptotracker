@@ -13,7 +13,10 @@ import kotlinx.coroutines.FlowPreview
     modules = [CoinListModule::class]
 )
 interface CoinListComponent {
-
+    @Component.Factory
+    interface Factory {
+        fun create(appComponent: AppComponent): CoinListComponent
+    }
     @FlowPreview
     @ExperimentalCoroutinesApi
     val searchCoinsViewModelFactory: SearchCoinsViewModel.ViewModel.Factory

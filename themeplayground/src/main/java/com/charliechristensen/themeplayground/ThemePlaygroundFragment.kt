@@ -10,9 +10,8 @@ class ThemePlaygroundFragment : BaseFragment<ThemePlaygroundViewModel>(R.layout.
 
     @ExperimentalCoroutinesApi
     override val viewModel: ThemePlaygroundViewModel by viewModel {
-        DaggerThemePlaygroundComponent.builder()
-            .appComponent(injector)
-            .build()
+        DaggerThemePlaygroundComponent.factory()
+            .create(injector)
             .themePlaygroundViewModel
     }
 }
