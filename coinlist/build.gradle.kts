@@ -39,6 +39,7 @@ dependencies {
 
     implementation(Libraries.lifecycleExtensions)
     implementation(Libraries.lifecycleCommon)
+    implementation(Libraries.savedState)
     implementation(Libraries.viewModel)
     implementation(Libraries.liveData)
 

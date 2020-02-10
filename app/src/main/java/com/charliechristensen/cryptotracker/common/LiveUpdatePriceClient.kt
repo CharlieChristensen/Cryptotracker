@@ -1,6 +1,6 @@
 package com.charliechristensen.cryptotracker.common
 
-import android.util.Log
+import com.charliechristensen.cryptotracker.common.extensions.accumulate
 import com.charliechristensen.cryptotracker.data.Repository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,15 +11,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.scan
-import kotlinx.coroutines.flow.scanReduce
+import timber.log.Timber
+
 
 @ExperimentalCoroutinesApi
 @Singleton
@@ -38,7 +37,7 @@ class LiveUpdatePriceClient @Inject constructor(
             repository.connectToLivePrices(symbolsList, previousCurrency, nextCurrency)
         }
             .onCompletion { repository.disconnectFromLivePrices() }
-            .catch { Log.d("SOCKET IO ERROR", it.localizedMessage ?: "UNKNOWN ERROR") }
+            .catch { Timber.tag("SOCKET IO ERROR").d( it.localizedMessage ?: "UNKNOWN ERROR") }
             .launchIn(scope)
 
         repository.priceUpdateReceived()
@@ -60,16 +59,5 @@ class LiveUpdatePriceClient @Inject constructor(
                 }
             }
         }
-
-    inline fun <T> Flow<T>.accumulate(
-        initial: T
-    ): Flow<Pair<T, T>> = flow {
-        var previous: T = initial
-        emit(previous to previous)
-        collect { next ->
-            emit(previous to next)
-            previous = next
-        }
-    }
 
 }
