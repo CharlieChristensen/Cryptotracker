@@ -15,8 +15,6 @@ import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirecti
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -33,7 +31,6 @@ interface SearchCoinsViewModel {
         val showNetworkError: LiveData<Unit>
     }
 
-    @ExperimentalCoroutinesApi
     class ViewModel @AssistedInject constructor(
         private val interactor: SearchCoinsInteractor,
         private val navigator: Navigator,
@@ -82,7 +79,6 @@ interface SearchCoinsViewModel {
 
         //region Outputs
 
-        @FlowPreview
         override val coinList: LiveData<PagedList<SearchCoinsListItem>> =
             searchDataSourceFactory.toLiveData(pageSize = 50)
 

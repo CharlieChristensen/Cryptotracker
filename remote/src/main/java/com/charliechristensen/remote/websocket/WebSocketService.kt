@@ -4,7 +4,7 @@ import com.charliechristensen.remote.models.SymbolPricePair
 import kotlinx.coroutines.flow.Flow
 
 interface WebSocketService {
-    fun connect(onConnection: (WebSocketService) -> Unit)
+    fun connect(): Flow<WebSocketService>
     fun disconnect()
     fun priceUpdateReceived(): Flow<SymbolPricePair>
     fun setPortfolioSubscriptions(symbols: Collection<String>, newCurrency: String, oldCurrency: String)

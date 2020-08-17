@@ -1,3 +1,4 @@
+include(":Dialogs")
 include(
     ":app",
     ":coindetail",

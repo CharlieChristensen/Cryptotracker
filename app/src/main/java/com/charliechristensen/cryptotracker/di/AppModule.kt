@@ -15,6 +15,11 @@ import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferencesImpl
 import com.charliechristensen.remote.di.RemoteModule
+import com.facebook.flipper.android.AndroidFlipperClient
+import com.facebook.flipper.core.FlipperClient
+import com.facebook.flipper.plugins.inspector.DescriptorMapping
+import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
@@ -43,8 +48,16 @@ object AppModule {
     fun provideWebSocketUrl(context: Context): String = context.getString(R.string.web_socket_url)
 
     @Provides
+    @Named("WebSocketUrlV2")
+    fun provideWebSocketUrlV2(context: Context): String = context.getString(R.string.web_socket_url_v2)
+
+    @Provides
     @Named("IsDebug")
     fun provideIsDebug(): Boolean = BuildConfig.DEBUG
+
+    @Provides
+    @Named("CryptoCompareApiKey")
+    fun provideCryptocompareApiKey(): String = BuildConfig.CRYPTOCOMPARE_API_KEY
 
     @Provides
     @Singleton
@@ -83,5 +96,24 @@ object AppModule {
         Database(driver, DbCoinHistory.Adapter(
             timePeriodAdapter = CoinHistoryTimePeriod.databaseAdapter
         ))
+
+    @Provides
+    @Singleton
+    fun provideFlipperClient(
+        applicationContext: Context,
+        networkFlipperPlugin: NetworkFlipperPlugin
+    ): FlipperClient = AndroidFlipperClient.getInstance(applicationContext).apply {
+        addPlugin(
+            InspectorFlipperPlugin(
+                applicationContext,
+                DescriptorMapping.withDefaults()
+            )
+        )
+        addPlugin(networkFlipperPlugin)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkFlipperPlugin(): NetworkFlipperPlugin = NetworkFlipperPlugin()
 
 }

@@ -5,6 +5,12 @@ package com.charliechristensen.remote.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
+data class RemoteTopListCoinData(
+    @Json(name = "RAW") val rawData: Map<String?, Map<String?, RemoteCoinPriceRawData?>>?,
+    @Json(name = "DISPLAY") val displayData: Map<String?, Map<String?, ServerCoinPriceDisplayData?>>?
+)
+
 @SuppressWarnings("SpellCheckingInspection")
 @JsonClass(generateAdapter = true)
 data class RemoteCoinPriceData(

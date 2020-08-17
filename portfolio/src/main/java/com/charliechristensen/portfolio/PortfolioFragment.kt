@@ -3,6 +3,7 @@ package com.charliechristensen.portfolio
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.extensions.viewModel
@@ -11,11 +12,9 @@ import com.charliechristensen.portfolio.databinding.ViewPortfolioCoinListBinding
 import com.charliechristensen.portfolio.di.DaggerPortfolioComponent
 import com.charliechristensen.portfolio.list.PortfolioAdapter
 import com.charliechristensen.portfolio.list.PortfolioListItem
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-@ExperimentalCoroutinesApi
 class PortfolioFragment :
-    BaseFragment<PortfolioCoinListViewModel.ViewModel>(R.layout.view_portfolio_coin_list),
+    BaseFragment<PortfolioCoinListViewModel.ViewModel, ViewPortfolioCoinListBinding>(R.layout.view_portfolio_coin_list),
     PortfolioAdapter.PortfolioAdapterCallback {
 
     override val viewModel: PortfolioCoinListViewModel.ViewModel by viewModel {
@@ -29,20 +28,17 @@ class PortfolioFragment :
 
         setActionBarTitle(com.charliechristensen.cryptotracker.cryptotracker.R.string.portfolio)
 
-        val binding: ViewPortfolioCoinListBinding = ViewPortfolioCoinListBinding.bind(view)
-        binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        val adapter = PortfolioAdapter(this)
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-
+        val portfolioAdapter = PortfolioAdapter(this).apply {
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        }
+        binding.recyclerView.apply {
+            adapter = portfolioAdapter
+            binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        }
         viewModel.outputs.coinList
-            .bind {
-                adapter.submitList(it)
-                if(binding.recyclerView.adapter == null) {
-                    binding.recyclerView.adapter = adapter
-                }
-            }
+            .bind(portfolioAdapter::submitList)
 
         viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }

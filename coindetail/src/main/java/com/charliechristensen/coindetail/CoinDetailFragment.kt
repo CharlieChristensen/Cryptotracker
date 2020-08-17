@@ -17,10 +17,9 @@ import com.charliechristensen.cryptotracker.common.extensions.savedStateViewMode
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-@ExperimentalCoroutinesApi
-class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.view_coin_detail) {
+
+class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel, ViewCoinDetailBinding>(R.layout.view_coin_detail) {
 
     override val viewModel: CoinDetailViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
         val fragmentArgs = CoinDetailFragmentArgs.fromBundle(requireArguments())
@@ -33,8 +32,6 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val binding: ViewCoinDetailBinding = ViewCoinDetailBinding.bind(view)
-        binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
         viewModel.outputs.isCoinInPortfolio
@@ -105,7 +102,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
     //region Dialogs
 
     private fun showAddCoinDialog(coinSymbol: String) {
-        val activity = (activity ?: return) ?: return
+        val activity = activity ?: return
         val binding = DialogTextInputLayoutBinding.inflate(activity.layoutInflater)
         val textInputLayout = binding.textInputLayout
         textInputLayout.hint = "Coin Amount"
@@ -123,7 +120,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
     }
 
     private fun showEditCoinAmountDialog(coinSymbol: String) {
-        val activity = (activity ?: return) ?: return
+        val activity = activity ?: return
         val binding = DialogTextInputLayoutBinding.inflate(activity.layoutInflater)
         val textInputLayout = binding.textInputLayout
         textInputLayout.hint = "Coin Amount"
@@ -141,7 +138,7 @@ class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel>(R.layout.
     }
 
     private fun showConfirmRemoveDialog(coinSymbol: String) {
-        val activity = (activity ?: return) ?: return
+        val activity = activity ?: return
         MaterialAlertDialogBuilder(activity)
             .setTitle("Remove")
             .setMessage("Are you sure you want to remove $coinSymbol from your portfolio?")

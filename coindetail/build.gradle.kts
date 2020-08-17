@@ -36,7 +36,6 @@ dependencies {
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
 
-    implementation(Libraries.lifecycleExtensions)
     implementation(Libraries.lifecycleCommon)
     implementation(Libraries.savedState)
     implementation(Libraries.viewModel)

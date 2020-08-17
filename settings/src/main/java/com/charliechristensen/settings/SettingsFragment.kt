@@ -11,7 +11,7 @@ import com.charliechristensen.settings.di.DaggerSettingsComponent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view_settings) {
+class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel, ViewSettingsBinding>(R.layout.view_settings) {
 
     override val viewModel: SettingsViewModel.ViewModel by viewModel {
         DaggerSettingsComponent.factory()
@@ -22,10 +22,7 @@ class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel>(R.layout.view
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        ViewSettingsBinding.bind(view).also { binding ->
-            binding.lifecycleOwner = this
-            binding.viewModel = viewModel
-        }
+        binding.viewModel = viewModel
 
         viewModel.outputs.showChooseThemeDialog
             .bind(this::showSelectThemeDialog)

@@ -1,122 +1,147 @@
 package com.charliechristensen.remote.websocket
 
 import com.charliechristensen.remote.models.SymbolPricePair
-import io.socket.client.IO
-import io.socket.client.Socket
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.BroadcastChannel
+import com.charliechristensen.remote.models.WebSocketSubscription
+import com.charliechristensen.remote.websocketv2.SocketService
+import com.tinder.scarlet.WebSocket
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import org.json.JSONArray
-import org.json.JSONObject
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
+import javax.inject.Singleton
 
-@ExperimentalCoroutinesApi
-class WebSocketServiceImpl @Inject constructor(@Named("WebSocketUrl")url: String) : WebSocketService {
+@Singleton
+class WebSocketServiceImpl @Inject constructor(
+    @Named("WebSocketUrl") url: String,
+    private val socketService: SocketService
+) : WebSocketService {
 
-    private val webSocket: Socket = IO.socket(url)
+    private var isConnected = false
+
+    private var currency: String? = null
     private val temporarySubscriptions: MutableSet<String> = mutableSetOf()
     private val portfolioSubscriptions: MutableSet<String> = mutableSetOf()
-    private val priceUpdateReceivedChannel = BroadcastChannel<SymbolPricePair>(1)
-    private val errorConnectingToSocketChannel = BroadcastChannel<Unit>(1)
+
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
     init {
-        webSocket.on("m") {
-            val socketResponse = SocketResponseMapper.mapResponse(it) ?: return@on
-            if (socketResponse.subscriptionId == 5) {
-                if (socketResponse.priceDirection == 1 || socketResponse.priceDirection == 2) {
-                    priceUpdateReceivedChannel.offer(
-                        SymbolPricePair(
-                            socketResponse.fromCurrency,
-                            socketResponse.toCurrency,
-                            socketResponse.price
+        socketService.observeWebsocketConnect()
+            .flowOn(Dispatchers.IO)
+            .onEach { event ->
+                Timber.d("Event Received! $event")
+                if (event is WebSocket.Event.OnConnectionOpened<*>) {
+                    isConnected = true
+                    val currency = currency
+                    if (!currency.isNullOrBlank()) {
+                        addSubscriptionsV2(
+                            temporarySubscriptions.plus(portfolioSubscriptions).toList(),
+                            currency
                         )
-                    )
+                    }
+                } else if (event is WebSocket.Event.OnConnectionClosed || event is WebSocket.Event.OnConnectionFailed) {
+                    isConnected = false
                 }
             }
-        }
+            .launchIn(scope)
     }
 
-    override fun connect(onConnection: (WebSocketService) -> Unit) {
-        if (!webSocket.connected()) {
-            webSocket.connect()
-            webSocket.on(Socket.EVENT_CONNECT) {
-                onConnection.invoke(this)
+    override fun connect(): Flow<WebSocketService> {
+        return socketService.observeWebsocketEvent()
+            .flowOn(Dispatchers.IO)
+            .onEach { event ->
+                when (event) {
+                    is WebSocket.Event.OnConnectionOpened<*>
+                    -> isConnected = true
+                    is WebSocket.Event.OnConnectionClosed,
+                    is WebSocket.Event.OnConnectionFailed
+                    -> isConnected = false
+                }
             }
-            webSocket.on(Socket.EVENT_ERROR) {
-                errorConnectingToSocketChannel.offer(Unit)
+            .filter {
+                it is WebSocket.Event.OnConnectionOpened<*>
             }
-        } else {
-            onConnection.invoke(this)
-        }
+            .map { this }
     }
 
     override fun disconnect() {
         temporarySubscriptions.clear()
         portfolioSubscriptions.clear()
-        webSocket.disconnect()
     }
 
-    @FlowPreview
-    override fun priceUpdateReceived(): Flow<SymbolPricePair> =
-        priceUpdateReceivedChannel.asFlow()
+    override fun priceUpdateReceived(): Flow<SymbolPricePair> = socketService.observeCoinData()
+        .flowOn(Dispatchers.IO)
+        .filter { it.type == 5 }
+        .mapNotNull { coinData ->
+            SymbolPricePair(
+                coinData.fromSymbol ?: return@mapNotNull null,
+                coinData.toSymbol ?: return@mapNotNull null,
+                coinData.price ?: return@mapNotNull null
+            )
+        }
 
-    override fun setPortfolioSubscriptions(symbols: Collection<String>, newCurrency: String, oldCurrency: String) {
-        val symbolsToUnsubscribe = symbols.plus(temporarySubscriptions)// portfolioSubscriptions.minus(symbols).minus(temporarySubscriptions)
+    override fun setPortfolioSubscriptions(
+        symbols: Collection<String>,
+        newCurrency: String,
+        oldCurrency: String
+    ) {
+        val symbolsToUnsubscribe =
+            symbols.plus(temporarySubscriptions)// portfolioSubscriptions.minus(symbols).minus(temporarySubscriptions)
         val symbolsToSubscribe = symbols.minus(portfolioSubscriptions).minus(temporarySubscriptions)
         portfolioSubscriptions.clear()
         portfolioSubscriptions.addAll(symbols)
-        removeSubscriptions(symbolsToUnsubscribe, oldCurrency)
-        addSubscriptions(symbols.toList(), newCurrency)
+        removeSubscriptionsV2(symbolsToUnsubscribe, oldCurrency)
+        addSubscriptionsV2(symbols.toList(), newCurrency)
+        this.currency = newCurrency
     }
 
     override fun addTemporarySubscription(symbol: String, currency: String) {
         temporarySubscriptions.add(symbol)
         if (!portfolioSubscriptions.contains(symbol)) {
-            addSubscriptions(listOf(symbol), currency)
+            addSubscriptionsV2(listOf(symbol), currency)
         }
+        this.currency = currency
     }
 
     override fun clearTemporarySubscriptions(currency: String) {
         val symbolsToUnsubscribe = temporarySubscriptions.minus(portfolioSubscriptions)
         temporarySubscriptions.clear()
-        removeSubscriptions(symbolsToUnsubscribe, currency)
+        removeSubscriptionsV2(symbolsToUnsubscribe, currency)
     }
 
-    private fun addSubscriptions(symbols: List<String>, currency: String): Boolean {
-        if (webSocket.connected() && symbols.isNotEmpty()) {
-            try {
-                val jsonArray = JSONArray()
-                symbols.forEach {
-                    jsonArray.put("5~CCCAGG~$it~$currency")
-                }
-                val jsonParams = JSONObject()
-                jsonParams.put("subs", jsonArray)
-                webSocket.emit("SubAdd", jsonParams)
-                return true
-            } catch (e: Exception) {
-                // JSON Exception
-            }
+    private fun addSubscriptionsV2(symbols: List<String>, currency: String): Boolean {
+        if (isConnected && symbols.isNotEmpty()) {
+            val subs = symbols.map { "5~CCCAGG~$it~$currency" }
+            Timber.d("Adding symbols $subs")
+            socketService.subscribe(
+                WebSocketSubscription(
+                    action = "SubAdd",
+                    subs = subs
+                )
+            )
+            return true
         }
         return false
     }
 
-    private fun removeSubscriptions(symbols: Iterable<String>, currency: String): Boolean {
-        if (webSocket.connected()) {
-            try {
-                val jsonArray = JSONArray()
-                symbols.forEach {
-                    jsonArray.put("5~CCCAGG~$it~$currency")
-                }
-                val jsonParams = JSONObject()
-                jsonParams.put("subs", jsonArray)
-                webSocket.emit("SubRemove", jsonParams)
-                return true
-            } catch (e: Exception) {
-                // JSON Exception
-            }
+    private fun removeSubscriptionsV2(symbols: Collection<String>, currency: String): Boolean {
+        if (isConnected && symbols.isNotEmpty()) {
+            Timber.d("Removing symbols $symbols")
+            socketService.subscribe(
+                WebSocketSubscription(
+                    action = "SubRemove",
+                    subs = symbols.map { "5~CCCAGG~$it~$currency" }
+                )
+            )
+            return true
         }
         return false
     }

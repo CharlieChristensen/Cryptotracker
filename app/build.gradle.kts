@@ -1,3 +1,5 @@
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     id(BuildPlugins.androidApplication)
@@ -5,6 +7,12 @@ plugins {
     id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.safeArgs)
     id(BuildPlugins.sqlDelight)
+//    id(BuildPlugins.hiltPlugin)
+}
+
+val apikeyPropertiesFile = rootProject.file("apikey.properties")
+val apikeyProperties = Properties().apply {
+    load(FileInputStream(apikeyPropertiesFile))
 }
 
 android {
@@ -17,6 +25,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "CRYPTOCOMPARE_API_KEY", apikeyProperties["CRYPTOCOMPARE_API_KEY"] as String)
     }
     buildTypes {
         getByName("debug") {
@@ -40,7 +49,7 @@ android {
         pickFirst("META-INF/kotlinx-coroutines-core.kotlin_module")
     }
 
-    dynamicFeatures = mutableSetOf(":coindetail", ":settings", ":coinlist", ":portfolio", ":themeplayground")
+    dynamicFeatures = mutableSetOf(":coindetail", ":settings", ":coinlist", ":portfolio", ":themeplayground", ":Dialogs")
 }
 
 dependencies {
@@ -48,6 +57,7 @@ dependencies {
     implementation(project(":remote"))
 
     implementation(Libraries.kotlinStdLib)
+    implementation(Libraries.kotlinReflect)
     implementation(Libraries.ktxCore)
     implementation(Libraries.appCompat)
     implementation(Libraries.constraintLayout)
@@ -57,7 +67,6 @@ dependencies {
     implementation(Libraries.workManager)
     implementation(Libraries.recyclerView)
 
-    implementation(Libraries.lifecycleExtensions)
     implementation(Libraries.lifecycleCommon)
     implementation(Libraries.viewModel)
     implementation(Libraries.liveData)
@@ -77,11 +86,20 @@ dependencies {
     kapt(Libraries.assistInjectCompiler)
     kapt(Libraries.daggerCompiler)
 
+//    implementation(Libraries.hilt)
+//    implementation(Libraries.hiltViewModel)
+//    kapt(Libraries.hiltCompiler)
+
     implementation(Libraries.retrofit)
     implementation(Libraries.retrofitMoshi)
     implementation(Libraries.okhttp)
     implementation(Libraries.okhttpLogging)
     implementation(Libraries.moshi)
+
+    implementation(Libraries.scarlett)
+    implementation(Libraries.scarlettLifecycle)
+    implementation(Libraries.scarlettMoshi)
+    implementation(Libraries.scarlettOkHttp)
 
     implementation(Libraries.glide)
     kapt(Libraries.glideCompiler)
@@ -92,6 +110,12 @@ dependencies {
     implementation(Libraries.timber)
 
     debugImplementation(Libraries.leakCanary)
+
+    debugImplementation(Libraries.flipper)
+    debugImplementation(Libraries.flipperSO)
+    debugImplementation(Libraries.flipperNetwork)
+
+    releaseImplementation(Libraries.flipperNoOp)
 
     testImplementation(TestLibraries.junit)
     testImplementation(TestLibraries.mockitoKotlin)

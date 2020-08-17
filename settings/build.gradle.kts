@@ -35,7 +35,6 @@ dependencies {
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
 
-    implementation(Libraries.lifecycleExtensions)
     implementation(Libraries.lifecycleCommon)
     implementation(Libraries.viewModel)
     implementation(Libraries.liveData)

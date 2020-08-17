@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    repositories {
+    this.repositories {
         google()
         jcenter()
         maven { url = uri("https://dl.bintray.com/kotlin/kotlin-eap") }
@@ -12,7 +12,7 @@ buildscript {
         classpath(BuildPlugins.kotlinGradlePlugin)
         classpath(BuildPlugins.safeArgsClasspath)
         classpath(BuildPlugins.sqlDelightClasspath)
-        classpath(BuildPlugins.delectClasspath)
+//        classpath(BuildPlugins.hilt)
     }
 }
 
@@ -34,5 +34,3 @@ allprojects {
 tasks.register("clean",Delete::class){
     delete(rootProject.buildDir)
 }
-
-apply(plugin = BuildPlugins.delectPlugin)

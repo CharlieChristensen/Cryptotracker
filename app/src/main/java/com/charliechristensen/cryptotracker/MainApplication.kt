@@ -7,6 +7,8 @@ import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
 import com.charliechristensen.cryptotracker.data.workers.FetchCoinListWorker
 import com.charliechristensen.cryptotracker.di.AppComponent
 import com.charliechristensen.cryptotracker.di.DaggerAppComponent
+import com.facebook.flipper.android.utils.FlipperUtils
+import com.facebook.soloader.SoLoader
 import com.google.android.play.core.splitcompat.SplitCompatApplication
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -22,8 +24,12 @@ class MainApplication : SplitCompatApplication() {
     override fun onCreate() {
         super.onCreate()
         setupWorkers()
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+            if (FlipperUtils.shouldEnableFlipper(this)) {
+                SoLoader.init(this, false)
+                appComponent.flipper().start()
+            }
         }
     }
 

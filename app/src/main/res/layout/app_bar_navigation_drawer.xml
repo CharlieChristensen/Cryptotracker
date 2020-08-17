@@ -19,7 +19,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/navigationHost"
         android:name="androidx.navigation.dynamicfeatures.fragment.DynamicNavHostFragment"
         android:layout_width="match_parent"

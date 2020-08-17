@@ -63,7 +63,6 @@ interface CoinDetailViewModel {
         val selectedDateTab: LiveData<Int>
     }
 
-    @ExperimentalCoroutinesApi
     class ViewModel @AssistedInject constructor(
         private val formatterFactory: FormatterFactory,
         private val interactor: CoinDetailInteractor,
@@ -214,7 +213,9 @@ interface CoinDetailViewModel {
         override val walletPriceChange24Hour: LiveData<ColorValueString> =
             walletPriceChange24HourChannel.distinctUntilChanged()
 
-        override val graphState: LiveData<CoinDetailGraphState> = currentTimePeriodChannel.asFlow()
+        @ExperimentalCoroutinesApi
+        override val graphState: LiveData<CoinDetailGraphState> = currentTimePeriodChannel
+            .asFlow()
             .flatMapLatest { timePeriod -> interactor.getCoinHistory(coinSymbol, timePeriod) }
             .onEach { graphState ->
                 if (graphState is CoinDetailGraphState.Success) {

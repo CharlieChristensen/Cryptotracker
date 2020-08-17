@@ -16,3 +16,4 @@
 /captures
 .externalNativeBuild
 *.ser
+apikey.properties

@@ -37,7 +37,6 @@ dependencies {
     implementation(Libraries.material)
     implementation(Libraries.recyclerView)
 
-    implementation(Libraries.lifecycleExtensions)
     implementation(Libraries.lifecycleCommon)
     implementation(Libraries.savedState)
     implementation(Libraries.viewModel)

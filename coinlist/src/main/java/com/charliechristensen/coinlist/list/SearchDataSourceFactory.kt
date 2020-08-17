@@ -3,7 +3,6 @@ package com.charliechristensen.coinlist.list
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import com.charliechristensen.coinlist.SearchCoinsInteractor
-import javax.inject.Inject
 
 class SearchDataSourceFactory constructor(
     private val interactor: SearchCoinsInteractor,

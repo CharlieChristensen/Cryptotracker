@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -15,6 +16,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewbinding.ViewBinding
 import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.common.ColorUtils
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor

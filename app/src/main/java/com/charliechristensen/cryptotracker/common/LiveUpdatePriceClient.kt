@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 
-@ExperimentalCoroutinesApi
 @Singleton
 class LiveUpdatePriceClient @Inject constructor(
     private val repository: Repository
@@ -28,16 +27,18 @@ class LiveUpdatePriceClient @Inject constructor(
 
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
+    @ExperimentalCoroutinesApi
     fun start() {
         combine(
             liveUpdatePrices(),
             repository.currency().accumulate(repository.getCurrency())
         )
         { symbolsList, (previousCurrency, nextCurrency) ->
-            repository.connectToLivePrices(symbolsList, previousCurrency, nextCurrency)
+//            repository.connectToLivePrices(symbolsList, previousCurrency, nextCurrency)
+            repository.setPortfolioSubscriptions(symbolsList, previousCurrency, nextCurrency)
         }
             .onCompletion { repository.disconnectFromLivePrices() }
-            .catch { Timber.tag("SOCKET IO ERROR").d( it.localizedMessage ?: "UNKNOWN ERROR") }
+            .catch { Timber.tag("SOCKET IO ERROR").d(it.localizedMessage ?: "UNKNOWN ERROR") }
             .launchIn(scope)
 
         repository.priceUpdateReceived()
@@ -49,6 +50,7 @@ class LiveUpdatePriceClient @Inject constructor(
         scope.coroutineContext.cancelChildren()
     }
 
+    @ExperimentalCoroutinesApi
     private fun liveUpdatePrices(): Flow<List<String>> = repository.liveUpdatePrices()
         .flatMapLatest { isSet ->
             if (isSet) {

@@ -11,7 +11,6 @@ import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.portfolio.list.PortfolioListItem
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -31,13 +30,12 @@ interface PortfolioCoinListViewModel {
         val coinList: LiveData<List<PortfolioListItem>>
     }
 
-    @ExperimentalCoroutinesApi
     class ViewModel @Inject constructor(
         private val navigator: Navigator,
         portfolioInteractor: PortfolioInteractor
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val showNetworkErrorChannel = SingleLiveEvent<Unit>()
+        private val showNetworkErrorLiveData = SingleLiveEvent<Unit>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -45,7 +43,7 @@ interface PortfolioCoinListViewModel {
         private val portfolioStates: Flow<PortfolioListData> =
             portfolioInteractor.listData()
                 .flowOn(Dispatchers.IO)
-                .catch { showNetworkErrorChannel.call() }
+                .catch { showNetworkErrorLiveData.call() }
 
         //region Inputs
 
@@ -80,7 +78,7 @@ interface PortfolioCoinListViewModel {
             .map { it.coinList }
             .asLiveData()
 
-        override val showNetworkError: LiveData<Unit> = showNetworkErrorChannel
+        override val showNetworkError: LiveData<Unit> = showNetworkErrorLiveData
 
         //endregion
     }

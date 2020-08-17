@@ -11,13 +11,12 @@ import com.charliechristensen.cryptotracker.data.models.ui.ImageAndNamePair
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
-@ExperimentalCoroutinesApi
+
 class CoinDetailInteractor @Inject constructor(
     private val repository: Repository,
     formatterFactory: FormatterFactory

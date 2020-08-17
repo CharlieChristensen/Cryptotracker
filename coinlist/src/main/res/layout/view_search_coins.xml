@@ -5,9 +5,6 @@
 
     <data>
 
-        <variable
-            name="viewModel"
-            type="com.charliechristensen.coinlist.SearchCoinsViewModel.ViewModel" />
     </data>
 
     <LinearLayout
@@ -33,7 +30,6 @@
             android:id="@+id/coinsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/cell_coin_list" />
 
     </LinearLayout>

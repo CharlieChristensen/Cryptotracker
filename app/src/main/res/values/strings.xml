@@ -59,5 +59,7 @@
     <string name="title_coinlist">Coin List</string>
     <string name="title_portfolio">Portfolio</string>
     <string name="title_themeplayground">Theme Playground</string>
+    <string name="title_dialogs">Dialogs</string>
+    <string name="title_remote">Dialogs</string>
 
 </resources>

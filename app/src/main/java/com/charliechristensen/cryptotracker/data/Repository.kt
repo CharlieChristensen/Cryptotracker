@@ -30,7 +30,7 @@ interface Repository: AppPreferences {
     fun addTemporarySubscription(symbol: String)
     fun clearTemporarySubscriptions()
 
-    fun connectToLivePrices(symbols: Collection<String>, newCurrency: String, oldCurrency: String)
+    fun setPortfolioSubscriptions(symbols: Collection<String>, newCurrency: String, oldCurrency: String)
     fun disconnectFromLivePrices()
     fun priceUpdateReceived(): Flow<SymbolPricePair>
 

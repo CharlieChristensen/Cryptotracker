@@ -3,6 +3,7 @@ package com.charliechristensen.remote.webservice
 import com.charliechristensen.remote.models.RemoteCoinList
 import com.charliechristensen.remote.models.RemoteCoinPriceData
 import com.charliechristensen.remote.models.RemoteHistoryResponse
+import com.charliechristensen.remote.models.RemoteTopListCoinData
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -46,4 +47,9 @@ interface CryptoService {
         @Query("aggregate") aggregate: Int = 1,
         @Query("e") exchange: String = "CCCAGG"
     ): RemoteHistoryResponse
+
+    @GET("/data/top/totalvolfull")
+    suspend fun getTopCoinFullData(
+        @Query("tsym") toSymbols: String
+    ): RemoteTopListCoinData
 }

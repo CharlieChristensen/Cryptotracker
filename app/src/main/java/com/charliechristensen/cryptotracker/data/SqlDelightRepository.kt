@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import timber.log.Timber
 import javax.inject.Inject
 
 class SqlDelightRepository @Inject constructor(
@@ -79,7 +80,6 @@ class SqlDelightRepository @Inject constructor(
         portfolioQueries.selectUnitsOwnedForSymbol(symbol)
             .flowAsList()
 
-    @ExperimentalCoroutinesApi
     override fun getPortfolioData(): Flow<List<CoinWithPriceAndAmount>> = combine(
         getPortfolioCoinSymbols(),
         getPortfolio()
@@ -168,8 +168,8 @@ class SqlDelightRepository @Inject constructor(
         remoteGateway.clearTemporarySubscriptions(getCurrency())
     }
 
-    override fun connectToLivePrices(symbols: Collection<String>, newCurrency: String, oldCurrency: String) {
-        remoteGateway.connect { socket -> socket.setPortfolioSubscriptions(symbols, newCurrency, oldCurrency) }
+    override fun setPortfolioSubscriptions(symbols: Collection<String>, newCurrency: String, oldCurrency: String) {
+        remoteGateway.setPortfolioSubscriptions(symbols, newCurrency, oldCurrency)
     }
 
     override fun disconnectFromLivePrices() {
@@ -253,6 +253,9 @@ class SqlDelightRepository @Inject constructor(
         symbol: String,
         timePeriod: CoinHistoryTimePeriod
     ) {
+
+        val topCoinFullData = remoteGateway.getTopCoinFullData("USD")
+        Timber.d(topCoinFullData.toString())
         val historicalData =
             when (timePeriod.timeUnit) {
                 CoinHistoryUnits.MINUTE -> remoteGateway.getHistoricalDataByMinute(

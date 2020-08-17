@@ -1,21 +1,32 @@
 package com.charliechristensen.remote.di
 
+import android.app.Application
 import com.charliechristensen.remote.RemoteGateway
 import com.charliechristensen.remote.RemoteGatewayImpl
+import com.charliechristensen.remote.interceptors.ApiKeyInterceptor
 import com.charliechristensen.remote.webservice.CryptoService
 import com.charliechristensen.remote.websocket.WebSocketService
 import com.charliechristensen.remote.websocket.WebSocketServiceImpl
+import com.charliechristensen.remote.websocketv2.FlowStreamAdapterFactory
+import com.charliechristensen.remote.websocketv2.SocketService
+import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.squareup.moshi.Moshi
+import com.tinder.scarlet.Scarlet
+import com.tinder.scarlet.lifecycle.android.AndroidLifecycle
+import com.tinder.scarlet.messageadapter.moshi.MoshiMessageAdapter
+import com.tinder.scarlet.retry.ExponentialWithJitterBackoffStrategy
+import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
 import javax.inject.Singleton
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Qualifier
+
 
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
@@ -43,7 +54,6 @@ object RemoteModule {
     ): CryptoService = retrofit
         .create(CryptoService::class.java)
 
-    @ExperimentalCoroutinesApi
     @Provides
     @InternalApi
     internal fun provideWebSocket(
@@ -65,11 +75,17 @@ object RemoteModule {
     @Provides
     @InternalApi
     internal fun provideOkHttpClient(
+        networkFlipperPlugin: NetworkFlipperPlugin,
         @Named("IsDebug") isDebug: Boolean,
-        @InternalApi httpLoggingInterceptor: HttpLoggingInterceptor
+        @InternalApi httpLoggingInterceptor: HttpLoggingInterceptor,
+        @InternalApi apiKeyInterceptor: ApiKeyInterceptor
     ): OkHttpClient = OkHttpClient
         .Builder().apply {
-            if (isDebug) addInterceptor(httpLoggingInterceptor)
+            addInterceptor(apiKeyInterceptor)
+            if (isDebug) {
+                addInterceptor(httpLoggingInterceptor)
+                addNetworkInterceptor(FlipperOkhttpInterceptor(networkFlipperPlugin))
+            }
         }
         .build()
 
@@ -80,9 +96,34 @@ object RemoteModule {
 
     @Provides
     @InternalApi
-    internal fun provideOkHttpLoggingInterceptor(
-        @Named("IsDebug") isDebug: Boolean
-    ): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
+    internal fun provideOkHttpLoggingInterceptor(): HttpLoggingInterceptor =
+        HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
+    @Provides
+    @Singleton
+    @InternalApi
+    fun provideScarlet(
+        application: Application,
+        moshi: Moshi,
+        @Named("WebSocketUrlV2") webSocketUrlV2: String,
+        @InternalApi okHttpClient: OkHttpClient
+    ): Scarlet = Scarlet.Builder()
+        .webSocketFactory(okHttpClient.newWebSocketFactory(webSocketUrlV2))
+        .addMessageAdapterFactory(MoshiMessageAdapter.Factory(moshi))
+        .addStreamAdapterFactory(FlowStreamAdapterFactory())
+        .backoffStrategy(ExponentialWithJitterBackoffStrategy(5000, 5000))
+        .lifecycle(AndroidLifecycle.ofApplicationForeground(application))
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideSocketService(@InternalApi scarlet: Scarlet): SocketService = scarlet.create()
+
+    @Provides
+    @InternalApi
+    fun providesApiKeyInterceptor(
+        @Named("CryptoCompareApiKey") cryptocompareApiKey: String
+    ): ApiKeyInterceptor = ApiKeyInterceptor(cryptocompareApiKey)
 }
