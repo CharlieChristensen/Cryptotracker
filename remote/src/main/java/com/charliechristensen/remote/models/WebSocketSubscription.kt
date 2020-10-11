@@ -1,10 +1,9 @@
 package com.charliechristensen.remote.models
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class WebSocketSubscription(
-    @Json(name = "action") val action: String,
-    @Json(name = "subs") val subs: List<String>
+    val action: String,
+    val subs: List<String>
 )

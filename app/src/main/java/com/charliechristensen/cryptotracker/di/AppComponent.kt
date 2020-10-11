@@ -5,7 +5,6 @@ import com.charliechristensen.cryptotracker.common.FormatterFactory
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer.MainActivityViewModel
 import com.charliechristensen.cryptotracker.data.Repository
-import com.charliechristensen.remote.websocketv2.SocketService
 import com.facebook.flipper.core.FlipperClient
 import dagger.BindsInstance
 import dagger.Component

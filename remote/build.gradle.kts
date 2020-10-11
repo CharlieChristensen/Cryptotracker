@@ -36,8 +36,6 @@ dependencies {
 
     implementation(Libraries.okhttp)
     implementation(Libraries.okhttpLogging)
-    implementation(Libraries.moshi)
-    kapt(Libraries.moshiCompiler)
 
     implementation(Libraries.ktorOkHttp)
     implementation(Libraries.ktorJson)
@@ -47,11 +45,6 @@ dependencies {
 
     implementation(Libraries.serialization)
     implementation(Libraries.serializationConverter)
-
-    implementation(Libraries.scarlett)
-    implementation(Libraries.scarlettLifecycle)
-    implementation(Libraries.scarlettMoshi)
-    implementation(Libraries.scarlettOkHttp)
 
     implementation(Libraries.dagger)
     kapt(Libraries.daggerCompiler)
@@ -63,8 +56,6 @@ dependencies {
     debugImplementation(Libraries.flipperNetwork)
 
     releaseImplementation(Libraries.flipperNoOp)
-
-    implementation(Libraries.socketIO)
 
 }
 

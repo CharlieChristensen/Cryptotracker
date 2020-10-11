@@ -87,15 +87,9 @@ dependencies {
 
     implementation(Libraries.okhttp)
     implementation(Libraries.okhttpLogging)
-    implementation(Libraries.moshi)
 
     implementation(Libraries.serialization)
     implementation(Libraries.serializationConverter)
-
-    implementation(Libraries.scarlett)
-    implementation(Libraries.scarlettLifecycle)
-    implementation(Libraries.scarlettMoshi)
-    implementation(Libraries.scarlettOkHttp)
 
     implementation(Libraries.ktorOkHttp)
     implementation(Libraries.ktorJson)

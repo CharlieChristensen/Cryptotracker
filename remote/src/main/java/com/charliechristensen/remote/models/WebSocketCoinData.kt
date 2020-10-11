@@ -1,42 +1,42 @@
 package com.charliechristensen.remote.models
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 class WebSocketCoinData(
-    @Json(name = "TYPE")
+    @SerialName("TYPE")
     val type: Int? = null,
-    @Json(name = "MARKET")
+    @SerialName("MARKET")
     val market: String? = null,
-    @Json(name = "FROMSYMBOL")
+    @SerialName("FROMSYMBOL")
     val fromSymbol: String? = null,
-    @Json(name = "TOSYMBOL")
+    @SerialName("TOSYMBOL")
     val toSymbol: String? = null,
-    @Json(name = "FLAGS")
+    @SerialName("FLAGS")
     val flags: Int? = null,
-    @Json(name = "PRICE")
+    @SerialName("PRICE")
     val price: Double? = null,
-    @Json(name = "LASTUPDATE")
+    @SerialName("LASTUPDATE")
     val lastUpdate: Long? = null,
-    @Json(name = "MEDIAN")
+    @SerialName("MEDIAN")
     val median: Double? = null,
-    @Json(name = "LASTTRADEID")
+    @SerialName("LASTTRADEID")
     val lastTradeId: String? = null,
-    @Json(name = "VOLUMEDAY")
+    @SerialName("VOLUMEDAY")
     val volumeDay: Double? = null,
-    @Json(name = "VOLUMEDAYTO")
+    @SerialName("VOLUMEDAYTO")
     val volumeDayTo: Double? = null,
-    @Json(name = "VOLUME24HOUR")
+    @SerialName("VOLUME24HOUR")
     val volume24Hour: Double? = null,
-    @Json(name = "VOLUME24HOURTO")
+    @SerialName("VOLUME24HOURTO")
     val volume24HourTo: Double? = null,
-    @Json(name = "VOLUMEHOUR")
+    @SerialName("VOLUMEHOUR")
     val volumeHour: Double? = null,
-    @Json(name = "VOLUMEHOURTO")
+    @SerialName("VOLUMEHOURTO")
     val volumeHourTo: Double? = null,
-    @Json(name = "TOPTIERVOLUME24HOUR")
+    @SerialName("TOPTIERVOLUME24HOUR")
     val topTierVolume24Hour: Double? = null,
-    @Json(name = "TOPTIERVOLUME24HOURTO")
+    @SerialName("TOPTIERVOLUME24HOURTO")
     val topTierVolume24HourTo: Double? = null
 )
