@@ -1,17 +1,17 @@
 package com.charliechristensen.remote.models
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class RemoteCoinData(
-    @Json(name = "Id") val id: Int?,
-    @Json(name = "Url") val url: String?,
-    @Json(name = "ImageUrl") val imageUrl: String?,
-    @Json(name = "Name") val symbol: String?,
-    @Json(name = "CoinName") val coinName: String?,
-    @Json(name = "FullName") val fullName: String?,
-    @Json(name = "Algorithm") val algorithm: String?,
-    @Json(name = "ProofType") val proofType: String?,
-    @Json(name = "SortOrder") val sortOrder: Int?
+    @SerialName("Id") val id: Int? = null,
+    @SerialName("Url") val url: String? = null,
+    @SerialName("ImageUrl") val imageUrl: String? = null,
+    @SerialName("Name") val symbol: String? = null,
+    @SerialName("CoinName") val coinName: String? = null,
+    @SerialName("FullName") val fullName: String? = null,
+    @SerialName("Algorithm") val algorithm: String? = null,
+    @SerialName("ProofType") val proofType: String? = null,
+    @SerialName("SortOrder") val sortOrder: Int? = null
 )

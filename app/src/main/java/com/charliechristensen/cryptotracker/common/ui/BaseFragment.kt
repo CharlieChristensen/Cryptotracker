@@ -38,6 +38,6 @@ abstract class BaseFragment<VM : BaseViewModel, B: ViewDataBinding>(@LayoutRes c
 
     protected inline fun <T> Flow<T>.bind(crossinline observer: suspend (T) -> Unit) {
         this.onEach { observer(it) }
-            .launchIn(this@BaseFragment.lifecycle.coroutineScope)
+            .launchIn(this@BaseFragment.viewLifecycleOwner.lifecycle.coroutineScope)
     }
 }

@@ -2,24 +2,24 @@
 
 package com.charliechristensen.remote.models
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class RemoteHistoryResponse(
-    @Json(name = "Response") val response: String?,
-    @Json(name = "Message") val message: String?,
-    @Json(name = "Type") val type: Int?,
-    @Json(name = "Aggregated") val aggregated: Boolean?,
-    @Json(name = "Data") val data: List<RemoteHistoryElement?>?,
-    @Json(name = "TimeTo") val timeTo: Long?,
-    @Json(name = "TimeFrom") val timeFrom: Long?,
-    @Json(name = "FirstValueInArray") val firstValueInArray: Boolean?,
-    @Json(name = "ConversionType") val conversionType: RemoteHistoryConversionType?
+    @SerialName("Response") val response: String? = null,
+    @SerialName("Message") val message: String? = null,
+    @SerialName("Type") val type: Int? = null,
+    @SerialName("Aggregated") val aggregated: Boolean? = null,
+    @SerialName("Data") val data: List<RemoteHistoryElement?>? = null,
+    @SerialName("TimeTo") val timeTo: Long? = null,
+    @SerialName("TimeFrom") val timeFrom: Long? = null,
+    @SerialName("FirstValueInArray") val firstValueInArray: Boolean? = null,
+    @SerialName("ConversionType") val conversionType: RemoteHistoryConversionType? = null
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class RemoteHistoryConversionType(
-    @Json(name = "type") val type: String?,
-    @Json(name = "conversionSymbol") val conversionSymbol: String?
+    @SerialName("type") val type: String? = null,
+    @SerialName("conversionSymbol") val conversionSymbol: String? = null
 )

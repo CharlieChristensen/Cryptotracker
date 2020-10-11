@@ -2,6 +2,7 @@ plugins {
     id(BuildPlugins.androidLibrary)
     id(BuildPlugins.kotlinAndroid)
     id(BuildPlugins.kotlinKapt)
+    kotlin(BuildPlugins.serialization) version kotlinVersion
 }
 
 android {
@@ -33,12 +34,19 @@ dependencies {
     implementation(Libraries.coroutinesAndroid)
     implementation(Libraries.coroutinesReactive)
 
-    implementation(Libraries.retrofit)
-    implementation(Libraries.retrofitMoshi)
     implementation(Libraries.okhttp)
     implementation(Libraries.okhttpLogging)
     implementation(Libraries.moshi)
     kapt(Libraries.moshiCompiler)
+
+    implementation(Libraries.ktorOkHttp)
+    implementation(Libraries.ktorJson)
+    implementation(Libraries.ktorSerialization)
+    implementation(Libraries.ktorLogging)
+    implementation(Libraries.ktorWebSockets)
+
+    implementation(Libraries.serialization)
+    implementation(Libraries.serializationConverter)
 
     implementation(Libraries.scarlett)
     implementation(Libraries.scarlettLifecycle)

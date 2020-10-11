@@ -7,7 +7,6 @@ plugins {
     id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.safeArgs)
     id(BuildPlugins.sqlDelight)
-//    id(BuildPlugins.hiltPlugin)
 }
 
 val apikeyPropertiesFile = rootProject.file("apikey.properties")
@@ -86,20 +85,23 @@ dependencies {
     kapt(Libraries.assistInjectCompiler)
     kapt(Libraries.daggerCompiler)
 
-//    implementation(Libraries.hilt)
-//    implementation(Libraries.hiltViewModel)
-//    kapt(Libraries.hiltCompiler)
-
-    implementation(Libraries.retrofit)
-    implementation(Libraries.retrofitMoshi)
     implementation(Libraries.okhttp)
     implementation(Libraries.okhttpLogging)
     implementation(Libraries.moshi)
+
+    implementation(Libraries.serialization)
+    implementation(Libraries.serializationConverter)
 
     implementation(Libraries.scarlett)
     implementation(Libraries.scarlettLifecycle)
     implementation(Libraries.scarlettMoshi)
     implementation(Libraries.scarlettOkHttp)
+
+    implementation(Libraries.ktorOkHttp)
+    implementation(Libraries.ktorJson)
+    implementation(Libraries.ktorSerialization)
+    implementation(Libraries.ktorLogging)
+    implementation(Libraries.ktorWebSockets)
 
     implementation(Libraries.glide)
     kapt(Libraries.glideCompiler)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="base_url">https://min-api.cryptocompare.com</string>
-    <string name="web_socket_url">https://streamer.cryptocompare.com</string>
+    <string name="base_url">min-api.cryptocompare.com</string>
+    <string name="web_socket_url">streamer.cryptocompare.com/v2</string>
     <string name="web_socket_url_v2">https://streamer.cryptocompare.com/v2</string>
 </resources>

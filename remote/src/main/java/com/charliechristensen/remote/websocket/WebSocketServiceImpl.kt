@@ -4,6 +4,7 @@ import com.charliechristensen.remote.models.SymbolPricePair
 import com.charliechristensen.remote.models.WebSocketSubscription
 import com.charliechristensen.remote.websocketv2.SocketService
 import com.tinder.scarlet.WebSocket
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,8 +22,8 @@ import javax.inject.Singleton
 
 @Singleton
 class WebSocketServiceImpl @Inject constructor(
-    @Named("WebSocketUrl") url: String,
-    private val socketService: SocketService
+    private val socketService: SocketService,
+    @Named("WebSocket") private val webSocketClient: HttpClient
 ) : WebSocketService {
 
     private var isConnected = false

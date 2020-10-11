@@ -5,6 +5,7 @@ import com.charliechristensen.remote.RemoteGateway
 import com.charliechristensen.remote.RemoteGatewayImpl
 import com.charliechristensen.remote.interceptors.ApiKeyInterceptor
 import com.charliechristensen.remote.webservice.CryptoService
+import com.charliechristensen.remote.webservice.KtorCryptoService
 import com.charliechristensen.remote.websocket.WebSocketService
 import com.charliechristensen.remote.websocket.WebSocketServiceImpl
 import com.charliechristensen.remote.websocketv2.FlowStreamAdapterFactory
@@ -19,13 +20,23 @@ import com.tinder.scarlet.retry.ExponentialWithJitterBackoffStrategy
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import dagger.Module
 import dagger.Provides
-import javax.inject.Named
-import javax.inject.Singleton
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.features.defaultRequest
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.features.logging.Logger
+import io.ktor.client.features.logging.Logging
+import io.ktor.client.features.websocket.WebSockets
+import io.ktor.client.request.host
+import io.ktor.http.URLProtocol
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import timber.log.Timber
+import javax.inject.Named
 import javax.inject.Qualifier
+import javax.inject.Singleton
 
 
 @Retention(AnnotationRetention.BINARY)
@@ -50,9 +61,10 @@ object RemoteModule {
     @Provides
     @InternalApi
     internal fun provideApiService(
-        @InternalApi retrofit: Retrofit
-    ): CryptoService = retrofit
-        .create(CryptoService::class.java)
+        @Named("WebSocketUrl") webSocketUrl: String,
+        @Named("Http") httpClient: HttpClient,
+        @Named("WebSocket") webSocketClient: HttpClient
+    ): CryptoService = KtorCryptoService(webSocketUrl, httpClient, webSocketClient)
 
     @Provides
     @InternalApi
@@ -61,16 +73,74 @@ object RemoteModule {
     ): WebSocketService = webSocketService
 
     @Provides
-    @InternalApi
-    internal fun provideRetrofit(
+    @Named("Http")
+    internal fun provideKtorClient(
         @Named("BaseUrl") baseUrl: String,
         @InternalApi okHttpClient: OkHttpClient,
-        @InternalApi moshiConverterFactory: MoshiConverterFactory
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .client(okHttpClient)
-        .addConverterFactory(moshiConverterFactory)
-        .build()
+        @InternalApi serialization: Json
+    ): HttpClient = HttpClient(OkHttp) {
+
+        install(JsonFeature) {
+            serializer = KotlinxSerializer(serialization)
+        }
+
+        install(Logging) {
+            logger = object : Logger {
+                override fun log(message: String) {
+                    Timber.tag("KtorLog").d(message)
+                }
+            }
+        }
+
+        install(WebSockets)
+
+        defaultRequest {
+            host = baseUrl
+            url {
+                protocol = URLProtocol.HTTPS
+            }
+        }
+
+        engine {
+            preconfigured = okHttpClient
+        }
+
+    }
+
+    @Provides
+    @Named("WebSocket")
+    internal fun provideKtorWebSocketClient(
+        @Named("WebSocketUrl") baseUrl: String,
+        @InternalApi okHttpClient: OkHttpClient,
+        @InternalApi serialization: Json
+    ): HttpClient = HttpClient(OkHttp) {
+
+//        install(JsonFeature) {
+//            serializer = KotlinxSerializer(serialization)
+//        }
+
+        install(Logging) {
+            logger = object : Logger {
+                override fun log(message: String) {
+                    Timber.tag("KtorebSocketLog").d(message)
+                }
+            }
+        }
+
+        install(WebSockets)
+
+        defaultRequest {
+            host = baseUrl
+            url {
+                protocol = URLProtocol.WSS
+            }
+        }
+
+        engine {
+            preconfigured = okHttpClient
+        }
+
+    }
 
     @Provides
     @InternalApi
@@ -91,8 +161,10 @@ object RemoteModule {
 
     @Provides
     @InternalApi
-    internal fun provideMoshiConverterFactory(moshi: Moshi): MoshiConverterFactory =
-        MoshiConverterFactory.create(moshi)
+    internal fun provideSerialization(): Json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+    }
 
     @Provides
     @InternalApi
@@ -110,7 +182,7 @@ object RemoteModule {
         @Named("WebSocketUrlV2") webSocketUrlV2: String,
         @InternalApi okHttpClient: OkHttpClient
     ): Scarlet = Scarlet.Builder()
-        .webSocketFactory(okHttpClient.newWebSocketFactory(webSocketUrlV2))
+        .webSocketFactory(okHttpClient.newWebSocketFactory("https://websockets.com"))
         .addMessageAdapterFactory(MoshiMessageAdapter.Factory(moshi))
         .addStreamAdapterFactory(FlowStreamAdapterFactory())
         .backoffStrategy(ExponentialWithJitterBackoffStrategy(5000, 5000))
