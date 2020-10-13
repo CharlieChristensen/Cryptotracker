@@ -29,6 +29,9 @@ import dagger.Reusable
 import javax.inject.Named
 import javax.inject.Singleton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
 @Suppress("unused")
 @AssistedModule
@@ -49,7 +52,8 @@ object AppModule {
 
     @Provides
     @Named("WebSocketUrlV2")
-    fun provideWebSocketUrlV2(context: Context): String = context.getString(R.string.web_socket_url_v2)
+    fun provideWebSocketUrlV2(context: Context): String =
+        context.getString(R.string.web_socket_url_v2)
 
     @Provides
     @Named("IsDebug")
@@ -93,9 +97,11 @@ object AppModule {
     @Provides
     @Singleton
     fun providesSqlDelightDatabase(driver: SqlDriver): Database =
-        Database(driver, DbCoinHistory.Adapter(
-            timePeriodAdapter = CoinHistoryTimePeriod.databaseAdapter
-        ))
+        Database(
+            driver, DbCoinHistory.Adapter(
+                timePeriodAdapter = CoinHistoryTimePeriod.databaseAdapter
+            )
+        )
 
     @Provides
     @Singleton
@@ -116,4 +122,56 @@ object AppModule {
     @Singleton
     fun provideNetworkFlipperPlugin(): NetworkFlipperPlugin = NetworkFlipperPlugin()
 
+}
+
+val appModule = module {
+
+    single(named("BaseUrl")) { androidContext().getString(R.string.base_url) }
+
+    single(named("WebSocketUrl")) { androidContext().getString(R.string.web_socket_url) }
+
+    single(named("WebSocketUrlV2")) { androidContext().getString(R.string.web_socket_url_v2) }
+
+    single(named("IsDebug")) { BuildConfig.DEBUG }
+
+    single(named("CryptoCompareApiKey")) { BuildConfig.CRYPTOCOMPARE_API_KEY }
+
+    single<Repository> { SqlDelightRepository(get(), get(), get()) }
+
+    single<Navigator> { NavigatorImpl() }
+
+    single<SharedPreferences> {
+        androidContext().getSharedPreferences(
+            "cryptotracker-shared-preferences",
+            Context.MODE_PRIVATE
+        )
+    }
+
+    single<AppPreferences> { AppPreferencesImpl(get()) }
+
+    single<SqlDriver> {
+        AndroidSqliteDriver(Database.Schema, androidContext(), "cryptotracker-db.db")
+    }
+
+    single {
+        Database(
+            get(), DbCoinHistory.Adapter(
+                timePeriodAdapter = CoinHistoryTimePeriod.databaseAdapter
+            )
+        )
+    }
+
+    single<FlipperClient> {
+        AndroidFlipperClient.getInstance(androidContext()).apply {
+            addPlugin(
+                InspectorFlipperPlugin(
+                    androidContext(),
+                    DescriptorMapping.withDefaults()
+                )
+            )
+            addPlugin(get())
+        }
+    }
+
+    single { NetworkFlipperPlugin() }
 }

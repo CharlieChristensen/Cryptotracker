@@ -7,7 +7,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.coroutineScope
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +32,7 @@ abstract class BaseFragment<VM : BaseViewModel, B: ViewDataBinding>(@LayoutRes c
     }
 
     inline fun <T> LiveData<T>.bind(crossinline observer: (T) -> Unit) {
-        this.observe(viewLifecycleOwner, Observer { observer(it) })
+        this.observe(viewLifecycleOwner, { observer(it) })
     }
 
     protected inline fun <T> Flow<T>.bind(crossinline observer: suspend (T) -> Unit) {

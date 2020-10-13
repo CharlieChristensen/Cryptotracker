@@ -12,7 +12,7 @@ buildscript {
         classpath(BuildPlugins.kotlinGradlePlugin)
         classpath(BuildPlugins.safeArgsClasspath)
         classpath(BuildPlugins.sqlDelightClasspath)
-//        classpath(BuildPlugins.hilt)
+        classpath(BuildPlugins.koinClasspath)
     }
 }
 

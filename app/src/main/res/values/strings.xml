@@ -61,5 +61,7 @@
     <string name="title_themeplayground">Theme Playground</string>
     <string name="title_dialogs">Dialogs</string>
     <string name="title_remote">Dialogs</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 
 </resources>

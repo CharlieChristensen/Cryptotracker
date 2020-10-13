@@ -5,18 +5,10 @@ import com.charliechristensen.remote.models.RemoteCoinPriceData
 import com.charliechristensen.remote.models.RemoteHistoryResponse
 import com.charliechristensen.remote.models.RemoteTopListCoinData
 import io.ktor.client.HttpClient
-import io.ktor.client.features.websocket.webSocket
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.URLProtocol
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.readBytes
-import io.ktor.http.cio.websocket.readText
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.onEach
-import timber.log.Timber
 
 class KtorCryptoService constructor(
     private val baseUrl: String,

@@ -85,6 +85,12 @@ dependencies {
     kapt(Libraries.assistInjectCompiler)
     kapt(Libraries.daggerCompiler)
 
+    implementation(Libraries.koinAndroid)
+    implementation(Libraries.koinScope)
+    implementation(Libraries.koinViewModel)
+    implementation(Libraries.koinWorkManager)
+    implementation(Libraries.koinFragmentFactory)
+
     implementation(Libraries.okhttp)
     implementation(Libraries.okhttpLogging)
 
