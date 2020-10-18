@@ -24,6 +24,6 @@ interface AppComponent {
     fun formatterFactory(): FormatterFactory
     fun flipper(): FlipperClient
 
-    @ExperimentalCoroutinesApi
-    val mainActivityViewModel: MainActivityViewModel.ViewModel
+//    @ExperimentalCoroutinesApi
+//    val mainActivityViewModel: MainActivityViewModel.ViewModel
 }

@@ -1,5 +1,6 @@
 package com.charliechristensen.cryptotracker.common.ui
 
+import android.os.Bundle
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -12,15 +13,33 @@ import com.charliechristensen.cryptotracker.common.BaseViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.module.Module
 
 abstract class BaseFragment<VM : BaseViewModel, B: ViewDataBinding>(@LayoutRes contentLayoutId: Int) :
     Fragment(contentLayoutId) {
 
+    protected open val koinModule: Module? = null
     protected abstract val viewModel: VM
     protected val binding: B by viewBinding {
         val binding: B = DataBindingUtil.bind(requireView())!!
         binding.lifecycleOwner = this
         binding
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if   (koinModule != null) {
+            loadKoinModules(koinModule!!)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (koinModule != null) {
+            unloadKoinModules(koinModule!!)
+        }
     }
 
     protected fun setActionBarTitle(@StringRes resId: Int) {

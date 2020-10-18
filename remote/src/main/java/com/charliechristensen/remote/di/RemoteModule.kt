@@ -21,6 +21,8 @@ import io.ktor.client.features.websocket.WebSockets
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 import timber.log.Timber
 import javax.inject.Named
 import javax.inject.Qualifier
@@ -116,4 +118,65 @@ object RemoteModule {
     fun providesApiKeyInterceptor(
         @Named("CryptoCompareApiKey") cryptocompareApiKey: String
     ): ApiKeyInterceptor = ApiKeyInterceptor(cryptocompareApiKey)
+}
+
+val remoteModule = module {
+
+    single<RemoteGateway> { RemoteGatewayImpl(get(), get()) }
+
+    single<CryptoService> { KtorCryptoService(get(named("BaseUrl")), get()) }
+
+    single<WebSocketService> { WebSocketServiceImpl(get(), get()) }
+
+    single {
+        HttpClient(OkHttp) {
+
+            install(JsonFeature) {
+                serializer = KotlinxSerializer(get())
+            }
+
+            install(Logging) {
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        Timber.tag("KtorLog").d(message)
+                    }
+                }
+            }
+
+            install(WebSockets)
+
+            engine {
+                preconfigured = get()
+            }
+
+        }
+    }
+
+    single {
+        OkHttpClient
+            .Builder().apply {
+                addInterceptor(get<ApiKeyInterceptor>())
+                if (get(named("IsDebug"))) {
+                    addInterceptor(get<HttpLoggingInterceptor>())
+                    addNetworkInterceptor(FlipperOkhttpInterceptor(get()))
+                }
+            }
+            .build()
+    }
+
+    single {
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
+    }
+
+    single {
+        HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+    }
+
+    single { ApiKeyInterceptor(get(named("CryptoCompareApiKey"))) }
+
 }

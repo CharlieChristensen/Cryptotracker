@@ -7,9 +7,14 @@ import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
 import com.charliechristensen.cryptotracker.data.workers.FetchCoinListWorker
 import com.charliechristensen.cryptotracker.di.AppComponent
 import com.charliechristensen.cryptotracker.di.DaggerAppComponent
+import com.charliechristensen.cryptotracker.di.appModule
 import com.facebook.flipper.android.utils.FlipperUtils
+import com.facebook.flipper.core.FlipperClient
 import com.facebook.soloader.SoLoader
 import com.google.android.play.core.splitcompat.SplitCompatApplication
+import org.koin.android.ext.android.get
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -23,12 +28,18 @@ class MainApplication : SplitCompatApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            androidContext(this@MainApplication)
+            modules(appModule)
+        }
         setupWorkers()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
             if (FlipperUtils.shouldEnableFlipper(this)) {
                 SoLoader.init(this, false)
-                appComponent.flipper().start()
+//                appComponent.flipper().start()
+                val flipper: FlipperClient = get()
+                flipper.start()
             }
         }
     }

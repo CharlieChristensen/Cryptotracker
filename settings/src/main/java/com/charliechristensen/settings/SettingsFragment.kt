@@ -3,21 +3,24 @@ package com.charliechristensen.settings
 import android.os.Bundle
 import android.view.View
 import com.charliechristensen.cryptotracker.common.AppTheme
-import com.charliechristensen.cryptotracker.common.extensions.injector
-import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.charliechristensen.settings.databinding.ViewSettingsBinding
-import com.charliechristensen.settings.di.DaggerSettingsComponent
+import com.charliechristensen.settings.di.settingsModule
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.module.Module
 
 
 class SettingsFragment : BaseFragment<SettingsViewModel.ViewModel, ViewSettingsBinding>(R.layout.view_settings) {
 
-    override val viewModel: SettingsViewModel.ViewModel by viewModel {
-        DaggerSettingsComponent.factory()
-            .create(injector)
-            .settingsViewModel
-    }
+    override val koinModule: Module = settingsModule
+
+    override val viewModel: SettingsViewModel.ViewModel by viewModel()
+//    viewModel {
+//        DaggerSettingsComponent.factory()
+//            .create(injector)
+//            .settingsViewModel
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

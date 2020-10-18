@@ -5,15 +5,15 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.charliechristensen.coinlist.databinding.ViewSearchCoinsBinding
-import com.charliechristensen.coinlist.di.DaggerCoinListComponent
+import com.charliechristensen.coinlist.di.coinListModule
 import com.charliechristensen.coinlist.list.SearchCoinsAdapter
 import com.charliechristensen.coinlist.list.SearchCoinsPagedAdapter
-import com.charliechristensen.cryptotracker.common.extensions.injector
-import com.charliechristensen.cryptotracker.common.extensions.savedStateViewModel
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.module.Module
 import ru.ldralighieri.corbind.appcompat.queryTextChanges
 import ru.ldralighieri.corbind.view.clicks
 
@@ -22,12 +22,15 @@ class SearchCoinsFragment :
     BaseFragment<SearchCoinsViewModel.ViewModel, ViewSearchCoinsBinding>(R.layout.view_search_coins),
     SearchCoinsAdapter.SearchCoinAdapterCallback {
 
-    override val viewModel: SearchCoinsViewModel.ViewModel by savedStateViewModel { savedStateHandle ->
-        val fragmentArgs = SearchCoinsFragmentArgs.fromBundle(requireArguments())
-        DaggerCoinListComponent.factory()
-            .create(injector)
-            .searchCoinsViewModelFactory.create(fragmentArgs.filterOwnedCoins, savedStateHandle)
-    }
+    override val koinModule: Module = coinListModule
+
+    override val viewModel: SearchCoinsViewModel.ViewModel by viewModel()
+//    savedStateViewModel { savedStateHandle ->
+//        val fragmentArgs = SearchCoinsFragmentArgs.fromBundle(requireArguments())
+//        DaggerCoinListComponent.factory()
+//            .create(injector)
+//            .searchCoinsViewModelFactory.create(fragmentArgs.filterOwnedCoins, savedStateHandle)
+//    }
 
     //region Lifecycle
 

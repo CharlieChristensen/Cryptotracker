@@ -48,6 +48,10 @@ dependencies {
     kapt(Libraries.assistInjectCompiler)
     kapt(Libraries.daggerCompiler)
 
+    implementation(Libraries.koinAndroid)
+    implementation(Libraries.koinScope)
+    implementation(Libraries.koinViewModel)
+
     implementation(Libraries.glide)
 
     implementation(Libraries.timber)

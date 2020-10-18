@@ -60,11 +60,11 @@ fun Context.getColorFromResource(colorAttribute: Int): Int {
     return typedValue.data
 }
 
-val Activity.injector
-    get() = (application as MainApplication).appComponent
+//val Activity.injector
+//    get() = (application as MainApplication).appComponent
 
-val Fragment.injector
-    get() = (requireActivity().application as MainApplication).appComponent
+//val Fragment.injector
+//    get() = (requireActivity().application as MainApplication).appComponent
 
 fun Fragment.showToast(@StringRes resId: Int) =
     Toast.makeText(requireContext(), resId, Toast.LENGTH_SHORT).show()

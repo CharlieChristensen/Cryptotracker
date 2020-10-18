@@ -4,24 +4,27 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.showToast
-import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.charliechristensen.portfolio.databinding.ViewPortfolioCoinListBinding
-import com.charliechristensen.portfolio.di.DaggerPortfolioComponent
+import com.charliechristensen.portfolio.di.portfolioModule
 import com.charliechristensen.portfolio.list.PortfolioAdapter
 import com.charliechristensen.portfolio.list.PortfolioListItem
+import org.koin.android.ext.android.inject
+import org.koin.core.module.Module
 
 class PortfolioFragment :
     BaseFragment<PortfolioCoinListViewModel.ViewModel, ViewPortfolioCoinListBinding>(R.layout.view_portfolio_coin_list),
     PortfolioAdapter.PortfolioAdapterCallback {
 
-    override val viewModel: PortfolioCoinListViewModel.ViewModel by viewModel {
-        DaggerPortfolioComponent.factory()
-            .create(injector)
-            .portfolioCoinListViewModel
-    }
+    override val koinModule: Module? = portfolioModule
+
+    override val viewModel: PortfolioCoinListViewModel.ViewModel by inject()
+//    viewModel {
+//        DaggerPortfolioComponent.factory()
+//            .create(injector)
+//            .portfolioCoinListViewModel
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -10,24 +10,24 @@ import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.extensions.hideKeyboard
-import com.charliechristensen.cryptotracker.common.extensions.injector
 import com.charliechristensen.cryptotracker.common.extensions.navigateRight
 import com.charliechristensen.cryptotracker.common.extensions.skip
-import com.charliechristensen.cryptotracker.common.extensions.viewModel
 import com.charliechristensen.cryptotracker.common.ui.BaseActivity
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.charliechristensen.cryptotracker.cryptotracker.databinding.ActivityNavigationDrawerBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.koin.android.ext.android.inject
 import ru.ldralighieri.corbind.navigation.destinationChanges
 
 @ExperimentalCoroutinesApi
 class MainActivity : BaseActivity() {
 
-    private val viewModel: MainActivityViewModel.ViewModel by viewModel {
-        injector.mainActivityViewModel
-    }
+    private val viewModel: MainActivityViewModel.ViewModel by inject()
+//    viewModel {
+//        injector.mainActivityViewModel
+//    }
 
     private val navController: NavController
         get() {

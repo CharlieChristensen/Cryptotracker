@@ -3,11 +3,14 @@ package com.charliechristensen.cryptotracker.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.charliechristensen.cryptotracker.common.FormatterFactory
+import com.charliechristensen.cryptotracker.common.LiveUpdatePriceClient
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.common.navigator.NavigatorImpl
 import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
 import com.charliechristensen.cryptotracker.cryptotracker.Database
 import com.charliechristensen.cryptotracker.cryptotracker.R
+import com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer.MainActivityViewModel
 import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.SqlDelightRepository
 import com.charliechristensen.cryptotracker.data.models.db.DbCoinHistory
@@ -15,6 +18,7 @@ import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.cryptotracker.data.preferences.AppPreferencesImpl
 import com.charliechristensen.remote.di.RemoteModule
+import com.charliechristensen.remote.di.remoteModule
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.core.FlipperClient
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
@@ -30,6 +34,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -99,8 +104,8 @@ object AppModule {
     fun providesSqlDelightDatabase(driver: SqlDriver): Database =
         Database(
             driver, DbCoinHistory.Adapter(
-                timePeriodAdapter = CoinHistoryTimePeriod.databaseAdapter
-            )
+            timePeriodAdapter = CoinHistoryTimePeriod.databaseAdapter
+        )
         )
 
     @Provides
@@ -156,22 +161,31 @@ val appModule = module {
     single {
         Database(
             get(), DbCoinHistory.Adapter(
-                timePeriodAdapter = CoinHistoryTimePeriod.databaseAdapter
-            )
+            timePeriodAdapter = CoinHistoryTimePeriod.databaseAdapter
+        )
         )
     }
 
     single<FlipperClient> {
         AndroidFlipperClient.getInstance(androidContext()).apply {
-            addPlugin(
-                InspectorFlipperPlugin(
-                    androidContext(),
-                    DescriptorMapping.withDefaults()
-                )
-            )
-            addPlugin(get())
+            addPlugin(get<InspectorFlipperPlugin>())
+            addPlugin(get<NetworkFlipperPlugin>())
         }
     }
 
+    single {
+        InspectorFlipperPlugin(
+            androidContext(),
+            DescriptorMapping.withDefaults()
+        )
+    }
+
     single { NetworkFlipperPlugin() }
-}
+
+    single { FormatterFactory() }
+
+    single { LiveUpdatePriceClient(get()) }
+
+    viewModel { MainActivityViewModel.ViewModel(get(), get(), get()) }
+
+}.plus(remoteModule)
