@@ -20,7 +20,7 @@ import org.koin.core.module.Module
 abstract class BaseFragment<VM : BaseViewModel, B: ViewDataBinding>(@LayoutRes contentLayoutId: Int) :
     Fragment(contentLayoutId) {
 
-    protected open val koinModule: Module? = null
+    protected abstract val koinModule: Module
     protected abstract val viewModel: VM
     protected val binding: B by viewBinding {
         val binding: B = DataBindingUtil.bind(requireView())!!
@@ -30,16 +30,12 @@ abstract class BaseFragment<VM : BaseViewModel, B: ViewDataBinding>(@LayoutRes c
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if   (koinModule != null) {
-            loadKoinModules(koinModule!!)
-        }
+        loadKoinModules(koinModule)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (koinModule != null) {
-            unloadKoinModules(koinModule!!)
-        }
+        unloadKoinModules(koinModule)
     }
 
     protected fun setActionBarTitle(@StringRes resId: Int) {

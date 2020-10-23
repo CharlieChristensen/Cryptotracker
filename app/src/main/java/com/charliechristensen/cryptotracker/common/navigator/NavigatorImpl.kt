@@ -1,17 +1,17 @@
 package com.charliechristensen.cryptotracker.common.navigator
 
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavDirections
-import com.charliechristensen.cryptotracker.common.SingleLiveEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 class NavigatorImpl : Navigator {
 
-    private val pendingNavigationEvent = SingleLiveEvent<NavDirections>()
+    private val pendingNavigationEvent = MutableSharedFlow<NavDirections>(1)
 
-    override val navigationEvents: LiveData<NavDirections> = pendingNavigationEvent
+    override val navigationEvents: Flow<NavDirections> = pendingNavigationEvent
 
     override fun navigate(navDirections: NavDirections) {
-        pendingNavigationEvent.value = navDirections
+        pendingNavigationEvent.tryEmit(navDirections)
     }
 
 }

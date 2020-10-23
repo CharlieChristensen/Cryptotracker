@@ -33,7 +33,7 @@ object AndroidSdk {
 
 object Libraries {
     private object Versions {
-        const val coroutines             =  "1.3.8"
+        const val coroutines             =  "1.4.0-M1"
         const val constraintLayout       =  "2.0.0"
         const val androidxCore           =  "1.3.0-rc01"
         const val activity               =  "1.2.0-alpha07"

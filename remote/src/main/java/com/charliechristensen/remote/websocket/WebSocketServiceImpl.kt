@@ -30,8 +30,7 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class WebSocketServiceImpl @Inject constructor(
+class WebSocketServiceImpl constructor(
     private val client: HttpClient,
     private val json: Json
 ) : WebSocketService {

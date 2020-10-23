@@ -48,13 +48,13 @@ class CoinDetailFragment :
             .bind { setToolbarImage(it.coinName, it.imageUrl) }
 
         viewModel.outputs.showAddCoinDialog
-            .bind(this::showAddCoinDialog)
+            .bind(::showAddCoinDialog)
 
         viewModel.outputs.showEditCoinAmountDialog
-            .bind(this::showEditCoinAmountDialog)
+            .bind(::showEditCoinAmountDialog)
 
         viewModel.outputs.showConfirmRemoveDialog
-            .bind(this::showConfirmRemoveDialog)
+            .bind(::showConfirmRemoveDialog)
 
         viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }

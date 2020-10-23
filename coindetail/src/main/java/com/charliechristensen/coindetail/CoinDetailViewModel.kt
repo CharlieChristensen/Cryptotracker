@@ -7,22 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.charliechristensen.coindetail.data.CoinDetailGraphState
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.FormatterFactory
-import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.cryptotracker.data.models.ui.ImageAndNamePair
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -54,10 +44,10 @@ interface CoinDetailViewModel {
         val walletTotalValue: LiveData<String>
         val walletPriceChange24Hour: LiveData<ColorValueString>
         val graphState: LiveData<CoinDetailGraphState>
-        val showAddCoinDialog: LiveData<String>
-        val showEditCoinAmountDialog: LiveData<String>
-        val showConfirmRemoveDialog: LiveData<String>
-        val showNetworkError: LiveData<Unit>
+        val showAddCoinDialog: Flow<String>
+        val showEditCoinAmountDialog: Flow<String>
+        val showConfirmRemoveDialog: Flow<String>
+        val showNetworkError: Flow<Unit>
         val selectedDateTab: LiveData<Int>
     }
 
@@ -86,10 +76,10 @@ interface CoinDetailViewModel {
                     savedState.get<Int>(KEY_GRAPH_DATE_SELECTION) ?: 0
                 )
             )
-        private val showAddCoinDialogChannel = SingleLiveEvent<String>()
-        private val showEditQuantityDialogChannel = SingleLiveEvent<String>()
-        private val showConfirmRemoveCoinDialogChannel = SingleLiveEvent<String>()
-        private val showNetworkErrorChannel = SingleLiveEvent<Unit>()
+        private val showAddCoinDialogChannel = MutableSharedFlow<String>()
+        private val showEditQuantityDialogChannel = MutableSharedFlow<String>()
+        private val showConfirmRemoveCoinDialogChannel = MutableSharedFlow<String>()
+        private val showNetworkErrorChannel = MutableSharedFlow<Unit>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -108,7 +98,7 @@ interface CoinDetailViewModel {
                 }
                 .catch {
                     Timber.e(it, "Get Coin Data")
-                    showNetworkErrorChannel.setValue(Unit)
+                    showNetworkErrorChannel.tryEmit(Unit)
                 }
                 .launchIn(viewModelScope)
 
@@ -128,15 +118,15 @@ interface CoinDetailViewModel {
         }
 
         override fun addCoinButtonClicked() {
-            showAddCoinDialogChannel.value = coinSymbol
+            showAddCoinDialogChannel.tryEmit(coinSymbol)
         }
 
         override fun editQuantityButtonClicked() {
-            showEditQuantityDialogChannel.value = coinSymbol
+            showEditQuantityDialogChannel.tryEmit(coinSymbol)
         }
 
         override fun removeFromPortfolioButtonClicked() {
-            showConfirmRemoveCoinDialogChannel.value = coinSymbol
+            showConfirmRemoveCoinDialogChannel.tryEmit(coinSymbol)
         }
 
         override fun confirmAddCoinToPortfolioClicked(symbol: String, amount: Double) {
@@ -229,13 +219,13 @@ interface CoinDetailViewModel {
             }
             .asLiveData()
 
-        override val showAddCoinDialog: LiveData<String> = showAddCoinDialogChannel
+        override val showAddCoinDialog: Flow<String> = showAddCoinDialogChannel
 
-        override val showEditCoinAmountDialog: LiveData<String> = showEditQuantityDialogChannel
+        override val showEditCoinAmountDialog: Flow<String> = showEditQuantityDialogChannel
 
-        override val showConfirmRemoveDialog: LiveData<String> = showConfirmRemoveCoinDialogChannel
+        override val showConfirmRemoveDialog: Flow<String> = showConfirmRemoveCoinDialogChannel
 
-        override val showNetworkError: LiveData<Unit> = showNetworkErrorChannel
+        override val showNetworkError: Flow<Unit> = showNetworkErrorChannel
 
         //endregion
 

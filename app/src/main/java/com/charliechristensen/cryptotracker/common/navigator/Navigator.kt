@@ -1,11 +1,11 @@
 package com.charliechristensen.cryptotracker.common.navigator
 
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavDirections
+import kotlinx.coroutines.flow.Flow
 
 interface Navigator {
 
-    val navigationEvents: LiveData<NavDirections>
+    val navigationEvents: Flow<NavDirections>
 
     fun navigate(navDirections: NavDirections)
 

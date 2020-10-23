@@ -9,6 +9,7 @@ import com.charliechristensen.cryptotracker.common.LiveUpdatePriceClient
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.data.Repository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 
 interface MainActivityViewModel {
 
@@ -16,7 +17,7 @@ interface MainActivityViewModel {
 
     interface Outputs {
         val theme: LiveData<AppTheme>
-        val navigationEvents: LiveData<NavDirections>
+        val navigationEvents: Flow<NavDirections>
         fun getAppThemeSync(): AppTheme
     }
 
@@ -48,7 +49,7 @@ interface MainActivityViewModel {
         override val theme: LiveData<AppTheme> = repository.theme()
             .asLiveData()
 
-        override val navigationEvents: LiveData<NavDirections> = navigator.navigationEvents
+        override val navigationEvents: Flow<NavDirections> = navigator.navigationEvents
 
         override fun getAppThemeSync(): AppTheme =
             repository.getTheme()

@@ -22,9 +22,12 @@ class SearchCoinsFragment :
     BaseFragment<SearchCoinsViewModel.ViewModel, ViewSearchCoinsBinding>(R.layout.view_search_coins),
     SearchCoinsAdapter.SearchCoinAdapterCallback {
 
-    override val koinModule: Module = getCoinListModule(
-        SearchCoinsFragmentArgs.fromBundle(requireArguments()).filterOwnedCoins
-    )
+    override val koinModule: Module by lazy {
+        val filterOutOwnedCoins = SearchCoinsFragmentArgs.fromBundle(requireArguments()).filterOwnedCoins
+        getCoinListModule(
+            filterOutOwnedCoins
+        )
+    }
 
     override val viewModel: SearchCoinsViewModel.ViewModel by viewModel()
 //    savedStateViewModel { savedStateHandle ->
