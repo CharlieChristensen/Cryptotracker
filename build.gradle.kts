@@ -27,6 +27,7 @@ allprojects {
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {
             jvmTarget = "1.8"
+            freeCompilerArgs = listOf("-XXLanguage:+InlineClasses", "-Xopt-in=kotlin.ExperimentalStdlibApi", "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi")
         }
     }
 }

@@ -2,12 +2,15 @@ package com.charliechristensen.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.Constants
-import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.data.Repository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * Settings ViewModel
@@ -26,15 +29,15 @@ interface SettingsViewModel {
         val themeDisplay: LiveData<Int>
         val liveUpdatePrices: LiveData<Boolean>
         val displayCurrency: LiveData<String>
-        val showChooseThemeDialog: LiveData<List<AppTheme>>
-        val showCurrencyDialog: LiveData<Array<String>>
+        val showChooseThemeDialog: Flow<List<AppTheme>>
+        val showCurrencyDialog: Flow<Array<String>>
     }
 
     class ViewModel constructor(private val repository: Repository) :
         BaseViewModel(), Inputs, Outputs {
 
-        private val showChooseThemeEvent = SingleLiveEvent<List<AppTheme>>()
-        private val showCurrencyDialogEvent = SingleLiveEvent<Array<String>>()
+        private val showChooseThemeEvent = MutableSharedFlow<List<AppTheme>>()
+        private val showCurrencyDialogEvent = MutableSharedFlow<Array<String>>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -42,11 +45,15 @@ interface SettingsViewModel {
         //region Inputs
 
         override fun themeButtonClicked() {
-            showChooseThemeEvent.value = Constants.availableThemes
+            viewModelScope.launch {
+                showChooseThemeEvent.emit(Constants.availableThemes)
+            }
         }
 
         override fun currencyButtonClicked() {
-            showCurrencyDialogEvent.value = Constants.availableCurrencies
+            viewModelScope.launch {
+                showCurrencyDialogEvent.emit(Constants.availableCurrencies)
+            }
         }
 
         override fun liveUpdatePricesToggled(isChecked: Boolean) {
@@ -65,7 +72,8 @@ interface SettingsViewModel {
 
         //region Outputs
 
-        override val themeDisplay: LiveData<Int> = repository.theme()
+        override val themeDisplay: LiveData<Int> = repository
+            .theme()
             .map { it.displayId }
             .asLiveData()
 
@@ -77,9 +85,9 @@ interface SettingsViewModel {
             .currency()
             .asLiveData()
 
-        override val showChooseThemeDialog: LiveData<List<AppTheme>> = showChooseThemeEvent
+        override val showChooseThemeDialog: Flow<List<AppTheme>> = showChooseThemeEvent
 
-        override val showCurrencyDialog: LiveData<Array<String>> = showCurrencyDialogEvent
+        override val showCurrencyDialog: Flow<Array<String>> = showCurrencyDialogEvent
 
         //endregion
 

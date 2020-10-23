@@ -118,15 +118,21 @@ interface CoinDetailViewModel {
         }
 
         override fun addCoinButtonClicked() {
-            showAddCoinDialogChannel.tryEmit(coinSymbol)
+            viewModelScope.launch {
+                showAddCoinDialogChannel.emit(coinSymbol)
+            }
         }
 
         override fun editQuantityButtonClicked() {
-            showEditQuantityDialogChannel.tryEmit(coinSymbol)
+            viewModelScope.launch {
+                showEditQuantityDialogChannel.emit(coinSymbol)
+            }
         }
 
         override fun removeFromPortfolioButtonClicked() {
-            showConfirmRemoveCoinDialogChannel.tryEmit(coinSymbol)
+            viewModelScope.launch {
+                showConfirmRemoveCoinDialogChannel.emit(coinSymbol)
+            }
         }
 
         override fun confirmAddCoinToPortfolioClicked(symbol: String, amount: Double) {

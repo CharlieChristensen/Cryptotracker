@@ -8,11 +8,11 @@ import androidx.paging.toLiveData
 import com.charliechristensen.coinlist.list.SearchCoinsListItem
 import com.charliechristensen.coinlist.list.SearchDataSourceFactory
 import com.charliechristensen.cryptotracker.common.BaseViewModel
-import com.charliechristensen.cryptotracker.common.SingleLiveEvent
-import com.charliechristensen.cryptotracker.common.call
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -26,7 +26,7 @@ interface SearchCoinsViewModel {
 
     interface Outputs {
         val coinList: LiveData<PagedList<SearchCoinsListItem>>
-        val showNetworkError: LiveData<Unit>
+        val showNetworkError: Flow<Unit>
     }
 
     class ViewModel constructor(
@@ -36,14 +36,17 @@ interface SearchCoinsViewModel {
         filterOutOwnedCoins: Boolean
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val searchDataSourceFactory = SearchDataSourceFactory(interactor, filterOutOwnedCoins)
-        private val showNetworkErrorChannel = SingleLiveEvent<Unit>()
+        private val searchDataSourceFactory =
+            SearchDataSourceFactory(interactor, filterOutOwnedCoins)
+        private val showNetworkErrorChannel = MutableSharedFlow<Unit>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
 
         init {
-            searchDataSourceFactory.setSearchTerm(savedState.get(KEY_SEARCH_QUERY_SAVED_STATE) ?: "")
+            searchDataSourceFactory.setSearchTerm(
+                savedState.get(KEY_SEARCH_QUERY_SAVED_STATE) ?: ""
+            )
         }
 
         private fun refreshCoins() {
@@ -54,7 +57,7 @@ interface SearchCoinsViewModel {
             try {
                 interactor.forceRefreshCoinListAndSaveToDb()
             } catch (exception: Exception) {
-                withContext(Dispatchers.Main.immediate) { showNetworkErrorChannel.call() }
+                showNetworkErrorChannel.emit(Unit)
             }
         }
 
@@ -80,7 +83,7 @@ interface SearchCoinsViewModel {
         override val coinList: LiveData<PagedList<SearchCoinsListItem>> =
             searchDataSourceFactory.toLiveData(pageSize = 50)
 
-        override val showNetworkError: LiveData<Unit> = showNetworkErrorChannel
+        override val showNetworkError: Flow<Unit> = showNetworkErrorChannel
 
         //endregion
 

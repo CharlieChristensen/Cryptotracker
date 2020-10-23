@@ -3,14 +3,13 @@ package com.charliechristensen.portfolio
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.charliechristensen.cryptotracker.common.BaseViewModel
-import com.charliechristensen.cryptotracker.common.SingleLiveEvent
-import com.charliechristensen.cryptotracker.common.call
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.portfolio.list.PortfolioListItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -22,7 +21,7 @@ interface PortfolioCoinListViewModel {
     }
 
     interface Outputs {
-        val showNetworkError: LiveData<Unit>
+        val showNetworkError: Flow<Unit>
         val walletTotalValue: LiveData<String>
         val percentChange24Hour: LiveData<ColorValueString>
         val portfolioValueChange: LiveData<ColorValueString>
@@ -34,7 +33,7 @@ interface PortfolioCoinListViewModel {
         portfolioInteractor: PortfolioInteractor
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val showNetworkErrorLiveData = SingleLiveEvent<Unit>()
+        private val showNetworkErrorLiveData = MutableSharedFlow<Unit>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -42,7 +41,7 @@ interface PortfolioCoinListViewModel {
         private val portfolioStates: Flow<PortfolioListData> =
             portfolioInteractor.listData()
                 .flowOn(Dispatchers.IO)
-                .catch { showNetworkErrorLiveData.call() }
+                .catch { showNetworkErrorLiveData.emit(Unit) }
 
         //region Inputs
 
@@ -77,7 +76,7 @@ interface PortfolioCoinListViewModel {
             .map { it.coinList }
             .asLiveData()
 
-        override val showNetworkError: LiveData<Unit> = showNetworkErrorLiveData
+        override val showNetworkError: Flow<Unit> = showNetworkErrorLiveData
 
         //endregion
     }

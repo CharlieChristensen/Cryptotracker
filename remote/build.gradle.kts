@@ -46,9 +46,6 @@ dependencies {
     implementation(Libraries.serialization)
     implementation(Libraries.serializationConverter)
 
-    implementation(Libraries.dagger)
-    kapt(Libraries.daggerCompiler)
-
     implementation(Libraries.koinAndroid)
     implementation(Libraries.koinScope)
     implementation(Libraries.koinViewModel)
