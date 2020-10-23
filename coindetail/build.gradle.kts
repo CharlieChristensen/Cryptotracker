@@ -47,11 +47,6 @@ dependencies {
     implementation(Libraries.coroutinesAndroid)
     implementation(Libraries.corbindMaterial)
 
-    implementation(Libraries.dagger)
-    compileOnly(Libraries.assistInjectAnnot)
-    kapt(Libraries.assistInjectCompiler)
-    kapt(Libraries.daggerCompiler)
-
     implementation(Libraries.koinAndroid)
     implementation(Libraries.koinScope)
     implementation(Libraries.koinViewModel)

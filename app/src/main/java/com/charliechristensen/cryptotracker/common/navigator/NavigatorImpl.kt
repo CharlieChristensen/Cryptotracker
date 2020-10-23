@@ -3,9 +3,8 @@ package com.charliechristensen.cryptotracker.common.navigator
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavDirections
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
-import javax.inject.Inject
 
-class NavigatorImpl @Inject constructor(): Navigator {
+class NavigatorImpl : Navigator {
 
     private val pendingNavigationEvent = SingleLiveEvent<NavDirections>()
 

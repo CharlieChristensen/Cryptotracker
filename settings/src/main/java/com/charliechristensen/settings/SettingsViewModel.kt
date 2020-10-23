@@ -7,7 +7,6 @@ import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.Constants
 import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.data.Repository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
 /**
@@ -31,7 +30,7 @@ interface SettingsViewModel {
         val showCurrencyDialog: LiveData<Array<String>>
     }
 
-    class ViewModel @Inject constructor(private val repository: Repository) :
+    class ViewModel constructor(private val repository: Repository) :
         BaseViewModel(), Inputs, Outputs {
 
         private val showChooseThemeEvent = SingleLiveEvent<List<AppTheme>>()

@@ -4,14 +4,13 @@ import android.content.SharedPreferences
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.Constants
 import com.tfcporciuncula.flow.FlowSharedPreferences
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 @ExperimentalCoroutinesApi
-class AppPreferencesImpl @Inject constructor(sharedPreferences: SharedPreferences) :
+class AppPreferencesImpl constructor(sharedPreferences: SharedPreferences) :
     AppPreferences {
 
     private val flowSharedPreferences = FlowSharedPreferences(sharedPreferences)

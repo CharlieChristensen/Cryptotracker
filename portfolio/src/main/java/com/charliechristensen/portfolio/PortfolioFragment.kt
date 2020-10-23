@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.charliechristensen.portfolio.databinding.ViewPortfolioCoinListBinding
-import com.charliechristensen.portfolio.di.portfolioModule
+import com.charliechristensen.portfolio.di.getPortfolioModule
 import com.charliechristensen.portfolio.list.PortfolioAdapter
 import com.charliechristensen.portfolio.list.PortfolioListItem
 import org.koin.android.ext.android.inject
@@ -17,7 +17,7 @@ class PortfolioFragment :
     BaseFragment<PortfolioCoinListViewModel.ViewModel, ViewPortfolioCoinListBinding>(R.layout.view_portfolio_coin_list),
     PortfolioAdapter.PortfolioAdapterCallback {
 
-    override val koinModule: Module? = portfolioModule
+    override val koinModule: Module? = getPortfolioModule()
 
     override val viewModel: PortfolioCoinListViewModel.ViewModel by inject()
 //    viewModel {

@@ -2,8 +2,6 @@ package com.charliechristensen.cryptotracker.common
 
 import com.charliechristensen.cryptotracker.common.extensions.accumulate
 import com.charliechristensen.cryptotracker.data.Repository
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,8 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 
-@Singleton
-class LiveUpdatePriceClient @Inject constructor(
+class LiveUpdatePriceClient constructor(
     private val repository: Repository
 ) {
 

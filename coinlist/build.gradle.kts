@@ -51,11 +51,6 @@ dependencies {
     implementation(Libraries.corbind)
     implementation(Libraries.corbindAppCompat)
 
-    implementation(Libraries.dagger)
-    compileOnly(Libraries.assistInjectAnnot)
-    kapt(Libraries.assistInjectCompiler)
-    kapt(Libraries.daggerCompiler)
-
     implementation(Libraries.koinAndroid)
     implementation(Libraries.koinScope)
     implementation(Libraries.koinViewModel)

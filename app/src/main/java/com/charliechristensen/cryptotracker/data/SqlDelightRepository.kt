@@ -20,9 +20,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import timber.log.Timber
-import javax.inject.Inject
 
-class SqlDelightRepository @Inject constructor(
+class SqlDelightRepository constructor(
     private val remoteGateway: RemoteGateway,
     private val appPreferences: AppPreferences,
     database: Database

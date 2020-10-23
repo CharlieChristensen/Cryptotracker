@@ -8,7 +8,6 @@ import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.LiveUpdatePriceClient
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.data.Repository
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 interface MainActivityViewModel {
@@ -22,7 +21,7 @@ interface MainActivityViewModel {
     }
 
     @ExperimentalCoroutinesApi
-    class ViewModel @Inject constructor(
+    class ViewModel constructor(
         private val liveUpdatePriceClient: LiveUpdatePriceClient,
         private val repository: Repository,
         navigator: Navigator

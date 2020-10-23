@@ -9,7 +9,6 @@ import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.portfolio.list.PortfolioListItem
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -30,7 +29,7 @@ interface PortfolioCoinListViewModel {
         val coinList: LiveData<List<PortfolioListItem>>
     }
 
-    class ViewModel @Inject constructor(
+    class ViewModel constructor(
         private val navigator: Navigator,
         portfolioInteractor: PortfolioInteractor
     ) : BaseViewModel(), Inputs, Outputs {

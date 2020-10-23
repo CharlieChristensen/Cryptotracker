@@ -1,12 +1,9 @@
 package com.charliechristensen.cryptotracker.common
 
-import dagger.Reusable
 import java.text.NumberFormat
 import java.util.Currency
-import javax.inject.Inject
 
-@Reusable
-class FormatterFactory @Inject constructor() {
+class FormatterFactory {
 
     fun currencyFormatter(currencyCode: String): NumberFormat =
             NumberFormat.getCurrencyInstance().apply {

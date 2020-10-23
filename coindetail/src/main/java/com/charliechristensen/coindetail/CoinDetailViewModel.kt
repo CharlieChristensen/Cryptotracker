@@ -11,8 +11,6 @@ import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.cryptotracker.data.models.ui.ImageAndNamePair
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -63,11 +61,11 @@ interface CoinDetailViewModel {
         val selectedDateTab: LiveData<Int>
     }
 
-    class ViewModel @AssistedInject constructor(
+    class ViewModel constructor(
         private val formatterFactory: FormatterFactory,
         private val interactor: CoinDetailInteractor,
-        @Assisted private val coinSymbol: String,
-        @Assisted private val savedState: SavedStateHandle
+        private val coinSymbol: String,
+        private val savedState: SavedStateHandle
     ) : BaseViewModel(), Inputs, Outputs {
 
         private val currencyFormatter = formatterFactory.currencyFormatter(interactor.getCurrency())
@@ -256,11 +254,6 @@ interface CoinDetailViewModel {
         }
 
         //endregion
-
-        @AssistedInject.Factory
-        interface Factory {
-            fun create(coinSymbol: String, savedState: SavedStateHandle): ViewModel
-        }
 
         companion object {
             const val KEY_GRAPH_DATE_SELECTION = "KeyGraphDateSelection"

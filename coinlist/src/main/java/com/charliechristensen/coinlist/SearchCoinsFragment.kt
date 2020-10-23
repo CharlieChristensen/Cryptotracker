@@ -5,7 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.charliechristensen.coinlist.databinding.ViewSearchCoinsBinding
-import com.charliechristensen.coinlist.di.coinListModule
+import com.charliechristensen.coinlist.di.getCoinListModule
 import com.charliechristensen.coinlist.list.SearchCoinsAdapter
 import com.charliechristensen.coinlist.list.SearchCoinsPagedAdapter
 import com.charliechristensen.cryptotracker.common.extensions.showToast
@@ -22,7 +22,9 @@ class SearchCoinsFragment :
     BaseFragment<SearchCoinsViewModel.ViewModel, ViewSearchCoinsBinding>(R.layout.view_search_coins),
     SearchCoinsAdapter.SearchCoinAdapterCallback {
 
-    override val koinModule: Module = coinListModule
+    override val koinModule: Module = getCoinListModule(
+        SearchCoinsFragmentArgs.fromBundle(requireArguments()).filterOwnedCoins
+    )
 
     override val viewModel: SearchCoinsViewModel.ViewModel by viewModel()
 //    savedStateViewModel { savedStateHandle ->

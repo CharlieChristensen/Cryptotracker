@@ -80,11 +80,6 @@ dependencies {
     implementation(Libraries.corbindNavigation)
     implementation(Libraries.flowPreferences)
 
-    implementation(Libraries.dagger)
-    compileOnly(Libraries.assistInjectAnnot)
-    kapt(Libraries.assistInjectCompiler)
-    kapt(Libraries.daggerCompiler)
-
     implementation(Libraries.koinAndroid)
     implementation(Libraries.koinScope)
     implementation(Libraries.koinViewModel)

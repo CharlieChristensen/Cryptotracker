@@ -10,7 +10,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.charliechristensen.coindetail.databinding.DialogTextInputLayoutBinding
 import com.charliechristensen.coindetail.databinding.ViewCoinDetailBinding
-import com.charliechristensen.coindetail.di.coinDetailModule
+import com.charliechristensen.coindetail.di.getCoinDetailModule
 import com.charliechristensen.cryptotracker.common.GlideApp
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
@@ -19,18 +19,16 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.module.Module
 
 
-class CoinDetailFragment : BaseFragment<CoinDetailViewModel.ViewModel, ViewCoinDetailBinding>(R.layout.view_coin_detail) {
+class CoinDetailFragment :
+    BaseFragment<CoinDetailViewModel.ViewModel, ViewCoinDetailBinding>(R.layout.view_coin_detail) {
 
-    override val koinModule: Module = coinDetailModule
+    override val koinModule: Module by lazy {
+        getCoinDetailModule(
+            CoinDetailFragmentArgs.fromBundle(requireArguments()).coinSymbol
+        )
+    }
 
     override val viewModel: CoinDetailViewModel.ViewModel by viewModel()
-//    savedStateViewModel { savedStateHandle ->
-//        val fragmentArgs = CoinDetailFragmentArgs.fromBundle(requireArguments())
-//        DaggerCoinDetailComponent.factory()
-//            .create(injector)
-//            .coinDetailViewModelFactory
-//            .create(fragmentArgs.coinSymbol, savedStateHandle)
-//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -5,12 +5,11 @@ import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.portfolio.list.PortfolioListItem
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 
-class PortfolioInteractor @Inject constructor(
+class PortfolioInteractor constructor(
     private val repository: Repository,
     private val formatterFactory: FormatterFactory
 ) {

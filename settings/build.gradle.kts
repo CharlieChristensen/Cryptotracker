@@ -44,9 +44,6 @@ dependencies {
 
     implementation(Libraries.timber)
 
-    implementation(Libraries.dagger)
-    kapt(Libraries.daggerCompiler)
-
     implementation(Libraries.koinAndroid)
     implementation(Libraries.koinScope)
     implementation(Libraries.koinViewModel)

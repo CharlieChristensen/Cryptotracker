@@ -12,8 +12,6 @@ import com.charliechristensen.cryptotracker.common.SingleLiveEvent
 import com.charliechristensen.cryptotracker.common.call
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,11 +29,11 @@ interface SearchCoinsViewModel {
         val showNetworkError: LiveData<Unit>
     }
 
-    class ViewModel @AssistedInject constructor(
+    class ViewModel constructor(
         private val interactor: SearchCoinsInteractor,
         private val navigator: Navigator,
-        @Assisted private val savedState: SavedStateHandle,
-        @Assisted filterOutOwnedCoins: Boolean
+        private val savedState: SavedStateHandle,
+        filterOutOwnedCoins: Boolean
     ) : BaseViewModel(), Inputs, Outputs {
 
         private val searchDataSourceFactory = SearchDataSourceFactory(interactor, filterOutOwnedCoins)
@@ -85,11 +83,6 @@ interface SearchCoinsViewModel {
         override val showNetworkError: LiveData<Unit> = showNetworkErrorChannel
 
         //endregion
-
-        @AssistedInject.Factory
-        interface Factory {
-            fun create(filterOutOwnedCoins: Boolean, savedState: SavedStateHandle): ViewModel
-        }
 
         companion object {
             const val KEY_SEARCH_QUERY_SAVED_STATE = "KeySearchQuerySavedState"

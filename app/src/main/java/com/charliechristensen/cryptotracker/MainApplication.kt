@@ -5,8 +5,6 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
 import com.charliechristensen.cryptotracker.data.workers.FetchCoinListWorker
-import com.charliechristensen.cryptotracker.di.AppComponent
-import com.charliechristensen.cryptotracker.di.DaggerAppComponent
 import com.charliechristensen.cryptotracker.di.appModule
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperClient
@@ -19,12 +17,6 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class MainApplication : SplitCompatApplication() {
-
-    val appComponent: AppComponent by lazy {
-        DaggerAppComponent
-            .factory()
-            .create(this)
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -50,7 +42,7 @@ class MainApplication : SplitCompatApplication() {
         WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork(
                 "CoinRefreshWorker",
-                ExistingPeriodicWorkPolicy.KEEP,
+                ExistingPeriodicWorkPolicy.REPLACE,
                 coinRefreshWorker
             )
     }

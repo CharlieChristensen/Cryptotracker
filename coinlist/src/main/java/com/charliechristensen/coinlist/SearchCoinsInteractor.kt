@@ -4,13 +4,10 @@ import com.charliechristensen.coinlist.list.SearchCoinsListItem
 import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
 import com.squareup.sqldelight.Query
-import dagger.Reusable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-@Reusable
-class SearchCoinsInteractor @Inject constructor(
+class SearchCoinsInteractor constructor(
     private val repository: Repository
 ) {
 
