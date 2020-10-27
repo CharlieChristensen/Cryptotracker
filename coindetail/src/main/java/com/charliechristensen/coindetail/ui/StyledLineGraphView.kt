@@ -3,6 +3,9 @@ package com.charliechristensen.coindetail.ui
 import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import com.charliechristensen.coindetail.data.CoinDetailGraphState
+import com.charliechristensen.cryptotracker.common.ColorUtils
+import com.charliechristensen.cryptotracker.common.extensions.getColorFromResource
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
@@ -49,6 +52,23 @@ class StyledLineGraphView @JvmOverloads constructor(
         ) // TODO PASS FORMATTER FROM CONTROLLER
         priceDateMarkerView.chartView = this
         marker = priceDateMarkerView
+    }
+
+    fun setGraphState(graphState: CoinDetailGraphState) {
+        when (graphState) {
+            is CoinDetailGraphState.Success -> {
+                val color = context.getColorFromResource(ColorUtils.getColorInt(graphState.color))
+                val title = context.getString(R.string.history)
+                setDataSet(graphState.coinHistoryList, title, color)
+            }
+            CoinDetailGraphState.Loading -> {
+                showLoading()
+                clear()
+            }
+            CoinDetailGraphState.NoData -> showNoData()
+            CoinDetailGraphState.Error -> showError()
+        }
+
     }
 
     fun setDataSet(entries: List<Entry>, label: String, @ColorInt color: Int) {

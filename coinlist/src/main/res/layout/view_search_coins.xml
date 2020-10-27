@@ -1,38 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coinListRootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <data>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/searchViewCard"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:cardUseCompatPadding="true">
 
-    </data>
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:id="@+id/coinListRootLayout"
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/coinsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        tools:listitem="@layout/cell_coin_list" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/searchViewCard"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:cardUseCompatPadding="true">
-
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/coinsRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/cell_coin_list" />
-
-    </LinearLayout>
-
-</layout>
+</LinearLayout>
 

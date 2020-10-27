@@ -1,12 +1,13 @@
 package com.charliechristensen.coinlist
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagedList
-import androidx.paging.toLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.charliechristensen.coinlist.list.SearchCoinsListItem
-import com.charliechristensen.coinlist.list.SearchDataSourceFactory
+import com.charliechristensen.coinlist.list.SearchDataSource
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
@@ -19,13 +20,12 @@ import kotlinx.coroutines.withContext
 interface SearchCoinsViewModel {
 
     interface Inputs {
-        fun setSearchQuery(query: CharSequence)
         fun onClickCoin(symbol: String)
         fun onClickRefresh()
     }
 
     interface Outputs {
-        val coinList: LiveData<PagedList<SearchCoinsListItem>>
+        fun coinList(searchTerm: String): Flow<PagingData<SearchCoinsListItem>>
         val showNetworkError: Flow<Unit>
     }
 
@@ -33,21 +33,13 @@ interface SearchCoinsViewModel {
         private val interactor: SearchCoinsInteractor,
         private val navigator: Navigator,
         private val savedState: SavedStateHandle,
-        filterOutOwnedCoins: Boolean
+        private val filterOutOwnedCoins: Boolean
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val searchDataSourceFactory =
-            SearchDataSourceFactory(interactor, filterOutOwnedCoins)
-        private val showNetworkErrorChannel = MutableSharedFlow<Unit>()
+        private val showNetworkErrorEvent = MutableSharedFlow<Unit>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
-
-        init {
-            searchDataSourceFactory.setSearchTerm(
-                savedState.get(KEY_SEARCH_QUERY_SAVED_STATE) ?: ""
-            )
-        }
 
         private fun refreshCoins() {
             viewModelScope.launch { forceRefreshCoinList() }
@@ -57,7 +49,7 @@ interface SearchCoinsViewModel {
             try {
                 interactor.forceRefreshCoinListAndSaveToDb()
             } catch (exception: Exception) {
-                showNetworkErrorChannel.emit(Unit)
+                showNetworkErrorEvent.emit(Unit)
             }
         }
 
@@ -71,19 +63,25 @@ interface SearchCoinsViewModel {
             refreshCoins()
         }
 
-        override fun setSearchQuery(query: CharSequence) {
-            savedState.set(KEY_SEARCH_QUERY_SAVED_STATE, query)
-            searchDataSourceFactory.setSearchTerm(query.toString())
-        }
-
         //endregion
 
         //region Outputs
 
-        override val coinList: LiveData<PagedList<SearchCoinsListItem>> =
-            searchDataSourceFactory.toLiveData(pageSize = 50)
+        override fun coinList(searchTerm: String): Flow<PagingData<SearchCoinsListItem>> {
+            savedState.set(KEY_SEARCH_QUERY_SAVED_STATE, searchTerm)
+            return Pager(
+                config = PagingConfig(pageSize = 50),
+                initialKey = 0
+            ) {
+                SearchDataSource(
+                    interactor,
+                    searchTerm,
+                    filterOutOwnedCoins
+                )
+            }.flow.cachedIn(viewModelScope)
+        }
 
-        override val showNetworkError: Flow<Unit> = showNetworkErrorChannel
+        override val showNetworkError: Flow<Unit> = showNetworkErrorEvent
 
         //endregion
 

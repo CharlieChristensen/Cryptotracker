@@ -15,7 +15,7 @@ class SearchDataSourceFactory constructor(
     override fun create(): DataSource<Int, SearchCoinsListItem> {
         val dataSource = SearchDataSource(interactor, query, filterOutOwnedCoins)
         dataSourceLiveData.postValue(dataSource)
-        return dataSource
+        return TODO()
     }
 
     fun setSearchTerm(searchTerm: String) {

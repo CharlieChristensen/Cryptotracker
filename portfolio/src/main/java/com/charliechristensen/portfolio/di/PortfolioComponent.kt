@@ -6,6 +6,5 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val portfolioModule = module {
-    single { PortfolioInteractor(get(), get()) }
-    viewModel { PortfolioCoinListViewModel.ViewModel(get(), get()) }
+    viewModel { PortfolioCoinListViewModel.ViewModel(get(), PortfolioInteractor(get(), get())) }
 }

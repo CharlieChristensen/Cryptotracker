@@ -1,16 +1,15 @@
 package com.charliechristensen.coinlist.list
 
-import android.view.ViewGroup
-import com.charliechristensen.coinlist.R
+import com.charliechristensen.coinlist.databinding.CellCoinListFooterBinding
 import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
 
 class SearchCoinsRefreshCell(
-    parent: ViewGroup,
+    binding: CellCoinListFooterBinding,
     callback: SearchCoinsAdapter.SearchCoinAdapterCallback
-) : BaseViewHolder<SearchCoinsListItem>(
-    inflateView(R.layout.cell_coin_list_footer, parent)
-) {
+) : BaseViewHolder<SearchCoinsListItem>(binding.root) {
+
     init {
-        itemView.setOnClickListener { callback.onClickRefresh() }
+        binding.root.setOnClickListener { callback.onClickRefresh() }
     }
+
 }

@@ -16,6 +16,7 @@ import com.charliechristensen.cryptotracker.common.ui.BaseActivity
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.charliechristensen.cryptotracker.cryptotracker.databinding.ActivityNavigationDrawerBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
@@ -53,7 +54,7 @@ class MainActivity : BaseActivity() {
             .launchIn(lifecycleScope)
 
         viewModel.outputs.theme
-            .skip(1)
+            .drop(1)
             .bind { changeTheme(it, true) }
 
         viewModel.outputs.navigationEvents

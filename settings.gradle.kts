@@ -1,3 +1,4 @@
+include(":sharedRemote")
 include(":Dialogs")
 include(
     ":app",

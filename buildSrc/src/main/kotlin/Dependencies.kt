@@ -3,7 +3,7 @@ const val kotlinVersion = "1.4.10"
 object BuildPlugins {
 
     object Versions {
-        const val gradlePlugin = "4.1.0-rc02"
+        const val gradlePlugin = "4.1.0"
         const val safeArgs = "2.3.0-alpha04"
         const val sqlDelight = "1.3.0"
         const val koin = "2.2.0-rc-2"
@@ -33,7 +33,7 @@ object AndroidSdk {
 
 object Libraries {
     private object Versions {
-        const val coroutines             =  "1.4.0-M1"
+        const val coroutines             =  "1.4.0"
         const val constraintLayout       =  "2.0.0"
         const val androidxCore           =  "1.5.0-alpha04"
         const val activity               =  "1.2.0-beta01"
@@ -41,7 +41,7 @@ object Libraries {
         const val fragment               =  "1.3.0-beta01"
         const val lifecycle              =  "2.3.0-beta01"
         const val navigation             =  "2.3.1"
-        const val paging                 =  "2.1.2"
+        const val paging                 =  "3.0.0-alpha07"
         const val recyclerView           =  "1.2.0-alpha06"
         const val workManager            =  "2.5.0-alpha03"
         const val material               =  "1.2.0-alpha05"

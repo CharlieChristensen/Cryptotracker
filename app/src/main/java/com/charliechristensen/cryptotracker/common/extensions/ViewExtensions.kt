@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
@@ -17,6 +18,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.charliechristensen.cryptotracker.MainApplication
 import com.charliechristensen.cryptotracker.common.ColorUtils
+import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.cryptotracker.data.models.ui.ValueChangeColor
 
 @Suppress("UNCHECKED_CAST")
@@ -82,4 +84,22 @@ fun Activity.hideKeyboard() {
     if (currentFocus != null && imm != null) {
         imm.hideSoftInputFromWindow(currentFocus.windowToken, 0)
     }
+}
+
+fun TextView.setText(colorValueString: ColorValueString) {
+    text = colorValueString.value
+    setTextColor(
+        context.getColorFromResource(ColorUtils.getColorInt(colorValueString.color))
+    )
+}
+
+fun TextView.setColorAttribute(valueChangeColor: ValueChangeColor) {
+    context.getColorAttribute(valueChangeColor) { color ->
+        setTextColor(color)
+    }
+}
+
+fun TextView.setColorValueString(colorValueString: ColorValueString) {
+    text = colorValueString.value
+    setTextColor(context.getColorFromResource(ColorUtils.getColorInt(colorValueString.color)))
 }

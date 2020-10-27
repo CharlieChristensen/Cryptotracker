@@ -1,7 +1,5 @@
 package com.charliechristensen.portfolio
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import com.charliechristensen.cryptotracker.common.BaseViewModel
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.cryptotracker.NavigationGraphDirections
@@ -13,6 +11,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 interface PortfolioCoinListViewModel {
 
@@ -22,10 +21,10 @@ interface PortfolioCoinListViewModel {
 
     interface Outputs {
         val showNetworkError: Flow<Unit>
-        val walletTotalValue: LiveData<String>
-        val percentChange24Hour: LiveData<ColorValueString>
-        val portfolioValueChange: LiveData<ColorValueString>
-        val coinList: LiveData<List<PortfolioListItem>>
+        val walletTotalValue: Flow<String>
+        val percentChange24Hour: Flow<ColorValueString>
+        val portfolioValueChange: Flow<ColorValueString>
+        val coinList: Flow<List<PortfolioListItem>>
     }
 
     class ViewModel constructor(
@@ -33,7 +32,7 @@ interface PortfolioCoinListViewModel {
         portfolioInteractor: PortfolioInteractor
     ) : BaseViewModel(), Inputs, Outputs {
 
-        private val showNetworkErrorLiveData = MutableSharedFlow<Unit>()
+        private val showNetworkErrorEvent = MutableSharedFlow<Unit>()
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -41,7 +40,7 @@ interface PortfolioCoinListViewModel {
         private val portfolioStates: Flow<PortfolioListData> =
             portfolioInteractor.listData()
                 .flowOn(Dispatchers.IO)
-                .catch { showNetworkErrorLiveData.emit(Unit) }
+                .catch { showNetworkErrorEvent.emit(Unit) }
 
         //region Inputs
 
@@ -60,23 +59,23 @@ interface PortfolioCoinListViewModel {
 
         //region Outputs
 
-        override val walletTotalValue: LiveData<String> = portfolioStates
+        override val walletTotalValue: Flow<String> = portfolioStates
             .map { it.formattedValue }
-            .asLiveData()
+            .share()
 
-        override val percentChange24Hour: LiveData<ColorValueString> = portfolioStates
+        override val percentChange24Hour: Flow<ColorValueString> = portfolioStates
             .map { it.percentChange24Hour }
-            .asLiveData()
+            .share()
 
-        override val portfolioValueChange: LiveData<ColorValueString> = portfolioStates
+        override val portfolioValueChange: Flow<ColorValueString> = portfolioStates
             .map { it.portfolioValueChange }
-            .asLiveData()
+            .share()
 
-        override val coinList: LiveData<List<PortfolioListItem>> = portfolioStates
+        override val coinList: Flow<List<PortfolioListItem>> = portfolioStates
             .map { it.coinList }
-            .asLiveData()
+            .share()
 
-        override val showNetworkError: Flow<Unit> = showNetworkErrorLiveData
+        override val showNetworkError: Flow<Unit> = showNetworkErrorEvent
 
         //endregion
     }

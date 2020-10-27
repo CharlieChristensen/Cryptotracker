@@ -1,7 +1,6 @@
 plugins {
     id(BuildPlugins.dynamicFeature)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.safeArgs)
 }
 
@@ -18,12 +17,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    viewBinding {
-        isEnabled = true
-    }
-    dataBinding {
-        isEnabled = true
-    }
+    buildFeatures.viewBinding = true
 }
 
 dependencies {
@@ -39,14 +33,8 @@ dependencies {
     implementation(Libraries.lifecycleCommon)
     implementation(Libraries.savedState)
     implementation(Libraries.viewModel)
-    implementation(Libraries.liveData)
 
     implementation(Libraries.navigation)
-
-    implementation(Libraries.dagger)
-    compileOnly(Libraries.assistInjectAnnot)
-    kapt(Libraries.assistInjectCompiler)
-    kapt(Libraries.daggerCompiler)
 
     implementation(Libraries.koinAndroid)
     implementation(Libraries.koinScope)

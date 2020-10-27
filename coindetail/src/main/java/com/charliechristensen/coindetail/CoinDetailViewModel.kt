@@ -1,8 +1,6 @@
 package com.charliechristensen.coindetail
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.charliechristensen.coindetail.data.CoinDetailGraphState
 import com.charliechristensen.cryptotracker.common.BaseViewModel
@@ -11,8 +9,17 @@ import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.ColorValueString
 import com.charliechristensen.cryptotracker.data.models.ui.ImageAndNamePair
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -33,22 +40,22 @@ interface CoinDetailViewModel {
 
     interface Outputs {
         val toolbarImageData: Flow<ImageAndNamePair>
-        val currentCoinPrice: LiveData<String>
-        val low24Hour: LiveData<String>
-        val high24Hour: LiveData<String>
+        val currentCoinPrice: Flow<String>
+        val low24Hour: Flow<String>
+        val high24Hour: Flow<String>
         val isCoinInPortfolio: Flow<Boolean>
-        val percentChangeTimePeriod: LiveData<Int>
-        val valueChange24Hour: LiveData<ColorValueString>
-        val percentChange24Hour: LiveData<ColorValueString>
-        val walletUnitsOwned: LiveData<String>
-        val walletTotalValue: LiveData<String>
-        val walletPriceChange24Hour: LiveData<ColorValueString>
-        val graphState: LiveData<CoinDetailGraphState>
+        val percentChangeTimePeriod: Flow<Int>
+        val valueChange24Hour: Flow<ColorValueString>
+        val percentChange24Hour: Flow<ColorValueString>
+        val walletUnitsOwned: Flow<String>
+        val walletTotalValue: Flow<String>
+        val walletPriceChange24Hour: Flow<ColorValueString>
+        val graphState: Flow<CoinDetailGraphState>
         val showAddCoinDialog: Flow<String>
         val showEditCoinAmountDialog: Flow<String>
         val showConfirmRemoveDialog: Flow<String>
         val showNetworkError: Flow<Unit>
-        val selectedDateTab: LiveData<Int>
+        val selectedDateTab: Flow<Int>
     }
 
     class ViewModel constructor(
@@ -153,29 +160,29 @@ interface CoinDetailViewModel {
 
         override val toolbarImageData: Flow<ImageAndNamePair> = toolbarImageDataChannel
 
-        override val currentCoinPrice: LiveData<String> = currentPricePerUnitChannel
+        override val currentCoinPrice: Flow<String> = currentPricePerUnitChannel
             .map { currencyFormatter.format(it) }
-            .asLiveData()
+            .share()
 
-        override val low24Hour: LiveData<String> = pricePerUnit24HourLowChannel
+        override val low24Hour: Flow<String> = pricePerUnit24HourLowChannel
             .map { currencyFormatter.format(it) }
-            .asLiveData()
+            .share()
 
-        override val high24Hour: LiveData<String> = pricePerUnit24HourHighChannel
+        override val high24Hour: Flow<String> = pricePerUnit24HourHighChannel
             .map { currencyFormatter.format(it) }
-            .asLiveData()
+            .share()
 
         override val isCoinInPortfolio: Flow<Boolean> = coinIsInPortfolioChannel
 
-        override val percentChangeTimePeriod: LiveData<Int> = currentTimePeriodChannel
+        override val percentChangeTimePeriod: Flow<Int> = currentTimePeriodChannel
             .map { it.displayString }
-            .asLiveData()
+            .share()
 
-        override val selectedDateTab: LiveData<Int> = currentTimePeriodChannel
+        override val selectedDateTab: Flow<Int> = currentTimePeriodChannel
             .map { CoinHistoryTimePeriod.getIndexWithTimePeriod(it) }
-            .asLiveData()
+            .share()
 
-        override val valueChange24Hour: LiveData<ColorValueString> = combine(
+        override val valueChange24Hour: Flow<ColorValueString> = combine(
             currentPricePerUnitChannel,
             currentStartPricePerUnitChannel
         ) { price: Double, startPrice: Double ->
@@ -183,9 +190,9 @@ interface CoinDetailViewModel {
             ColorValueString.create(valueChangeDouble, currencyFormatter)
         }
             .distinctUntilChanged()
-            .asLiveData()
+            .share()
 
-        override val percentChange24Hour: LiveData<ColorValueString> = combine(
+        override val percentChange24Hour: Flow<ColorValueString> = combine(
             currentPricePerUnitChannel,
             currentStartPricePerUnitChannel
         ) { price, startPrice ->
@@ -197,21 +204,21 @@ interface CoinDetailViewModel {
             ColorValueString.create(percentChange, formatterFactory.percentFormatter())
         }
             .distinctUntilChanged()
-            .asLiveData()
+            .share()
 
-        override val walletUnitsOwned: LiveData<String> = walletUnitsOwnedChannel
+        override val walletUnitsOwned: Flow<String> = walletUnitsOwnedChannel
             .map { formatterFactory.decimalFormatter().format(it) }
-            .asLiveData()
+            .share()
 
-        override val walletTotalValue: LiveData<String> = walletTotalValueChannel
+        override val walletTotalValue: Flow<String> = walletTotalValueChannel
             .map { currencyFormatter.format(it) }
-            .asLiveData()
+            .share()
 
-        override val walletPriceChange24Hour: LiveData<ColorValueString> =
-            walletPriceChange24HourChannel.asLiveData()
+        override val walletPriceChange24Hour: Flow<ColorValueString> =
+            walletPriceChange24HourChannel
+                .share()
 
-        @ExperimentalCoroutinesApi
-        override val graphState: LiveData<CoinDetailGraphState> = currentTimePeriodChannel
+        override val graphState: Flow<CoinDetailGraphState> = currentTimePeriodChannel
             .flatMapLatest { timePeriod -> interactor.getCoinHistory(coinSymbol, timePeriod) }
             .onEach { graphState ->
                 if (graphState is CoinDetailGraphState.Success) {
@@ -223,7 +230,7 @@ interface CoinDetailViewModel {
                 Timber.e(it, "Get Coin History")
                 emit(CoinDetailGraphState.Error)
             }
-            .asLiveData()
+            .share()
 
         override val showAddCoinDialog: Flow<String> = showAddCoinDialogChannel
 

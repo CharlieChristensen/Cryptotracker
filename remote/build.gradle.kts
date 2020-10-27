@@ -1,7 +1,6 @@
 plugins {
     id(BuildPlugins.androidLibrary)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.kotlinKapt)
     kotlin(BuildPlugins.serialization) version kotlinVersion
 }
 
@@ -17,12 +16,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    viewBinding {
-        isEnabled = true
-    }
-    dataBinding {
-        isEnabled = true
     }
 }
 

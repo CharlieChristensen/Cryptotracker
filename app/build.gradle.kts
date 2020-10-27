@@ -4,7 +4,6 @@ import java.util.Properties
 plugins {
     id(BuildPlugins.androidApplication)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.safeArgs)
     id(BuildPlugins.sqlDelight)
 }
@@ -40,10 +39,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    buildFeatures {
-        dataBinding = true
-        viewBinding = true
-    }
+    buildFeatures.viewBinding = true
     packagingOptions {
         pickFirst("META-INF/kotlinx-coroutines-core.kotlin_module")
     }
@@ -68,7 +64,6 @@ dependencies {
 
     implementation(Libraries.lifecycleCommon)
     implementation(Libraries.viewModel)
-    implementation(Libraries.liveData)
 
     implementation(Libraries.navigation)
     implementation(Libraries.navigationUI)

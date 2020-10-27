@@ -15,12 +15,15 @@ import com.charliechristensen.cryptotracker.common.GlideApp
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.charliechristensen.cryptotracker.common.extensions.setColorAttribute
+import com.charliechristensen.cryptotracker.common.extensions.setColorValueString
+import com.charliechristensen.cryptotracker.common.ui.viewBinding
+import com.google.android.material.tabs.TabLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.module.Module
 
 
-class CoinDetailFragment :
-    BaseFragment<CoinDetailViewModel.ViewModel, ViewCoinDetailBinding>(R.layout.view_coin_detail) {
+class CoinDetailFragment : BaseFragment(R.layout.view_coin_detail) {
 
     override val koinModule: Module by lazy {
         getCoinDetailModule(
@@ -28,12 +31,12 @@ class CoinDetailFragment :
         )
     }
 
-    override val viewModel: CoinDetailViewModel.ViewModel by viewModel()
+    private val viewModel: CoinDetailViewModel.ViewModel by viewModel()
+
+    private val binding: ViewCoinDetailBinding by viewBinding(ViewCoinDetailBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.viewModel = viewModel
 
         viewModel.outputs.isCoinInPortfolio
             .bind { inPortfolio ->
@@ -44,8 +47,35 @@ class CoinDetailFragment :
                 }
             }
 
+        viewModel.outputs.currentCoinPrice
+            .bind(binding.currentPriceTextView::setText)
+
+        viewModel.outputs.percentChangeTimePeriod
+            .bind(binding.title24HourPercentChange::setText)
+
+        viewModel.outputs.valueChange24Hour
+            .bind(binding.percentChangeTextView::setColorValueString)
+
+        viewModel.outputs.high24Hour
+            .bind(binding.high24HourTextView::setText)
+
+        viewModel.outputs.low24Hour
+            .bind(binding.low24HourTextView::setText)
+
         viewModel.outputs.toolbarImageData
             .bind { setToolbarImage(it.coinName, it.imageUrl) }
+
+        viewModel.outputs.selectedDateTab
+            .bind(binding.lineGraphController.dateTabLayout::selectedTab)
+
+        viewModel.outputs.walletTotalValue
+            .bind(binding.walletTotalValueTextView::setText)
+
+        viewModel.outputs.walletUnitsOwned
+            .bind(binding.walletAmountOwnedTextView::setText)
+
+        viewModel.outputs.walletPriceChange24Hour
+            .bind(binding.walletPriceChange24Hour::setColorValueString)
 
         viewModel.outputs.showAddCoinDialog
             .bind(::showAddCoinDialog)
@@ -56,8 +86,31 @@ class CoinDetailFragment :
         viewModel.outputs.showConfirmRemoveDialog
             .bind(::showConfirmRemoveDialog)
 
+        viewModel.outputs.graphState
+            .bind(binding.lineGraphController.lineGraphView::setGraphState)
+
         viewModel.outputs.showNetworkError
             .bind { showToast(com.charliechristensen.cryptotracker.cryptotracker.R.string.error_network_error) }
+
+        binding.addToPortfolioButton
+            .setOnClickListener { viewModel.inputs.addCoinButtonClicked() }
+
+        binding.editQuantityButton
+            .setOnClickListener { viewModel.inputs.editQuantityButtonClicked() }
+
+        binding.removeFromPortfolioButton
+            .setOnClickListener { viewModel.inputs.removeFromPortfolioButtonClicked() }
+
+        binding.lineGraphController.dateTabLayout
+            .addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    viewModel.inputs.graphDateSelectionChanged(tab.position)
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+                override fun onTabReselected(tab: TabLayout.Tab?) {}
+            })
     }
 
     //region View Helpers

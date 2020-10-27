@@ -22,7 +22,6 @@ allprojects {
         jcenter()
         maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://dl.bintray.com/kotlin/kotlin-eap") }
-        maven { url = uri("https://ci.android.com/builds/submitted/6043188/androidx_snapshot/latest/repository/") }
     }
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {

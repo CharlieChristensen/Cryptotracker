@@ -1,7 +1,5 @@
 package com.charliechristensen.settings
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.charliechristensen.cryptotracker.common.AppTheme
 import com.charliechristensen.cryptotracker.common.BaseViewModel
@@ -26,9 +24,9 @@ interface SettingsViewModel {
     }
 
     interface Outputs {
-        val themeDisplay: LiveData<Int>
-        val liveUpdatePrices: LiveData<Boolean>
-        val displayCurrency: LiveData<String>
+        val themeDisplay: Flow<Int>
+        val liveUpdatePrices: Flow<Boolean>
+        val displayCurrency: Flow<String>
         val showChooseThemeDialog: Flow<List<AppTheme>>
         val showCurrencyDialog: Flow<Array<String>>
     }
@@ -72,18 +70,18 @@ interface SettingsViewModel {
 
         //region Outputs
 
-        override val themeDisplay: LiveData<Int> = repository
+        override val themeDisplay: Flow<Int> = repository
             .theme()
             .map { it.displayId }
-            .asLiveData()
+            .share()
 
-        override val liveUpdatePrices: LiveData<Boolean> = repository
+        override val liveUpdatePrices: Flow<Boolean> = repository
             .liveUpdatePrices()
-            .asLiveData()
+            .share()
 
-        override val displayCurrency: LiveData<String> = repository
+        override val displayCurrency: Flow<String> = repository
             .currency()
-            .asLiveData()
+            .share()
 
         override val showChooseThemeDialog: Flow<List<AppTheme>> = showChooseThemeEvent
 
