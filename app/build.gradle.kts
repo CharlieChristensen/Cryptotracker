@@ -96,6 +96,7 @@ dependencies {
 
     implementation(Libraries.glide)
     kapt(Libraries.glideCompiler)
+    implementation(Libraries.coil)
 
     implementation(Libraries.sqlDelight)
     implementation(Libraries.sqlDelightCoroutines)

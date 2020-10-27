@@ -1,5 +1,6 @@
 package com.charliechristensen.portfolio.list
 
+import coil.load
 import com.charliechristensen.cryptotracker.common.GlideApp
 import com.charliechristensen.cryptotracker.common.extensions.setColorAttribute
 import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
@@ -14,9 +15,7 @@ class PortfolioCoinCell(
         if (listItem is PortfolioListItem.Coin) {
             binding.apply {
                 root.setOnClickListener { callback.onClickItem(listItem) }
-                GlideApp.with(logoImageView)
-                    .load(listItem.imageUri)
-                    .into(logoImageView)
+                logoImageView.load(listItem.imageUri)
                 coinSymbolTextView.text = listItem.symbol
                 currentPriceTextView.text = listItem.currentPrice
                 amountChangeTextView.text = listItem.priceChange.value

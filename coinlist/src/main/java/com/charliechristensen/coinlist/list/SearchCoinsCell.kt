@@ -1,7 +1,8 @@
 package com.charliechristensen.coinlist.list
 
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.charliechristensen.coinlist.databinding.CellCoinListBinding
-import com.charliechristensen.cryptotracker.common.GlideApp
 import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
 
 class SearchCoinsCell(
@@ -16,10 +17,10 @@ class SearchCoinsCell(
             binding.root.setOnClickListener {
                 callback.onClickCoin(listItem.symbol)
             }
-            GlideApp.with(binding.logoImageView)
-                .load(listItem.imageUri)
-                .circleCrop()
-                .into(binding.logoImageView)
+            binding.logoImageView.load(listItem.imageUri) {
+                crossfade(true)
+                transformations(CircleCropTransformation())
+            }
         }
     }
 

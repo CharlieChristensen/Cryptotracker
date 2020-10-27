@@ -46,5 +46,6 @@ dependencies {
     implementation(Libraries.timber)
 
     implementation(Libraries.glide)
+    implementation(Libraries.coil)
 
 }

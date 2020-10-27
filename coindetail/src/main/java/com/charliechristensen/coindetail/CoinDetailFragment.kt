@@ -1,23 +1,20 @@
 package com.charliechristensen.coindetail
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
+import coil.imageLoader
+import coil.request.ImageRequest
 import com.charliechristensen.coindetail.databinding.DialogTextInputLayoutBinding
 import com.charliechristensen.coindetail.databinding.ViewCoinDetailBinding
 import com.charliechristensen.coindetail.di.getCoinDetailModule
-import com.charliechristensen.cryptotracker.common.GlideApp
+import com.charliechristensen.cryptotracker.common.extensions.setColorValueString
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.charliechristensen.cryptotracker.common.extensions.setColorAttribute
-import com.charliechristensen.cryptotracker.common.extensions.setColorValueString
 import com.charliechristensen.cryptotracker.common.ui.viewBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.module.Module
@@ -128,27 +125,22 @@ class CoinDetailFragment : BaseFragment(R.layout.view_coin_detail) {
         if (imageSize <= 0) {
             return
         }
-        GlideApp.with(this)
-            .asDrawable()
-            .load(imageUrl)
-            .into(object : CustomTarget<Drawable>() {
-                override fun onResourceReady(
-                    resource: Drawable,
-                    transition: Transition<in Drawable>?
-                ) {
-                    val imageSpan = ImageSpan(resource, ImageSpan.ALIGN_BASELINE)
-                    imageSpan.drawable.setBounds(0, 0, imageSize, imageSize)
-                    val stringBuilder = SpannableStringBuilder().apply {
-                        append("  ")
-                        setSpan(imageSpan, length - 1, length, 0)
-                        append("  ")
-                        append(coinName)
-                    }
-                    actionBar.title = stringBuilder
+        val request = ImageRequest.Builder(activity)
+            .lifecycle(this)
+            .data(imageUrl)
+            .target { drawable ->
+                val imageSpan = ImageSpan(drawable, ImageSpan.ALIGN_BASELINE)
+                imageSpan.drawable.setBounds(0, 0, imageSize, imageSize)
+                val stringBuilder = SpannableStringBuilder().apply {
+                    append("  ")
+                    setSpan(imageSpan, length - 1, length, 0)
+                    append("  ")
+                    append(coinName)
                 }
-
-                override fun onLoadCleared(placeholder: Drawable?) {}
-            })
+                actionBar.title = stringBuilder
+            }
+            .build()
+        activity.imageLoader.enqueue(request)
     }
 
     //endregion
