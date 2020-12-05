@@ -1,11 +1,11 @@
 package com.charliechristensen.cryptotracker.data
 
+import com.charliechristensen.cryptotracker.data.datastore.AppPreferences
 import com.charliechristensen.cryptotracker.data.models.graph.CoinHistoryElement
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
 import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
 import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
 import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
-import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
 import com.charliechristensen.remote.models.SymbolPricePair
 import com.squareup.sqldelight.Query
 import kotlinx.coroutines.flow.Flow
@@ -27,8 +27,8 @@ interface Repository: AppPreferences {
     ): Flow<List<CoinPriceData>>
 
     fun getPortfolioCoinSymbols(): Flow<List<String>>
-    fun addTemporarySubscription(symbol: String)
-    fun clearTemporarySubscriptions()
+    suspend fun addTemporarySubscription(symbol: String)
+    suspend fun clearTemporarySubscriptions()
 
     fun setPortfolioSubscriptions(symbols: Collection<String>, newCurrency: String, oldCurrency: String)
     fun disconnectFromLivePrices()

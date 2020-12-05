@@ -26,6 +26,10 @@ sealed class CoinHistoryTimePeriod(
             override fun encode(value: CoinHistoryTimePeriod): Long = getIndexWithTimePeriod(value).toLong()
         }
 
+        fun encodeToLong(value: CoinHistoryTimePeriod): Long = getIndexWithTimePeriod(value).toLong()
+
+        fun decode(databaseValue: Long): CoinHistoryTimePeriod = getTimePeriodWithIndex(databaseValue.toInt())
+
         fun getTimePeriodWithIndex(index: Int): CoinHistoryTimePeriod = when (index) {
             0 -> OneDay
             1 -> OneWeek

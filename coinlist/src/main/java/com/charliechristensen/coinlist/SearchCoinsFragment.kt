@@ -11,6 +11,7 @@ import com.charliechristensen.coinlist.list.SearchCoinsAdapter
 import com.charliechristensen.coinlist.list.SearchCoinsPagedAdapter
 import com.charliechristensen.cryptotracker.common.extensions.showToast
 import com.charliechristensen.cryptotracker.common.ui.BaseFragment
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest

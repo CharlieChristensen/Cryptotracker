@@ -58,6 +58,7 @@ val remoteModule = module {
     single {
         OkHttpClient
             .Builder().apply {
+                cache(get())
                 addInterceptor(get<ApiKeyInterceptor>())
                 if (get(named("IsDebug"))) {
                     addInterceptor(get<HttpLoggingInterceptor>())

@@ -1,7 +1,6 @@
 package com.charliechristensen.coinlist.list
 
 import androidx.paging.PagingSource
-import androidx.paging.PositionalDataSource
 import com.charliechristensen.coinlist.SearchCoinsInteractor
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
 import com.squareup.sqldelight.Query

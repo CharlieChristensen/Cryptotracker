@@ -1,4 +1,4 @@
-package com.charliechristensen.cryptotracker.data.preferences
+package com.charliechristensen.cryptotracker.data.datastore
 
 import com.charliechristensen.cryptotracker.common.AppTheme
 import kotlinx.coroutines.flow.Flow
@@ -8,15 +8,14 @@ import kotlinx.coroutines.flow.Flow
  */
 interface AppPreferences {
 
-    fun setLiveUpdatePrices(shouldUpdatePrices: Boolean)
-    fun setTheme(theme: AppTheme)
+    suspend fun setLiveUpdatePrices(shouldUpdatePrices: Boolean)
+    suspend fun setTheme(theme: AppTheme)
 
     fun theme(): Flow<AppTheme>
 
-    fun getLiveUpdatePrices(): Boolean
-    fun getTheme(): AppTheme
     fun liveUpdatePrices(): Flow<Boolean>
-    fun setCurrency(symbol: String)
-    fun getCurrency(): String
+    suspend fun setCurrency(symbol: String)
+    suspend fun getCurrency(): String
     fun currency(): Flow<String>
+
 }

@@ -2,7 +2,6 @@ package com.charliechristensen.coinlist.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.charliechristensen.coinlist.R

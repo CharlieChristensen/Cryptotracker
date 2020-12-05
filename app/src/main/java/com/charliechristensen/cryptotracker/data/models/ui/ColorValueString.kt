@@ -9,7 +9,7 @@ import java.text.NumberFormat
  * RED if the value is < 0
  *
  */
-data class ColorValueString constructor(
+data class ColorValueString private constructor(
     val value: String,
     val color: ValueChangeColor
 ) {
@@ -26,8 +26,7 @@ data class ColorValueString constructor(
             val value: String
             when {
                 valueChangeDouble >= 0.0 -> {
-                    color =
-                        ValueChangeColor.GREEN
+                    color = ValueChangeColor.GREEN
                     value = "+" + formatter.format(valueChangeDouble)
                 }
                 else -> {
@@ -40,7 +39,10 @@ data class ColorValueString constructor(
                 color
             )
         }
+
+        fun empty(): ColorValueString = ColorValueString("0.0", ValueChangeColor.RED)
     }
+
 }
 
 enum class ValueChangeColor {

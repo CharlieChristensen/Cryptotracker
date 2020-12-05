@@ -1,5 +1,6 @@
 package com.charliechristensen.cryptotracker.common
 
+import androidx.appcompat.app.AppCompatDelegate
 import com.charliechristensen.cryptotracker.cryptotracker.R
 
 /**
@@ -10,13 +11,13 @@ sealed class AppTheme constructor(
     val displayId: Int,
     val restoreId: Int
 ) {
-    object Dark : AppTheme(R.style.AppTheme_Dark, R.string.theme_dark, 0)
-    object Teal : AppTheme(R.style.AppTheme_Teal, R.string.teal, 2)
+    object Dark : AppTheme(AppCompatDelegate.MODE_NIGHT_YES, R.string.theme_dark, 0)
+    object Teal : AppTheme(AppCompatDelegate.MODE_NIGHT_NO, R.string.teal, 2)
 
     companion object {
 
         fun themeFromRestoreId(restoreId: Int): AppTheme = when (restoreId) {
-            Teal.displayId -> Teal
+            Teal.restoreId -> Teal
             else -> Dark
         }
 

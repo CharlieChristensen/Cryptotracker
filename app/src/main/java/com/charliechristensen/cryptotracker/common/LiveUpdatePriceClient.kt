@@ -28,7 +28,7 @@ class LiveUpdatePriceClient constructor(
     fun start() {
         combine(
             liveUpdatePrices(),
-            repository.currency().accumulate(repository.getCurrency())
+            repository.currency().accumulate{ repository.getCurrency() }
         )
         { symbolsList, (previousCurrency, nextCurrency) ->
 //            repository.connectToLivePrices(symbolsList, previousCurrency, nextCurrency)

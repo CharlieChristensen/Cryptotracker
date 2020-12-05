@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Dark application theme. -->
+    <style name="AppTheme" parent="BaseTheme">
+        <!--Theme Colors-->
+        <item name="themeColorPrimary">@color/colorPrimary</item>
+        <item name="themeColorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="themeColorAccent">@color/colorAccent</item>
+        <item name="themeTextColor">@color/textColorPrimary</item>
+        <item name="themeTextColorSecondary">@color/textColorSecondary</item>
+        <!--Default Background-->
+        <item name="android:windowBackground">@drawable/background_dark_theme</item>
+        <!--Custom Attributes-->
+        <item name="positivePriceGreen">@color/pastel_teal</item>
+        <item name="negativePriceRed">@color/pastel_red</item>
+        <item name="dividerColor">@color/dividerColor</item>
+    </style>
+
+</resources>

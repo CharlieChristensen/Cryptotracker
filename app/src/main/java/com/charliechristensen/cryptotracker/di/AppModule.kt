@@ -2,20 +2,22 @@ package com.charliechristensen.cryptotracker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.createDataStore
+import coil.ImageLoader
+import coil.util.CoilUtils
 import com.charliechristensen.cryptotracker.common.FormatterFactory
 import com.charliechristensen.cryptotracker.common.LiveUpdatePriceClient
 import com.charliechristensen.cryptotracker.common.navigator.Navigator
 import com.charliechristensen.cryptotracker.common.navigator.NavigatorImpl
 import com.charliechristensen.cryptotracker.cryptotracker.BuildConfig
-import com.charliechristensen.cryptotracker.cryptotracker.Database
 import com.charliechristensen.cryptotracker.cryptotracker.R
 import com.charliechristensen.cryptotracker.cryptotracker.navigationDrawer.MainActivityViewModel
 import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.SqlDelightRepository
-import com.charliechristensen.cryptotracker.data.models.db.DbCoinHistory
-import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
-import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
-import com.charliechristensen.cryptotracker.data.preferences.AppPreferencesImpl
+import com.charliechristensen.cryptotracker.data.datastore.AppPreferences
+import com.charliechristensen.cryptotracker.data.datastore.AppPreferencesImpl
+import com.charliechristensen.database.Database
 import com.charliechristensen.remote.di.remoteModule
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.core.FlipperClient
@@ -53,19 +55,25 @@ val appModule = module {
         )
     }
 
+    single {
+        androidContext().createDataStore(
+            name = "cryptotracker-datastore",
+            migrations = listOf(
+                SharedPreferencesMigration(
+                    androidContext(),
+                    "cryptotracker-shared-preferences"
+                )
+            )
+        )
+    }
+
     single<AppPreferences> { AppPreferencesImpl(get()) }
 
     single<SqlDriver> {
         AndroidSqliteDriver(Database.Schema, androidContext(), "cryptotracker-db.db")
     }
 
-    single {
-        Database(
-            get(), DbCoinHistory.Adapter(
-            timePeriodAdapter = CoinHistoryTimePeriod.databaseAdapter
-        )
-        )
-    }
+    single { Database(get()) }
 
     single<FlipperClient> {
         AndroidFlipperClient.getInstance(androidContext()).apply {
@@ -87,6 +95,14 @@ val appModule = module {
 
     single { LiveUpdatePriceClient(get()) }
 
-    viewModel { MainActivityViewModel.ViewModel(get(), get(), get()) }
+    single {
+        ImageLoader.Builder(androidContext())
+            .okHttpClient { get() }
+            .build()
+    }
+
+    single { CoilUtils.createDefaultCache(androidContext()) }
+
+    viewModel { MainActivityViewModel.ViewModel(get(), get()) }
 
 }.plus(remoteModule)

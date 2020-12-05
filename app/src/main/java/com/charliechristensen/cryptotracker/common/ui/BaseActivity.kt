@@ -14,10 +14,9 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     protected inline fun <T> Flow<T>.bind(crossinline observer: suspend (T) -> Unit) {
-        this.onEach {
+        onEach {
             observer(it)
-        }
-            .launchIn(lifecycleScope)
+        }.launchIn(lifecycleScope)
     }
 
 }

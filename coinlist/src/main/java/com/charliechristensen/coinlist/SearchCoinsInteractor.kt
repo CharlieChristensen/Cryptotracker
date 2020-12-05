@@ -4,8 +4,11 @@ import com.charliechristensen.coinlist.list.SearchCoinsListItem
 import com.charliechristensen.cryptotracker.data.Repository
 import com.charliechristensen.cryptotracker.data.models.ui.Coin
 import com.squareup.sqldelight.Query
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 
 class SearchCoinsInteractor constructor(
     private val repository: Repository
@@ -53,5 +56,4 @@ class SearchCoinsInteractor constructor(
         } else {
             repository.searchCoinsPaged(query, limit, offset)
         }
-
 }

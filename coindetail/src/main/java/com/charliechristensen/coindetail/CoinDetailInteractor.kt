@@ -18,16 +18,16 @@ import kotlinx.coroutines.flow.map
 
 class CoinDetailInteractor constructor(
     private val repository: Repository,
-    formatterFactory: FormatterFactory
+    private val formatterFactory: FormatterFactory
 ) {
-
-    private val formatter = formatterFactory.currencyFormatter(repository.getCurrency())
 
     fun getCoinData(coinSymbol: String): Flow<CoinDetailData> = combine(
         repository.getCoinPriceData(coinSymbol),
         repository.getUnitsOwnedForSymbol(coinSymbol),
         repository.getCoinDetails(coinSymbol)
     ) { priceList, unitsOwnedList, coinList ->
+        val currencyFormatter = formatterFactory.currencyFormatter(repository.getCurrency())
+        val decimalFormatter = formatterFactory.decimalFormatter()
         val coinName = coinList.getOrNull(0)?.coinName ?: ""
         val imageUrl = coinList.getOrNull(0)?.imageUrl ?: ""
         val unitsOwned = unitsOwnedList.getOrElse(0) { 0.0 }
@@ -35,7 +35,7 @@ class CoinDetailInteractor constructor(
         val priceData = priceList.getOrElse(0) {
             return@combine CoinDetailData(
                 coinIsInPortfolio = coinIsInPortfolio,
-                walletUnitsOwned = unitsOwned,
+                walletUnitsOwned = decimalFormatter.format(unitsOwned),
                 toolbarImageData = ImageAndNamePair(coinName, imageUrl)
             )
         }
@@ -44,16 +44,17 @@ class CoinDetailInteractor constructor(
         val walletTotalValueChangeDouble = walletTotalValueDouble - walletTotalValueOpenDouble
         val walletPriceChange24Hour = ColorValueString.create(
             walletTotalValueChangeDouble,
-            formatter
+            currencyFormatter
         )
         val imageNamePair = ImageAndNamePair(coinName, imageUrl)
         return@combine CoinDetailData(
             coinIsInPortfolio = coinIsInPortfolio,
-            walletUnitsOwned = unitsOwned,
+            walletUnitsOwned = decimalFormatter.format(unitsOwned),
             pricePerUnit = priceData.price,
-            pricePerUnit24HourLow = priceData.low24Hour,
-            pricePerUnit24HourHigh = priceData.high24Hour,
-            walletTotalValue = walletTotalValueDouble,
+            pricePerUnitFormatted = currencyFormatter.format(priceData.price),
+            pricePerUnit24HourLow = currencyFormatter.format(priceData.low24Hour),
+            pricePerUnit24HourHigh = currencyFormatter.format(priceData.high24Hour),
+            walletTotalValue = currencyFormatter.format(walletTotalValueDouble),
             walletPriceChange24Hour = walletPriceChange24Hour,
             toolbarImageData = imageNamePair
         )
@@ -92,7 +93,7 @@ class CoinDetailInteractor constructor(
         }
         .flowOn(Dispatchers.IO)
 
-    fun getCurrency(): String = repository.getCurrency()
+    suspend fun getCurrency(): String = repository.getCurrency()
 
     suspend fun saveCoinToPortfolio(symbol: String, amount: Double) {
         repository.addPortfolioCoin(symbol, amount)
@@ -102,11 +103,11 @@ class CoinDetailInteractor constructor(
         repository.removeCoinFromPortfolio(symbol)
     }
 
-    fun addTemporarySubscription(symbol: String) {
+    suspend fun addTemporarySubscription(symbol: String) {
         repository.addTemporarySubscription(symbol)
     }
 
-    fun clearTemporarySubscriptions() {
+    suspend fun clearTemporarySubscriptions() {
         repository.clearTemporarySubscriptions()
     }
 }

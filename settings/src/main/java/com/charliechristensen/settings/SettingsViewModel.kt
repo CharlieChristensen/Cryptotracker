@@ -55,15 +55,21 @@ interface SettingsViewModel {
         }
 
         override fun liveUpdatePricesToggled(isChecked: Boolean) {
-            repository.setLiveUpdatePrices(isChecked)
+            viewModelScope.launch {
+                repository.setLiveUpdatePrices(isChecked)
+            }
         }
 
         override fun themeChosen(theme: AppTheme) {
-            repository.setTheme(theme)
+            viewModelScope.launch {
+                repository.setTheme(theme)
+            }
         }
 
         override fun setCurrency(symbol: String) {
-            repository.setCurrency(symbol)
+            viewModelScope.launch {
+                repository.setCurrency(symbol)
+            }
         }
 
         //endregion

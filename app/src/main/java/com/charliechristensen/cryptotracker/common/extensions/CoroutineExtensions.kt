@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.flow
 
 inline fun <T : Any> Query<T>.flowAsList(): Flow<List<T>> = asFlow().mapToList()
 
-inline fun <T> Flow<T>.accumulate(
-    initial: T
+fun <T> Flow<T>.accumulate(
+    initial: suspend () -> T
 ): Flow<Pair<T, T>> = flow {
-    var previous: T = initial
+    var previous: T = initial()
     emit(previous to previous)
     collect { next ->
         emit(previous to next)

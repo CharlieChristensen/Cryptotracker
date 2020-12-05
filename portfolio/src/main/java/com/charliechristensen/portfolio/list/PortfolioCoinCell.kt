@@ -1,7 +1,6 @@
 package com.charliechristensen.portfolio.list
 
 import coil.load
-import com.charliechristensen.cryptotracker.common.GlideApp
 import com.charliechristensen.cryptotracker.common.extensions.setColorAttribute
 import com.charliechristensen.cryptotracker.common.lists.BaseViewHolder
 import com.charliechristensen.portfolio.databinding.CellCoinPortfolioBinding

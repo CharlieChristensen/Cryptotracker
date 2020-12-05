@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Teal application theme. -->
+    <style name="AppTheme" parent="BaseTheme">
+        <!--Theme Colors-->
+        <item name="themeColorPrimary">@color/tealColorPrimary</item>
+        <item name="themeColorPrimaryDark">@color/tealColorPrimaryDark</item>
+        <item name="themeColorAccent">@color/tealColorAccent</item>
+        <item name="themeTextColor">@color/tealTextColorPrimary</item>
+        <item name="themeTextColorSecondary">@color/tealTextColorSecondary</item>
+        <!--Default Background-->
+        <item name="android:windowBackground">@drawable/background_teal_theme</item>
+        <!--Custom Attributes-->
+        <item name="positivePriceGreen">@color/pastel_teal</item>
+        <item name="negativePriceRed">@color/pastel_red</item>
+        <item name="dividerColor">@color/tealDividerColor</item>
+    </style>
+
+</resources>

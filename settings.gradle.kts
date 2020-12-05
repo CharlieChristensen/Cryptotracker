@@ -1,3 +1,5 @@
+include(":common")
+include(":database")
 include(":sharedRemote")
 include(":Dialogs")
 include(

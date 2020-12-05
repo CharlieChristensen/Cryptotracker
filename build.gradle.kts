@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
+    val kotlin_version by extra("1.4.20")
     this.repositories {
         google()
         jcenter()
@@ -13,6 +14,7 @@ buildscript {
         classpath(BuildPlugins.safeArgsClasspath)
         classpath(BuildPlugins.sqlDelightClasspath)
         classpath(BuildPlugins.koinClasspath)
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
 

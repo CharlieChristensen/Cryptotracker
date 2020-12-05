@@ -4,7 +4,6 @@ import java.util.Properties
 plugins {
     id(BuildPlugins.androidApplication)
     id(BuildPlugins.kotlinAndroid)
-    id(BuildPlugins.kotlinKapt)
     id(BuildPlugins.safeArgs)
     id(BuildPlugins.sqlDelight)
 }
@@ -51,9 +50,9 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(project(":remote"))
+    implementation(project(":database"))
 
     implementation(Libraries.kotlinStdLib)
-    implementation(Libraries.kotlinReflect)
     implementation(Libraries.ktxCore)
     implementation(Libraries.appCompat)
     implementation(Libraries.constraintLayout)
@@ -62,6 +61,7 @@ dependencies {
     implementation(Libraries.fragment)
     implementation(Libraries.workManager)
     implementation(Libraries.recyclerView)
+    implementation(Libraries.dataStore)
 
     implementation(Libraries.lifecycleCommon)
     implementation(Libraries.viewModel)
@@ -74,7 +74,6 @@ dependencies {
     implementation(Libraries.coroutinesAndroid)
     implementation(Libraries.corbind)
     implementation(Libraries.corbindNavigation)
-    implementation(Libraries.flowPreferences)
 
     implementation(Libraries.koinAndroid)
     implementation(Libraries.koinScope)
@@ -94,11 +93,9 @@ dependencies {
     implementation(Libraries.ktorLogging)
     implementation(Libraries.ktorWebSockets)
 
-    implementation(Libraries.glide)
-    kapt(Libraries.glideCompiler)
     implementation(Libraries.coil)
 
-    implementation(Libraries.sqlDelight)
+    implementation(Libraries.sqlDelightAndroid)
     implementation(Libraries.sqlDelightCoroutines)
 
     implementation(Libraries.timber)

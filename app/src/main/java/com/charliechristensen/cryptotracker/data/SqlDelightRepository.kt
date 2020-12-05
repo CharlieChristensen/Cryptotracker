@@ -1,15 +1,11 @@
 package com.charliechristensen.cryptotracker.data
 
 import com.charliechristensen.cryptotracker.common.extensions.flowAsList
-import com.charliechristensen.cryptotracker.cryptotracker.Database
+import com.charliechristensen.cryptotracker.data.datastore.AppPreferences
 import com.charliechristensen.cryptotracker.data.mappers.CoinMappers
 import com.charliechristensen.cryptotracker.data.models.graph.CoinHistoryElement
-import com.charliechristensen.cryptotracker.data.models.ui.Coin
-import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryTimePeriod
-import com.charliechristensen.cryptotracker.data.models.ui.CoinHistoryUnits
-import com.charliechristensen.cryptotracker.data.models.ui.CoinPriceData
-import com.charliechristensen.cryptotracker.data.models.ui.CoinWithPriceAndAmount
-import com.charliechristensen.cryptotracker.data.preferences.AppPreferences
+import com.charliechristensen.cryptotracker.data.models.ui.*
+import com.charliechristensen.database.Database
 import com.charliechristensen.remote.RemoteGateway
 import com.charliechristensen.remote.models.SymbolPricePair
 import com.squareup.sqldelight.Query
@@ -83,17 +79,19 @@ class SqlDelightRepository constructor(
         getPortfolioCoinSymbols(),
         getPortfolio()
     ) { symbols, portfolio ->
-        if(symbols.isNotEmpty() && portfolio.isEmpty()) {
+        if (symbols.isNotEmpty() && portfolio.isEmpty()) {
             fetchCoinPriceAndSaveToDb(symbols, getCurrency())
         }
         portfolio
     }
 
-    private fun getPortfolio(): Flow<List<CoinWithPriceAndAmount>> =
-        combinedTableQueries.getPortfolioData(
-            getCurrency(),
-            CoinMappers.dbCoinWithPriceAndAmountMapper
-        ).flowAsList()
+    private fun getPortfolio(): Flow<List<CoinWithPriceAndAmount>> = currency()
+        .flatMapLatest { currency ->
+            combinedTableQueries.getPortfolioData(
+                currency,
+                CoinMappers.dbCoinWithPriceAndAmountMapper
+            ).flowAsList()
+        }
 
     private fun loadCoinPrices(symbol: String, currency: String): Flow<List<CoinPriceData>> =
         coinPriceQueries.selectBySymbol(symbol, currency, CoinMappers.dbCoinPriceDataMapper)
@@ -109,7 +107,10 @@ class SqlDelightRepository constructor(
         forceRefresh: Boolean
     ): Flow<List<CoinPriceData>> {
         var shouldForceRefresh = forceRefresh
-        return loadCoinPrices(symbol, getCurrency())
+        return currency()
+            .flatMapLatest { currency ->
+                loadCoinPrices(symbol, currency)
+            }
             .flatMapLatest { dbList ->
                 if (dbList.isEmpty() || shouldForceRefresh) {
                     shouldForceRefresh = false
@@ -159,11 +160,11 @@ class SqlDelightRepository constructor(
         }
     }
 
-    override fun addTemporarySubscription(symbol: String) {
+    override suspend fun addTemporarySubscription(symbol: String) {
         remoteGateway.addTemporarySubscription(symbol, getCurrency())
     }
 
-    override fun clearTemporarySubscriptions() {
+    override suspend fun clearTemporarySubscriptions() {
         remoteGateway.clearTemporarySubscriptions(getCurrency())
     }
 
@@ -241,12 +242,15 @@ class SqlDelightRepository constructor(
     private fun getCoinHistoryFromDb(
         symbol: String,
         timePeriod: CoinHistoryTimePeriod
-    ): Flow<List<CoinHistoryElement>> = coinHistoryQueries.selectByTimePeriod(
-        symbol,
-        getCurrency(),
-        timePeriod,
-        CoinMappers.dbCoinHistoryMapper
-    ).flowAsList()
+    ): Flow<List<CoinHistoryElement>> = currency()
+        .flatMapLatest { currency ->
+            coinHistoryQueries.selectByTimePeriod(
+                symbol,
+                currency,
+                CoinHistoryTimePeriod.encodeToLong(timePeriod),
+                CoinMappers.dbCoinHistoryMapper
+            ).flowAsList()
+        }
 
     private suspend fun fetchCoinHistoryAndSaveToDb(
         symbol: String,
@@ -273,7 +277,7 @@ class SqlDelightRepository constructor(
                     timePeriod.limit
                 )
             }
-
+        val currency = getCurrency()
         coinHistoryQueries.transaction {
             historicalData.data
                 ?.filterNotNull()
@@ -281,8 +285,8 @@ class SqlDelightRepository constructor(
                 ?.forEach { remoteElement ->
                     coinHistoryQueries.insertByTimePeriod(
                         symbol,
-                        getCurrency(),
-                        timePeriod,
+                        currency,
+                        CoinHistoryTimePeriod.encodeToLong(timePeriod),
                         remoteElement.time!!,
                         remoteElement.close ?: 0.0,
                         remoteElement.high ?: 0.0,
@@ -295,7 +299,7 @@ class SqlDelightRepository constructor(
         }
     }
 
-    override fun setCurrency(symbol: String) {
+    override suspend fun setCurrency(symbol: String) {
         appPreferences.setCurrency(symbol)
     }
 

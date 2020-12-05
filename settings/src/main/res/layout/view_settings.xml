@@ -10,8 +10,7 @@
         android:id="@+id/liveUpdatePricesButton"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:background="?attr/selectableItemBackground"
-        android:onClick="@{() -> liveUpdatePricesSwitch.toggle()}">
+        android:background="?attr/selectableItemBackground">
 
         <TextView
             android:id="@+id/titleLiveUpdatePrices"

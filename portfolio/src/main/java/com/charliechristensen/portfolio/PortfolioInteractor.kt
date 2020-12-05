@@ -14,16 +14,15 @@ class PortfolioInteractor constructor(
     private val formatterFactory: FormatterFactory
 ) {
 
-    private val currencyFormatter = formatterFactory.currencyFormatter(repository.getCurrency())
-
     fun listData(): Flow<PortfolioListData> =
         repository.getPortfolioData()
             .map { dbList -> mapPortfolioListData(dbList, formatterFactory) }
 
-    private fun mapPortfolioListData(
+    private suspend fun mapPortfolioListData(
         dbList: List<CoinWithPriceAndAmount>,
         formatterFactory: FormatterFactory
     ): PortfolioListData {
+        val currencyFormatter = formatterFactory.currencyFormatter(repository.getCurrency())
         var portfolioValueDouble = 0.0
         var portfolioOpenDouble = 0.0
         val coinList = dbList
@@ -34,13 +33,12 @@ class PortfolioInteractor constructor(
                 val walletTotalValueChangeDouble =
                     walletTotalValueDouble - walletTotalValueOpenDouble
 
-                val dollarFormat = currencyFormatter
                 val walletTotalValueChange =
-                    ColorValueString.create(walletTotalValueChangeDouble, dollarFormat)
+                    ColorValueString.create(walletTotalValueChangeDouble, currencyFormatter)
                 val priceChangePerUnit =
-                    ColorValueString.create(priceChangePerUnitDouble, dollarFormat)
-                val currentPrice = dollarFormat.format(coin.price)
-                val walletTotalValue = dollarFormat.format(walletTotalValueDouble)
+                    ColorValueString.create(priceChangePerUnitDouble, currencyFormatter)
+                val currentPrice = currencyFormatter.format(coin.price)
+                val walletTotalValue = currencyFormatter.format(walletTotalValueDouble)
 
                 portfolioValueDouble += walletTotalValueDouble
                 portfolioOpenDouble += walletTotalValueOpenDouble
